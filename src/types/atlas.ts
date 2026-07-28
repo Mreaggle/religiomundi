@@ -1,6 +1,6 @@
 export type CorrelationType = "direct" | "partial" | "impersonal" | "uncertain" | "absent";
 export type TemporalPrecision = "exact" | "approximate" | "century" | "macroperiod" | "unknown";
-export type TemporalMode = "panorama" | "emergences";
+export type TemporalMode = "panorama" | "emergences" | "catalog";
 export type ViewMode = "constellation" | "map" | "matrix" | "signatures" | "sources";
 
 export interface Correlation {

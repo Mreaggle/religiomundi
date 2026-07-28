@@ -55,6 +55,35 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
 });
 
+test("mapa oferece zoom focal e acesso explícito às 460 tradições", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"), "Roda do mouse é verificada no desktop");
+  await page.goto("/");
+  await page.getByRole("button", { name: "Mapa", exact: true }).click();
+
+  const viewport = page.locator(".map-viewport");
+  const before = await viewport.getAttribute("transform");
+  const map = page.locator(".map-stage > svg");
+  await map.hover({ position: { x: 680, y: 360 } });
+  await page.mouse.wheel(0, -650);
+  await expect(page.getByLabel("Nível de zoom")).not.toHaveText("100%");
+  await expect.poll(() => viewport.getAttribute("transform")).not.toBe(before);
+
+  await page.getByRole("button", { name: "Catálogo · 460" }).click();
+  await expect(page.locator(".map-summary")).toContainText("460 tradições");
+  await expect(page.getByText("460 de 460 tradições")).toBeVisible();
+
+  await page.getByRole("button", { name: "Restaurar posição do mapa" }).click();
+  const clusterNodes = page.locator(".tradition-cluster");
+  const labels = await clusterNodes.evaluateAll((nodes) =>
+    nodes.map((node) => node.getAttribute("aria-label") ?? ""),
+  );
+  const counts = labels.map((label) => Number(label.match(/, (\d+) tradições/)?.[1] ?? 0));
+  const largest = Math.max(...counts);
+  await clusterNodes.nth(counts.indexOf(largest)).click();
+  await expect(page.locator(".map-cluster-inspector")).toBeVisible();
+  await expect(page.locator(".map-inspector-list > button")).toHaveCount(largest);
+});
+
 test("layout móvel mantém navegação, lista alternativa e dossiê em sheet", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("navigation", { name: "Modos de visualização" })).toBeVisible();
