@@ -18,6 +18,9 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
     page.getByRole("heading", { name: "Constelação Arquetípica Temporal" }),
   ).toBeVisible();
   await expect(page.locator(".archetype-node")).toHaveCount(44);
+  await expect(page.locator(".archetype-icon")).toHaveCount(44);
+  await expect(page.locator('[data-archetype-code="A15"] .lucide-heart')).toBeVisible();
+  await expect(page.locator('[data-archetype-code="A01"] .lucide-sprout')).toBeVisible();
   await expect(page.getByText("460 × 44")).toHaveText("460 × 44");
 
   await page.getByRole("button", { name: "Abrir busca e filtros" }).click();

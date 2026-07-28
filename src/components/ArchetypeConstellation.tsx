@@ -1,9 +1,17 @@
 import { LocateFixed, Minus, Plus } from "lucide-react";
-import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  type KeyboardEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, CorrelationType, Tradition } from "../types/atlas";
 import { clusterTraditions, countByCorrelation } from "../utils/atlas";
+import { getArchetypeVisual } from "./archetypeVisuals";
 import { CorrelationFiber } from "./CorrelationFiber";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
 import { TraditionCluster } from "./TraditionCluster";
@@ -198,7 +206,7 @@ export function ArchetypeConstellation() {
         </div>
         <p>
           Os 44 eixos permanecem fixos. Agrupamentos orbitais são decisões de interface, não novas
-          categorias acadêmicas.
+          categorias acadêmicas. Ícones e cores são marcadores de navegação, não símbolos sagrados.
         </p>
       </div>
       <div className="constellation-canvas">
@@ -348,6 +356,8 @@ export function ArchetypeConstellation() {
               {data.archetypes.map((archetype) => {
                 const position = positions.get(archetype.code) ?? [0, 0];
                 const stats = archetypeStats.get(archetype.code);
+                const visual = getArchetypeVisual(archetype.code);
+                const ArchetypeIcon = visual.icon;
                 const count = stats?.total ?? 0;
                 const intensity = count / maximum;
                 const selected = selectedArchetype?.code === archetype.code;
@@ -357,6 +367,9 @@ export function ArchetypeConstellation() {
                     className={`archetype-node ${selected ? "selected" : ""} ${
                       count === 0 ? "inactive" : ""
                     }`}
+                    data-archetype-code={archetype.code}
+                    data-color-family={visual.colorFamily}
+                    style={{ "--archetype-color": visual.color } as CSSProperties}
                     transform={`translate(${position[0]} ${position[1]})`}
                     role="button"
                     tabIndex={0}
@@ -368,7 +381,7 @@ export function ArchetypeConstellation() {
                       setTooltip({
                         x: event.clientX - rect.left,
                         y: event.clientY - rect.top,
-                        content: `${archetype.code} — ${archetype.name}\n${archetype.inclusionCriteria}\nEvitar / não confundir: ${archetype.avoidConfusion}\n● ${stats.counts.direct} · ≈ ${stats.counts.partial} · ◇ ${stats.counts.impersonal} · ? ${stats.counts.uncertain} · — ${stats.counts.absent}\nPrincipais no recorte: ${stats.topTraditions.join(", ") || "nenhuma"}`,
+                        content: `${archetype.code} — ${archetype.name}\nGlifo de interface: ${visual.iconLabel} · Família cromática: ${visual.colorFamily}\n${archetype.inclusionCriteria}\nEvitar / não confundir: ${archetype.avoidConfusion}\n● ${stats.counts.direct} · ≈ ${stats.counts.partial} · ◇ ${stats.counts.impersonal} · ? ${stats.counts.uncertain} · — ${stats.counts.absent}\nPrincipais no recorte: ${stats.topTraditions.join(", ") || "nenhuma"}`,
                       });
                     }}
                     onPointerLeave={() => setTooltip(undefined)}
@@ -384,8 +397,16 @@ export function ArchetypeConstellation() {
                     </title>
                     <circle className="archetype-halo" r={17 + intensity * 12} />
                     <circle className="archetype-disc" r={13 + intensity * 3} />
-                    <path className="archetype-glyph" d="M-5,0 L0,-6 L5,0 L0,6 Z" />
-                    <text className="archetype-code" y={3}>
+                    <ArchetypeIcon
+                      className="archetype-icon"
+                      x={-7}
+                      y={-7}
+                      width={14}
+                      height={14}
+                      strokeWidth={1.65}
+                      aria-hidden="true"
+                    />
+                    <text className="archetype-code" y={-20}>
                       {archetype.code}
                     </text>
                     <text className="archetype-name" y={28}>
