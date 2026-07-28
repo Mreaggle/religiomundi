@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { AtlasData } from "../types/atlas";
+import { assetUrl } from "../utils/assets";
 
 interface AtlasLoadState {
   data?: AtlasData;
@@ -11,7 +12,7 @@ export function useAtlasData(): AtlasLoadState {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/data/atlas.generated.json", { signal: controller.signal })
+    fetch(assetUrl("data/atlas.generated.json"), { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`Falha ao carregar os dados (${response.status})`);
         return response.json() as Promise<AtlasData>;

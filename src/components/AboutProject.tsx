@@ -1,5 +1,6 @@
 import { FileDown, ShieldCheck } from "lucide-react";
 import { useAtlas } from "../state/AtlasProvider";
+import { assetUrl } from "../utils/assets";
 import { formatCount } from "../utils/text";
 import { ModalShell } from "./ModalShell";
 
@@ -59,7 +60,7 @@ export function AboutProject({ onClose }: { onClose: () => void }) {
         </div>
       </section>
       <div className="about-actions">
-        <a href="/data/UNO_reformulado.xlsx" download>
+        <a href={assetUrl("data/UNO_reformulado.xlsx")} download>
           <FileDown size={15} /> Baixar planilha canônica
         </a>
       </div>

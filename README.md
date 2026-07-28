@@ -39,3 +39,8 @@ Comandos principais:
 - `scripts/normalize-data.mjs` — pipeline reproduzível XLSX → JSON.
 - `skills/` — cinco papéis especializados reutilizáveis.
 - `e2e/` — fluxos de navegador e captura de erros de console.
+
+## Publicação
+
+O workflow `pages.yml` compila a revisão de `main` e publica o diretório `dist/`
+no GitHub Pages, com base configurada para `/religiomundi/`.
