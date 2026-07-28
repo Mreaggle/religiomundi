@@ -1,8 +1,9 @@
 import { Eye, Route } from "lucide-react";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 import { useAtlas } from "../state/AtlasProvider";
 import type { CorrelationType } from "../types/atlas";
 import { CORRELATION_META, countByCorrelation } from "../utils/atlas";
+import { getArchetypeVisual } from "./archetypeVisuals";
 import { DrawerShell } from "./DrawerShell";
 
 export function ArchetypeDossier() {
@@ -28,6 +29,8 @@ export function ArchetypeDossier() {
     [archetype, visibleTraditions],
   );
   if (!archetype) return null;
+  const visual = getArchetypeVisual(archetype.code);
+  const ArchetypeIcon = visual.icon;
   const related = visibleTraditions
     .filter((tradition) => tradition.correlations[archetype.code].type !== "absent")
     .sort(
@@ -46,11 +49,21 @@ export function ArchetypeDossier() {
       title={`${archetype.code} — ${archetype.name}`}
       onClose={() => setSelectedArchetypeCode(undefined)}
     >
-      <div className="archetype-seal" aria-hidden="true">
+      <div
+        className="archetype-seal"
+        style={{ "--archetype-color": visual.color } as CSSProperties}
+        role="img"
+        aria-label={`${archetype.code}: glifo de interface ${visual.iconLabel}; família cromática ${visual.colorFamily}`}
+      >
+        <ArchetypeIcon aria-hidden="true" />
         <span>{archetype.code}</span>
         <i />
         <i />
       </div>
+      <p className="archetype-visual-note">
+        Glifo de interface: {visual.iconLabel} · Família cromática: {visual.colorFamily}. Não é um
+        símbolo sagrado atribuído à tradição.
+      </p>
       <section className="definition-block">
         <h3>Critério de inclusão</h3>
         <p>{archetype.inclusionCriteria}</p>

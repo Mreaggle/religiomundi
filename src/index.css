@@ -1361,11 +1361,42 @@ select:focus-visible,
   overflow: hidden;
 }
 
-.constellation-canvas svg {
+.constellation-canvas > svg {
   display: block;
   width: 100%;
   height: 100%;
   min-height: 620px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.constellation-canvas > svg:active,
+.constellation-canvas > svg.is-interacting {
+  cursor: grabbing;
+}
+
+.constellation-viewport {
+  will-change: transform;
+}
+
+.constellation-tools {
+  top: 82px;
+  z-index: 14;
+}
+
+.constellation-gesture-hint {
+  position: absolute;
+  bottom: 43px;
+  left: 14px;
+  z-index: 6;
+  margin: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  color: #c0bcb2;
+  background: rgba(6, 9, 8, 0.88);
+  font: 0.61rem var(--mono);
+  pointer-events: none;
 }
 
 .constellation-aura {
@@ -1389,31 +1420,38 @@ select:focus-visible,
 }
 
 .archetype-halo {
-  fill: rgba(213, 154, 74, 0.025);
-  stroke: rgba(213, 154, 74, 0.12);
+  fill: var(--archetype-color);
+  fill-opacity: 0.035;
+  stroke: var(--archetype-color);
+  stroke-opacity: 0.3;
   stroke-width: 0.6;
   transition:
-    fill 350ms ease,
-    stroke 350ms ease;
+    fill-opacity 350ms ease,
+    stroke-opacity 350ms ease;
 }
 
 .archetype-disc {
   fill: #0c1211;
-  stroke: rgba(185, 154, 98, 0.63);
-  stroke-width: 0.9;
-  filter: drop-shadow(0 0 4px rgba(213, 154, 74, 0.16));
+  stroke: var(--archetype-color);
+  stroke-opacity: 0.78;
+  stroke-width: 1;
+  filter: drop-shadow(0 0 4px var(--archetype-color));
 }
 
-.archetype-glyph {
+.archetype-icon {
   fill: none;
-  stroke: rgba(216, 200, 167, 0.2);
-  stroke-width: 0.5;
+  color: var(--archetype-color);
+  overflow: visible;
+  pointer-events: none;
 }
 
 .archetype-code {
-  fill: var(--ivory);
-  font: 6.2px var(--mono);
+  fill: var(--archetype-color);
+  font: 600 6.4px var(--mono);
   text-anchor: middle;
+  paint-order: stroke;
+  stroke: #060807;
+  stroke-width: 1.8px;
   pointer-events: none;
 }
 
@@ -1431,14 +1469,15 @@ select:focus-visible,
 
 .archetype-node:hover .archetype-halo,
 .archetype-node.selected .archetype-halo {
-  fill: rgba(213, 154, 74, 0.16);
-  stroke: rgba(213, 154, 74, 0.65);
+  fill-opacity: 0.19;
+  stroke-opacity: 0.9;
 }
 
 .archetype-node.selected .archetype-disc {
-  fill: #261d11;
-  stroke: var(--amber);
-  filter: drop-shadow(0 0 9px rgba(213, 154, 74, 0.5));
+  fill: #171b1a;
+  stroke: var(--archetype-color);
+  stroke-opacity: 1;
+  filter: drop-shadow(0 0 9px var(--archetype-color));
 }
 
 .archetype-node.inactive {
@@ -2154,7 +2193,7 @@ select:focus-visible,
   width: 160px;
   height: 160px;
   margin: 8px auto 24px;
-  border: 1px solid rgba(185, 154, 98, 0.32);
+  border: 1px solid var(--archetype-color);
   border-radius: 50%;
   place-items: center;
 }
@@ -2168,21 +2207,41 @@ select:focus-visible,
 
 .archetype-seal::before {
   inset: 24px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--archetype-color);
+  opacity: 0.34;
   transform: rotate(45deg);
 }
 
 .archetype-seal::after {
   inset: 42px;
-  border: 1px solid rgba(87, 200, 212, 0.2);
+  border: 1px solid var(--archetype-color);
   border-radius: 50%;
+  opacity: 0.44;
+}
+
+.archetype-seal > svg {
+  position: relative;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  color: var(--archetype-color);
+  stroke-width: 1.25;
 }
 
 .archetype-seal span {
-  position: relative;
+  position: absolute;
+  bottom: 19px;
   z-index: 2;
-  color: var(--ivory);
-  font: 1rem var(--mono);
+  color: var(--archetype-color);
+  font: 600 0.7rem var(--mono);
+}
+
+.archetype-visual-note {
+  max-width: 330px;
+  margin: -12px auto 20px;
+  color: #aaa99f;
+  font: 0.58rem / 1.55 var(--mono);
+  text-align: center;
 }
 
 .definition-block p {
@@ -3695,7 +3754,7 @@ select:focus-visible,
     height: 610px;
   }
 
-  .constellation-canvas svg {
+  .constellation-canvas > svg {
     min-width: 960px;
     transform: translateX(calc((100vw - 984px) / 2));
   }
@@ -3838,7 +3897,7 @@ select:focus-visible,
     overflow-x: auto;
   }
 
-  .constellation-canvas svg {
+  .constellation-canvas > svg {
     min-width: 900px;
     transform: translateX(calc((100vw - 924px) / 2));
   }
@@ -3848,6 +3907,21 @@ select:focus-visible,
     left: 10px;
     flex-direction: column;
     gap: 2px;
+  }
+
+  .constellation-tools {
+    top: 76px;
+    left: 9px;
+  }
+
+  .constellation-gesture-hint {
+    right: 9px;
+    bottom: 72px;
+    left: 9px;
+    overflow: hidden;
+    font-size: 0.55rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .map-canvas {

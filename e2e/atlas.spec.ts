@@ -18,6 +18,9 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
     page.getByRole("heading", { name: "Constelação Arquetípica Temporal" }),
   ).toBeVisible();
   await expect(page.locator(".archetype-node")).toHaveCount(44);
+  await expect(page.locator(".archetype-icon")).toHaveCount(44);
+  await expect(page.locator('[data-archetype-code="A15"] .lucide-heart')).toBeVisible();
+  await expect(page.locator('[data-archetype-code="A01"] .lucide-sprout')).toBeVisible();
   await expect(page.getByText("460 × 44")).toHaveText("460 × 44");
 
   await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
@@ -53,6 +56,25 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await page.getByRole("button", { name: "Ativar interpretação autoral" }).click();
   await expect(page.getByLabel("Interpretação autoral e esotérica")).toBeVisible();
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
+});
+
+test("constelação oferece zoom focal sem mover seus eixos entre períodos", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"), "Roda do mouse é verificada no desktop");
+  await page.goto("/");
+
+  const viewport = page.locator(".constellation-viewport");
+  const before = await viewport.getAttribute("transform");
+  const constellation = page.locator(".constellation-canvas > svg");
+  await constellation.hover({ position: { x: 720, y: 390 } });
+  await page.mouse.wheel(0, -650);
+  await expect(page.getByLabel("Nível de zoom da constelação")).not.toHaveText("100%");
+  await expect.poll(() => viewport.getAttribute("transform")).not.toBe(before);
+  await expect(page.locator(".archetype-node")).toHaveCount(44);
+
+  await page.getByRole("button", { name: "Restaurar posição da constelação" }).click();
+  await expect(page.getByLabel("Nível de zoom da constelação")).toHaveText("100%");
 });
 
 test("mapa oferece zoom focal e acesso explícito às 460 tradições", async ({ page }, testInfo) => {
