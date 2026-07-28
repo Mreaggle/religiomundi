@@ -55,6 +55,25 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
 });
 
+test("constelação oferece zoom focal sem mover seus eixos entre períodos", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"), "Roda do mouse é verificada no desktop");
+  await page.goto("/");
+
+  const viewport = page.locator(".constellation-viewport");
+  const before = await viewport.getAttribute("transform");
+  const constellation = page.locator(".constellation-canvas > svg");
+  await constellation.hover({ position: { x: 720, y: 390 } });
+  await page.mouse.wheel(0, -650);
+  await expect(page.getByLabel("Nível de zoom da constelação")).not.toHaveText("100%");
+  await expect.poll(() => viewport.getAttribute("transform")).not.toBe(before);
+  await expect(page.locator(".archetype-node")).toHaveCount(44);
+
+  await page.getByRole("button", { name: "Restaurar posição da constelação" }).click();
+  await expect(page.getByLabel("Nível de zoom da constelação")).toHaveText("100%");
+});
+
 test("mapa oferece zoom focal e acesso explícito às 460 tradições", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name.includes("mobile"), "Roda do mouse é verificada no desktop");
   await page.goto("/");

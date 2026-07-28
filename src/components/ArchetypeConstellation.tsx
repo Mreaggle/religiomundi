@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { LocateFixed, Minus, Plus } from "lucide-react";
+import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, CorrelationType, Tradition } from "../types/atlas";
 import { clusterTraditions, countByCorrelation } from "../utils/atlas";
@@ -10,6 +12,8 @@ const EXTENT: [[number, number], [number, number]] = [
   [315, 170],
   [885, 505],
 ];
+const WIDTH = 1200;
+const HEIGHT = 700;
 const TYPE_SCORE: Record<CorrelationType, number> = {
   direct: 5,
   partial: 4,
@@ -46,13 +50,46 @@ export function ArchetypeConstellation() {
   } = useAtlas();
   const [expanded, setExpanded] = useState<string>();
   const [tooltip, setTooltip] = useState<{ x: number; y: number; content: string }>();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const viewportRef = useRef<SVGGElement>(null);
   const positions = useMemo(() => archetypePositions(data.archetypes), [data.archetypes]);
   const clusters = useMemo(() => clusterTraditions(visibleTraditions), [visibleTraditions]);
   const { projection } = useWorldGeometry(EXTENT);
+  const { scale, zoomBy, panBy, resetZoom } = useSvgZoom(svgRef, viewportRef, {
+    width: WIDTH,
+    height: HEIGHT,
+    minScale: 0.75,
+    maxScale: 9,
+  });
 
   useEffect(() => {
     if (Number.isFinite(selectedYear)) setTooltip(undefined);
   }, [selectedYear]);
+
+  function handleConstellationKey(event: KeyboardEvent) {
+    if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      zoomBy(1.35);
+    } else if (event.key === "-") {
+      event.preventDefault();
+      zoomBy(1 / 1.35);
+    } else if (event.key === "0") {
+      event.preventDefault();
+      resetZoom();
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      panBy(44, 0);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      panBy(-44, 0);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      panBy(0, 44);
+    } else if (event.key === "ArrowDown") {
+      event.preventDefault();
+      panBy(0, -44);
+    }
+  }
 
   const archetypeStats = useMemo(
     () =>
@@ -165,8 +202,26 @@ export function ArchetypeConstellation() {
         </p>
       </div>
       <div className="constellation-canvas">
+        <div
+          className="map-tools constellation-tools"
+          role="group"
+          aria-label="Controles de navegação da constelação"
+          onKeyDown={handleConstellationKey}
+        >
+          <button type="button" onClick={() => zoomBy(1.45)} aria-label="Aproximar constelação">
+            <Plus aria-hidden="true" />
+          </button>
+          <output aria-label="Nível de zoom da constelação">{Math.round(scale * 100)}%</output>
+          <button type="button" onClick={() => zoomBy(1 / 1.45)} aria-label="Afastar constelação">
+            <Minus aria-hidden="true" />
+          </button>
+          <button type="button" onClick={resetZoom} aria-label="Restaurar posição da constelação">
+            <LocateFixed aria-hidden="true" />
+          </button>
+        </div>
         <svg
-          viewBox="0 0 1200 700"
+          ref={svgRef}
+          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="img"
           aria-label={`Constelação com 44 arquétipos fixos e ${visibleTraditions.length} tradições visíveis`}
         >
@@ -183,161 +238,163 @@ export function ArchetypeConstellation() {
               </feMerge>
             </filter>
           </defs>
-          <circle className="constellation-aura" cx="600" cy="350" r="270" />
-          <circle className="orbit-line orbit-outer" cx="600" cy="350" rx="545" ry="300" />
-          <circle className="orbit-line orbit-inner" cx="600" cy="350" rx="430" ry="238" />
-          <MapGeometry extent={EXTENT} />
+          <g ref={viewportRef} className="constellation-viewport">
+            <circle className="constellation-aura" cx="600" cy="350" r="270" />
+            <circle className="orbit-line orbit-outer" cx="600" cy="350" rx="545" ry="300" />
+            <circle className="orbit-line orbit-inner" cx="600" cy="350" rx="430" ry="238" />
+            <MapGeometry extent={EXTENT} />
 
-          <g className="correlation-layer">
-            {connections.map((item, index) => {
-              const target = positions.get(item.archetype.code);
-              if (!target) return null;
-              if (item.correlation.type === "absent") {
+            <g className="correlation-layer">
+              {connections.map((item, index) => {
+                const target = positions.get(item.archetype.code);
+                if (!target) return null;
+                if (item.correlation.type === "absent") {
+                  return (
+                    <circle
+                      key={`${item.tradition.id}-${item.archetype.code}`}
+                      className="absence-mark"
+                      cx={target[0]}
+                      cy={target[1]}
+                      r={2 + (index % 3)}
+                    >
+                      <title>
+                        {item.tradition.name} · {item.correlation.originalText}
+                      </title>
+                    </circle>
+                  );
+                }
                 return (
-                  <circle
+                  <CorrelationFiber
                     key={`${item.tradition.id}-${item.archetype.code}`}
-                    className="absence-mark"
-                    cx={target[0]}
-                    cy={target[1]}
-                    r={2 + (index % 3)}
-                  >
-                    <title>
-                      {item.tradition.name} · {item.correlation.originalText}
-                    </title>
-                  </circle>
-                );
-              }
-              return (
-                <CorrelationFiber
-                  key={`${item.tradition.id}-${item.archetype.code}`}
-                  {...item}
-                  source={sourceForTradition(item.tradition, index)}
-                  target={target}
-                  onSelect={() => {
-                    setSelectedTraditionId(item.tradition.id);
-                    setSelectedArchetypeCode(item.archetype.code);
-                  }}
-                  onTooltip={(event, visible) => {
-                    if (!visible) return setTooltip(undefined);
-                    const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
-                    if (!rect) return;
-                    setTooltip({
-                      x: event.clientX - rect.left,
-                      y: event.clientY - rect.top,
-                      content: `${item.tradition.name} · ${item.archetype.code} — ${item.archetype.name}\n${item.correlation.originalText}`,
-                    });
-                  }}
-                />
-              );
-            })}
-          </g>
-
-          <g className="tradition-layer">
-            {clusters.map((cluster, index) => {
-              const projected =
-                cluster.latitude !== undefined && cluster.longitude !== undefined
-                  ? projection([cluster.longitude, cluster.latitude])
-                  : [520 + (index % 7) * 27, 300 + Math.floor(index / 7) * 25];
-              if (!projected) return null;
-              return (
-                <g key={cluster.key}>
-                  <TraditionCluster
-                    cluster={cluster}
-                    x={projected[0]}
-                    y={projected[1]}
-                    active={expanded === cluster.key}
-                    onActivate={() => {
-                      if (cluster.traditions.length === 1) {
-                        setSelectedTraditionId(cluster.traditions[0].id);
-                      } else {
-                        setExpanded(expanded === cluster.key ? undefined : cluster.key);
-                      }
+                    {...item}
+                    source={sourceForTradition(item.tradition, index)}
+                    target={target}
+                    onSelect={() => {
+                      setSelectedTraditionId(item.tradition.id);
+                      setSelectedArchetypeCode(item.archetype.code);
+                    }}
+                    onTooltip={(event, visible) => {
+                      if (!visible) return setTooltip(undefined);
+                      const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+                      if (!rect) return;
+                      setTooltip({
+                        x: event.clientX - rect.left,
+                        y: event.clientY - rect.top,
+                        content: `${item.tradition.name} · ${item.archetype.code} — ${item.archetype.name}\n${item.correlation.originalText}`,
+                      });
                     }}
                   />
-                  {expanded === cluster.key &&
-                    cluster.traditions.slice(0, 18).map((tradition, itemIndex) => {
-                      const angle =
-                        (itemIndex / Math.min(18, cluster.traditions.length)) * Math.PI * 2;
-                      const radius = 28 + Math.floor(itemIndex / 8) * 18;
-                      return (
-                        <g
-                          key={tradition.id}
-                          className="expanded-tradition"
-                          transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
-                            projected[1] + Math.sin(angle) * radius
-                          })`}
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => setSelectedTraditionId(tradition.id)}
-                          onKeyDown={(event) =>
-                            event.key === "Enter" && setSelectedTraditionId(tradition.id)
-                          }
-                        >
-                          <title>
-                            {tradition.name} · {tradition.periodLabel}
-                          </title>
-                          <circle r="4" />
-                          <text x="6" y="3">
-                            {tradition.name}
-                          </text>
-                        </g>
-                      );
-                    })}
-                </g>
-              );
-            })}
-          </g>
+                );
+              })}
+            </g>
 
-          <g className="archetype-layer">
-            {data.archetypes.map((archetype) => {
-              const position = positions.get(archetype.code) ?? [0, 0];
-              const stats = archetypeStats.get(archetype.code);
-              const count = stats?.total ?? 0;
-              const intensity = count / maximum;
-              const selected = selectedArchetype?.code === archetype.code;
-              return (
-                <g
-                  key={archetype.code}
-                  className={`archetype-node ${selected ? "selected" : ""} ${
-                    count === 0 ? "inactive" : ""
-                  }`}
-                  transform={`translate(${position[0]} ${position[1]})`}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`${archetype.code}, ${archetype.name}, ${count} correlações no período`}
-                  onClick={() => setSelectedArchetypeCode(selected ? undefined : archetype.code)}
-                  onPointerMove={(event) => {
-                    const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
-                    if (!rect || !stats) return;
-                    setTooltip({
-                      x: event.clientX - rect.left,
-                      y: event.clientY - rect.top,
-                      content: `${archetype.code} — ${archetype.name}\n${archetype.inclusionCriteria}\nEvitar / não confundir: ${archetype.avoidConfusion}\n● ${stats.counts.direct} · ≈ ${stats.counts.partial} · ◇ ${stats.counts.impersonal} · ? ${stats.counts.uncertain} · — ${stats.counts.absent}\nPrincipais no recorte: ${stats.topTraditions.join(", ") || "nenhuma"}`,
-                    });
-                  }}
-                  onPointerLeave={() => setTooltip(undefined)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      setSelectedArchetypeCode(selected ? undefined : archetype.code);
-                    }
-                  }}
-                >
-                  <title>
-                    {archetype.code} — {archetype.name}. {archetype.inclusionCriteria}
-                  </title>
-                  <circle className="archetype-halo" r={17 + intensity * 12} />
-                  <circle className="archetype-disc" r={13 + intensity * 3} />
-                  <path className="archetype-glyph" d="M-5,0 L0,-6 L5,0 L0,6 Z" />
-                  <text className="archetype-code" y={3}>
-                    {archetype.code}
-                  </text>
-                  <text className="archetype-name" y={28}>
-                    {archetype.name}
-                  </text>
-                </g>
-              );
-            })}
+            <g className="tradition-layer">
+              {clusters.map((cluster, index) => {
+                const projected =
+                  cluster.latitude !== undefined && cluster.longitude !== undefined
+                    ? projection([cluster.longitude, cluster.latitude])
+                    : [520 + (index % 7) * 27, 300 + Math.floor(index / 7) * 25];
+                if (!projected) return null;
+                return (
+                  <g key={cluster.key}>
+                    <TraditionCluster
+                      cluster={cluster}
+                      x={projected[0]}
+                      y={projected[1]}
+                      active={expanded === cluster.key}
+                      onActivate={() => {
+                        if (cluster.traditions.length === 1) {
+                          setSelectedTraditionId(cluster.traditions[0].id);
+                        } else {
+                          setExpanded(expanded === cluster.key ? undefined : cluster.key);
+                        }
+                      }}
+                    />
+                    {expanded === cluster.key &&
+                      cluster.traditions.slice(0, 18).map((tradition, itemIndex) => {
+                        const angle =
+                          (itemIndex / Math.min(18, cluster.traditions.length)) * Math.PI * 2;
+                        const radius = 28 + Math.floor(itemIndex / 8) * 18;
+                        return (
+                          <g
+                            key={tradition.id}
+                            className="expanded-tradition"
+                            transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
+                              projected[1] + Math.sin(angle) * radius
+                            })`}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => setSelectedTraditionId(tradition.id)}
+                            onKeyDown={(event) =>
+                              event.key === "Enter" && setSelectedTraditionId(tradition.id)
+                            }
+                          >
+                            <title>
+                              {tradition.name} · {tradition.periodLabel}
+                            </title>
+                            <circle r="4" />
+                            <text x="6" y="3">
+                              {tradition.name}
+                            </text>
+                          </g>
+                        );
+                      })}
+                  </g>
+                );
+              })}
+            </g>
+
+            <g className="archetype-layer">
+              {data.archetypes.map((archetype) => {
+                const position = positions.get(archetype.code) ?? [0, 0];
+                const stats = archetypeStats.get(archetype.code);
+                const count = stats?.total ?? 0;
+                const intensity = count / maximum;
+                const selected = selectedArchetype?.code === archetype.code;
+                return (
+                  <g
+                    key={archetype.code}
+                    className={`archetype-node ${selected ? "selected" : ""} ${
+                      count === 0 ? "inactive" : ""
+                    }`}
+                    transform={`translate(${position[0]} ${position[1]})`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${archetype.code}, ${archetype.name}, ${count} correlações no período`}
+                    onClick={() => setSelectedArchetypeCode(selected ? undefined : archetype.code)}
+                    onPointerMove={(event) => {
+                      const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+                      if (!rect || !stats) return;
+                      setTooltip({
+                        x: event.clientX - rect.left,
+                        y: event.clientY - rect.top,
+                        content: `${archetype.code} — ${archetype.name}\n${archetype.inclusionCriteria}\nEvitar / não confundir: ${archetype.avoidConfusion}\n● ${stats.counts.direct} · ≈ ${stats.counts.partial} · ◇ ${stats.counts.impersonal} · ? ${stats.counts.uncertain} · — ${stats.counts.absent}\nPrincipais no recorte: ${stats.topTraditions.join(", ") || "nenhuma"}`,
+                      });
+                    }}
+                    onPointerLeave={() => setTooltip(undefined)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedArchetypeCode(selected ? undefined : archetype.code);
+                      }
+                    }}
+                  >
+                    <title>
+                      {archetype.code} — {archetype.name}. {archetype.inclusionCriteria}
+                    </title>
+                    <circle className="archetype-halo" r={17 + intensity * 12} />
+                    <circle className="archetype-disc" r={13 + intensity * 3} />
+                    <path className="archetype-glyph" d="M-5,0 L0,-6 L5,0 L0,6 Z" />
+                    <text className="archetype-code" y={3}>
+                      {archetype.code}
+                    </text>
+                    <text className="archetype-name" y={28}>
+                      {archetype.name}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
           </g>
         </svg>
         {tooltip && (
@@ -352,6 +409,10 @@ export function ArchetypeConstellation() {
           <span>As funções reaparecem.</span>
           <strong>As diferenças continuam importando.</strong>
         </div>
+        <p className="constellation-gesture-hint">
+          Roda do mouse: zoom focal · arrastar: mover · duplo clique: aproximar · teclado: + − 0 e
+          setas
+        </p>
       </div>
     </section>
   );

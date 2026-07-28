@@ -10,7 +10,7 @@ Atlas temporal interativo de 460 religiões, cosmovisões e tradições, correla
 
 Coordenadas são aproximações regionais de interface, nunca localizações arqueológicas precisas. Datas ambíguas permanecem marcadas como aproximadas, por século, macroperíodo ou desconhecidas.
 
-No mapa, use a roda do mouse ou gesto de pinça para aproximar no ponto focal e arraste para navegar. Os marcadores são agrupamentos: o número indica quantas tradições estão reunidas ali. `Catálogo · 460` ignora temporariamente o recorte cronológico para tornar todo o acervo pesquisável.
+Na constelação e no mapa, use a roda do mouse ou gesto de pinça para aproximar no ponto focal e arraste para navegar. Os marcadores são agrupamentos: o número indica quantas tradições estão reunidas ali. `Catálogo · 460` ignora temporariamente o recorte cronológico para tornar todo o acervo pesquisável.
 
 ## Desenvolvimento
 
