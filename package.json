@@ -1,0 +1,52 @@
+{
+  "name": "religiomundi",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "data:build": "node scripts/normalize-data.mjs",
+    "dev": "npm run data:build && vite",
+    "build": "npm run data:build && tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "biome check src scripts e2e vite.config.ts vitest.config.ts playwright.config.ts",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:watch": "vitest",
+    "check": "npm run lint && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/inter": "5.3.0",
+    "d3": "7.9.0",
+    "lucide-react": "0.468.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "read-excel-file": "9.3.5",
+    "topojson-client": "3.1.0",
+    "world-atlas": "2.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.6",
+    "@playwright/test": "1.62.0",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@testing-library/user-event": "14.5.2",
+    "@types/d3": "7.4.3",
+    "@types/node": "22.10.5",
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "@types/topojson-client": "3.1.5",
+    "@vitejs/plugin-react": "4.3.4",
+    "autoprefixer": "10.4.20",
+    "jsdom": "25.0.1",
+    "postcss": "8.5.24",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.7.2",
+    "vite": "6.4.3",
+    "vitest": "3.2.6"
+  }
+}

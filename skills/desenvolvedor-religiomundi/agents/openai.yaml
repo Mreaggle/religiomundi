@@ -1,0 +1,7 @@
+interface:
+  display_name: "Desenvolvedor RELIGIO MUNDI"
+  short_description: "Implementa o atlas com rigor e desempenho"
+  brand_color: "#57C8D4"
+  default_prompt: "Use $desenvolvedor-religiomundi para implementar uma funcionalidade do atlas sem perder fidelidade aos dados."
+policy:
+  allow_implicit_invocation: true

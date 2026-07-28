@@ -1,0 +1,7 @@
+interface:
+  display_name: "Teólogo"
+  short_description: "Revisa linguagem e distinções teológicas"
+  brand_color: "#A96A58"
+  default_prompt: "Use $teologo para revisar afirmações teológicas e evitar equivalências indevidas no atlas."
+policy:
+  allow_implicit_invocation: true

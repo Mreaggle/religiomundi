@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cientista de Dados"
+  short_description: "Audita, normaliza e valida dados religiosos"
+  brand_color: "#D59A4A"
+  default_prompt: "Use $cientista-de-dados para auditar a planilha e validar as transformações do atlas."
+policy:
+  allow_implicit_invocation: true

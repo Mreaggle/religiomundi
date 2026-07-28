@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+UNO.xlsx:Zone.Identifier

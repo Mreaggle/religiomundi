@@ -1,0 +1,7 @@
+interface:
+  display_name: "Especialista em Religião Comparada"
+  short_description: "Revisa comparações com rigor historiográfico"
+  brand_color: "#8C779F"
+  default_prompt: "Use $especialista-religiao-comparada para revisar uma correlação funcional preservando diferenças históricas e culturais."
+policy:
+  allow_implicit_invocation: true

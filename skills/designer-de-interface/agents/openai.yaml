@@ -1,0 +1,7 @@
+interface:
+  display_name: "Designer de Interface"
+  short_description: "Projeta experiência imersiva e acessível"
+  brand_color: "#D8C8A7"
+  default_prompt: "Use $designer-de-interface para projetar uma interação do atlas com clareza, acessibilidade e identidade visual."
+policy:
+  allow_implicit_invocation: true
