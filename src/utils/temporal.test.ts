@@ -34,4 +34,8 @@ describe("visibilidade temporal", () => {
     expect(traditionIsVisible(tradition, -500, "emergences")).toBe(true);
     expect(traditionIsVisible(tradition, 200, "emergences")).toBe(false);
   });
+
+  it("expõe o catálogo integral sem apagar a data documentada", () => {
+    expect(traditionIsVisible(tradition, 2026, "catalog")).toBe(true);
+  });
 });

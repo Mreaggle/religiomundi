@@ -54,18 +54,29 @@ export function ArchetypeConstellation() {
     if (Number.isFinite(selectedYear)) setTooltip(undefined);
   }, [selectedYear]);
 
-  const archetypeCounts = useMemo(
+  const archetypeStats = useMemo(
     () =>
       new Map(
         data.archetypes.map((archetype) => {
           const counts = countByCorrelation(visibleTraditions, archetype.code);
-          return [
-            archetype.code,
-            counts.direct + counts.partial + counts.impersonal + counts.uncertain,
-          ];
+          const total = counts.direct + counts.partial + counts.impersonal + counts.uncertain;
+          const topTraditions = visibleTraditions
+            .filter((tradition) => tradition.correlations[archetype.code]?.type !== "absent")
+            .sort(
+              (a, b) =>
+                TYPE_SCORE[b.correlations[archetype.code].type] -
+                TYPE_SCORE[a.correlations[archetype.code].type],
+            )
+            .slice(0, 5)
+            .map((tradition) => tradition.name);
+          return [archetype.code, { counts, total, topTraditions }];
         }),
       ),
     [data.archetypes, visibleTraditions],
+  );
+  const archetypeCounts = useMemo(
+    () => new Map([...archetypeStats.entries()].map(([code, stats]) => [code, stats.total])),
+    [archetypeStats],
   );
   const maximum = Math.max(1, ...archetypeCounts.values());
   const topArchetypes = [...data.archetypes]
@@ -280,7 +291,8 @@ export function ArchetypeConstellation() {
           <g className="archetype-layer">
             {data.archetypes.map((archetype) => {
               const position = positions.get(archetype.code) ?? [0, 0];
-              const count = archetypeCounts.get(archetype.code) ?? 0;
+              const stats = archetypeStats.get(archetype.code);
+              const count = stats?.total ?? 0;
               const intensity = count / maximum;
               const selected = selectedArchetype?.code === archetype.code;
               return (
@@ -294,6 +306,16 @@ export function ArchetypeConstellation() {
                   tabIndex={0}
                   aria-label={`${archetype.code}, ${archetype.name}, ${count} correlações no período`}
                   onClick={() => setSelectedArchetypeCode(selected ? undefined : archetype.code)}
+                  onPointerMove={(event) => {
+                    const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+                    if (!rect || !stats) return;
+                    setTooltip({
+                      x: event.clientX - rect.left,
+                      y: event.clientY - rect.top,
+                      content: `${archetype.code} — ${archetype.name}\n${archetype.inclusionCriteria}\nEvitar / não confundir: ${archetype.avoidConfusion}\n● ${stats.counts.direct} · ≈ ${stats.counts.partial} · ◇ ${stats.counts.impersonal} · ? ${stats.counts.uncertain} · — ${stats.counts.absent}\nPrincipais no recorte: ${stats.topTraditions.join(", ") || "nenhuma"}`,
+                    });
+                  }}
+                  onPointerLeave={() => setTooltip(undefined)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();

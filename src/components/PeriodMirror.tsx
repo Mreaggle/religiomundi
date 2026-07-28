@@ -59,7 +59,12 @@ export function PeriodMirror() {
         <p className="eyebrow">LEITURA DETERMINÍSTICA</p>
         <h2 id="mirror-title">O Espelho do Período</h2>
         <span>
-          {formatYear(selectedYear)} · {temporalMode === "panorama" ? "Panorama" : "Emergências"}
+          {formatYear(selectedYear)} ·{" "}
+          {temporalMode === "panorama"
+            ? "Panorama"
+            : temporalMode === "emergences"
+              ? "Emergências"
+              : "Catálogo completo"}
         </span>
       </div>
       <div className="mirror-primary">

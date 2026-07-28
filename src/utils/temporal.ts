@@ -60,6 +60,7 @@ export function traditionIsVisible(
   year: number,
   mode: TemporalMode,
 ): boolean {
+  if (mode === "catalog") return true;
   const start = tradition.startYear ?? 2026;
   const end = tradition.endYear ?? start;
   if (mode === "panorama") return year >= start && year <= end;

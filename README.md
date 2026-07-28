@@ -10,6 +10,8 @@ Atlas temporal interativo de 460 religiões, cosmovisões e tradições, correla
 
 Coordenadas são aproximações regionais de interface, nunca localizações arqueológicas precisas. Datas ambíguas permanecem marcadas como aproximadas, por século, macroperíodo ou desconhecidas.
 
+No mapa, use a roda do mouse ou gesto de pinça para aproximar no ponto focal e arraste para navegar. Os marcadores são agrupamentos: o número indica quantas tradições estão reunidas ali. `Catálogo · 460` ignora temporariamente o recorte cronológico para tornar todo o acervo pesquisável.
+
 ## Desenvolvimento
 
 Requer Node.js 20.19 ou superior.
@@ -23,7 +25,7 @@ Comandos principais:
 
 - `npm run data:build` — normaliza e valida a planilha.
 - `npm run build` — gera os dados, verifica TypeScript e compila a aplicação.
-- `npm test` — executa 19 testes unitários e de integridade.
+- `npm test` — executa 20 testes unitários e de integridade.
 - `npm run test:e2e` — valida desktop e celular no Chromium.
 - `npm run lint` — verifica código, acessibilidade estática e formatação.
 - `npm run check` — executa lint, testes e build.

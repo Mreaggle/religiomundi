@@ -21,6 +21,7 @@ export function TemporalGlide() {
     setSelectedYear,
     temporalMode,
     setTemporalMode,
+    visibleTraditions,
     aeonEnabled,
     setAeonEnabled,
   } = useAtlas();
@@ -49,6 +50,7 @@ export function TemporalGlide() {
   }, [data.metadata.currentYear, playing, setSelectedYear, speed]);
 
   function jumpPeriod(direction: -1 | 1) {
+    setTemporalMode("panorama");
     const index = data.chronology.findIndex((item) => item.id === period.id);
     const target =
       data.chronology[Math.max(0, Math.min(data.chronology.length - 1, index + direction))];
@@ -73,6 +75,9 @@ export function TemporalGlide() {
             </p>
             <strong>{formatYear(selectedYear)}</strong>
             <span>{period.name}</span>
+            <small className="timeline-count">
+              {visibleTraditions.length} de {data.metadata.traditionCount} tradições
+            </small>
           </div>
 
           <div className="timeline-instrument">
@@ -93,7 +98,10 @@ export function TemporalGlide() {
               max={1000}
               step={1}
               value={position}
-              onChange={(event) => setSelectedYear(positionToYear(Number(event.target.value)))}
+              onChange={(event) => {
+                setTemporalMode("panorama");
+                setSelectedYear(positionToYear(Number(event.target.value)));
+              }}
               aria-valuetext={`${formatYear(selectedYear)}, ${period.name}`}
             />
             <div className="timeline-compression">
@@ -108,7 +116,10 @@ export function TemporalGlide() {
             </button>
             <button
               className="play-history"
-              onClick={() => setPlaying(!playing)}
+              onClick={() => {
+                if (!playing) setTemporalMode("panorama");
+                setPlaying(!playing);
+              }}
               aria-label={playing ? "Pausar história" : "Observar a história"}
             >
               {playing ? <Pause size={17} /> : <Play size={17} />}
@@ -128,6 +139,7 @@ export function TemporalGlide() {
             <button
               onClick={() => {
                 setPlaying(false);
+                setTemporalMode("panorama");
                 setSelectedYear(data.metadata.currentYear);
               }}
             >
@@ -145,20 +157,42 @@ export function TemporalGlide() {
             <button
               className={temporalMode === "panorama" ? "active" : ""}
               onClick={() => setTemporalMode("panorama")}
+              aria-pressed={temporalMode === "panorama"}
             >
               Panorama
             </button>
             <button
               className={temporalMode === "emergences" ? "active" : ""}
               onClick={() => setTemporalMode("emergences")}
+              aria-pressed={temporalMode === "emergences"}
             >
               Emergências
+            </button>
+            <button
+              className={temporalMode === "catalog" ? "active" : ""}
+              onClick={() => {
+                setPlaying(false);
+                setTemporalMode("catalog");
+              }}
+              aria-pressed={temporalMode === "catalog"}
+              title="Exibe todas as tradições do catálogo, preservando suas datas documentadas"
+            >
+              Catálogo · {data.metadata.traditionCount}
             </button>
           </div>
           <p>
             <CalendarClock size={13} />
             <span>
-              <strong>{period.context}</strong> {period.limitations}
+              {temporalMode === "catalog" ? (
+                <>
+                  <strong>Visão transversal do catálogo completo.</strong> A posição temporal
+                  continua registrada, mas não filtra as tradições neste modo.
+                </>
+              ) : (
+                <>
+                  <strong>{period.context}</strong> {period.limitations}
+                </>
+              )}
             </span>
           </p>
           <button className={aeonEnabled ? "aeon active" : "aeon"} onClick={handleAeon}>

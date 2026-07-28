@@ -45,6 +45,8 @@ function AtlasExperience() {
     revealPatterns,
     effectsEnabled,
     filters,
+    temporalMode,
+    data,
   } = useAtlas();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -64,10 +66,13 @@ function AtlasExperience() {
           <PatternRevelation />
         ) : (
           <div className={`atlas-workspace ${viewMode === "sources" ? "wide" : ""}`}>
-            <div className="workspace-visual">
+            <div className={`workspace-visual workspace-${viewMode}`}>
               <div className="workspace-readout">
                 <span>
-                  RECORTE ATUAL <b>{visibleTraditions.length}</b>
+                  {temporalMode === "catalog" ? "CATÁLOGO" : "RECORTE TEMPORAL"}{" "}
+                  <b>
+                    {visibleTraditions.length}/{data.metadata.traditionCount}
+                  </b>
                 </span>
                 {activeFilters > 0 && (
                   <button onClick={() => setFiltersOpen(true)}>

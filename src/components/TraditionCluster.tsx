@@ -5,12 +5,14 @@ export function TraditionCluster({
   x,
   y,
   active,
+  summary,
   onActivate,
 }: {
   cluster: TraditionClusterData;
   x: number;
   y: number;
   active: boolean;
+  summary?: string;
   onActivate: () => void;
 }) {
   const radius = Math.min(18, 5 + Math.sqrt(cluster.traditions.length) * 1.8);
@@ -31,7 +33,8 @@ export function TraditionCluster({
     >
       <title>
         {cluster.label} · {cluster.traditions.length} tradições · cobertura predominante:{" "}
-        {cluster.coverage}. Localização aproximada segundo a região informada no catálogo.
+        {cluster.coverage}. Período predominante: {cluster.predominantPeriod}. {summary ?? ""}
+        Localização aproximada segundo a região informada no catálogo.
       </title>
       <circle className="cluster-pulse" r={radius + 8} />
       <circle className="cluster-core" r={radius} />
