@@ -4,6 +4,7 @@ import { LINEAGE_GROUPS, LINEAGE_RELATIONS } from "../data/lineage";
 import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Tradition } from "../types/atlas";
+import { semanticZoomScale } from "../utils/collision";
 import { yearToPosition } from "../utils/temporal";
 
 const WIDTH = 1580;
@@ -248,7 +249,7 @@ export function LineageTree() {
               <g
                 key={tradition.id}
                 className={`lineage-node ${root ? "lineage-root" : ""}`}
-                transform={`translate(${x} ${y}) scale(${1 / Math.max(1, scale)})`}
+                transform={`translate(${x} ${y}) scale(${semanticZoomScale(scale)})`}
                 role="button"
                 tabIndex={0}
                 aria-label={`${tradition.name}, ${tradition.periodLabel}`}

@@ -39,6 +39,7 @@ export function HeaderNav({
     setComparisonOpen,
     revealPatterns,
     setRevealPatterns,
+    clearSelection,
   } = useAtlas();
 
   return (
@@ -79,7 +80,11 @@ export function HeaderNav({
         </button>
         <button
           className={revealPatterns ? "active" : ""}
-          onClick={() => setRevealPatterns(!revealPatterns)}
+          aria-label={revealPatterns ? "Fechar Revelar padrões" : "Revelar padrões"}
+          onClick={() => {
+            if (revealPatterns) clearSelection();
+            setRevealPatterns(!revealPatterns);
+          }}
         >
           <Sparkles size={16} />
           <span>Revelar padrões</span>

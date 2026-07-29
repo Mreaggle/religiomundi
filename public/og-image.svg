@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">RELIGIO MUNDI</title>
+  <desc id="desc">O maior atlas religioso do mundo: linha do tempo, mapas e árvores.</desc>
+  <defs>
+    <radialGradient id="a" cx="50%" cy="48%" r="65%">
+      <stop offset="0" stop-color="#173238"/>
+      <stop offset=".5" stop-color="#0b1515"/>
+      <stop offset="1" stop-color="#050807"/>
+    </radialGradient>
+    <filter id="g"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#a)"/>
+  <g fill="none" stroke="#d59a4a" opacity=".5">
+    <ellipse cx="600" cy="315" rx="510" ry="245"/>
+    <ellipse cx="600" cy="315" rx="390" ry="185" stroke="#57c8d4" opacity=".42"/>
+    <circle cx="600" cy="315" r="95" opacity=".25"/>
+  </g>
+  <g fill="#d59a4a">
+    <circle cx="600" cy="70" r="5"/><circle cx="1110" cy="315" r="5"/>
+    <circle cx="600" cy="560" r="5"/><circle cx="90" cy="315" r="5"/>
+  </g>
+  <g fill="#57c8d4" filter="url(#g)" opacity=".45">
+    <circle cx="210" cy="198" r="8"/><circle cx="925" cy="178" r="8"/>
+    <circle cx="830" cy="455" r="8"/><circle cx="345" cy="460" r="8"/>
+  </g>
+  <text x="600" y="230" fill="#d59a4a" font-family="Georgia, serif" font-size="22" letter-spacing="9" text-anchor="middle">ATLAS TEMPORAL</text>
+  <text x="600" y="315" fill="#f0eadf" font-family="Georgia, serif" font-size="76" font-weight="700" letter-spacing="8" text-anchor="middle">RELIGIO MUNDI</text>
+  <text x="600" y="365" fill="#cbc3b5" font-family="Arial, sans-serif" font-size="23" letter-spacing="3" text-anchor="middle">O MAIOR ATLAS RELIGIOSO DO MUNDO</text>
+  <text x="600" y="417" fill="#88cbd1" font-family="Arial, sans-serif" font-size="18" letter-spacing="2" text-anchor="middle">LINHA DO TEMPO · MAPAS · ÁRVORES · ARQUÉTIPOS</text>
+  <text x="600" y="500" fill="#d6b06f" font-family="monospace" font-size="18" text-anchor="middle">471 TRADIÇÕES  ·  44 FUNÇÕES  ·  20.724 RELAÇÕES</text>
+</svg>

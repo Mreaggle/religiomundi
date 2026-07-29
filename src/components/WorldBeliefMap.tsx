@@ -4,7 +4,7 @@ import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, TraditionCluster as TraditionClusterData } from "../types/atlas";
 import { clusterTraditions } from "../utils/atlas";
-import { selectCollisionFreeLabels } from "../utils/collision";
+import { selectCollisionFreeLabels, semanticZoomScale } from "../utils/collision";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
 import { TraditionCluster } from "./TraditionCluster";
 
@@ -252,7 +252,7 @@ export function WorldBeliefMap() {
                               className="expanded-tradition"
                               transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
                                 projected[1] + Math.sin(angle) * radius
-                              }) scale(${1 / Math.max(1, scale)})`}
+                              }) scale(${semanticZoomScale(scale)})`}
                               role="button"
                               tabIndex={0}
                               onClick={() => setSelectedTraditionId(tradition.id)}

@@ -29,7 +29,9 @@ export function IntroSequence({
         <i />
       </div>
       <div className="intro-copy">
-        <p className="eyebrow">ATLAS TEMPORAL DAS RELIGIÕES</p>
+        <p className="eyebrow">
+          O MAIOR ATLAS RELIGIOSO DO MUNDO · LINHA DO TEMPO, MAPAS E ÁRVORES
+        </p>
         <h1 id="intro-title">Antes de comparar deuses, compare funções.</h1>
         <p className="intro-thesis">
           Este atlas não afirma que entidades diferentes sejam a mesma entidade. Ele mostra como

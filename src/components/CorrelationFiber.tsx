@@ -26,6 +26,8 @@ export function CorrelationFiber({
   return (
     <path
       className={`correlation-fiber fiber-${correlation.type}`}
+      data-archetype-code={archetype.code}
+      data-correlation-type={correlation.type}
       style={{ "--fiber-color": visual.color } as CSSProperties}
       d={path}
       tabIndex={0}

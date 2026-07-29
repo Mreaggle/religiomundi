@@ -100,7 +100,12 @@ function AtlasExperience() {
       </main>
       <AccessibleTraditionList />
       <EpistemicLegend />
-      {selectedTradition ? <TraditionDossier /> : selectedArchetype ? <ArchetypeDossier /> : null}
+      {!revealPatterns &&
+        (selectedTradition ? (
+          <TraditionDossier />
+        ) : selectedArchetype ? (
+          <ArchetypeDossier />
+        ) : null)}
       <ComparisonChamber />
       {filtersOpen && <FilterCommandPalette onClose={() => setFiltersOpen(false)} />}
       {aboutOpen && <AboutProject onClose={() => setAboutOpen(false)} />}

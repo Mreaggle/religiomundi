@@ -1,0 +1,4 @@
+interface:
+  display_name: "Q.A. RELIGIO MUNDI"
+  short_description: "Valida regressões visuais, funcionais e de dados"
+  default_prompt: "Use $qa-religiomundi para auditar esta mudança do atlas antes da publicação."

@@ -15,6 +15,7 @@ export function PatternRevelation() {
     setRevealPatterns,
     traceRecurrences,
     setTraceRecurrences,
+    clearSelection,
   } = useAtlas();
 
   const topCode = useMemo(
@@ -56,7 +57,11 @@ export function PatternRevelation() {
         </div>
         <button
           className="icon-button"
-          onClick={() => setRevealPatterns(false)}
+          onClick={() => {
+            setRevealPatterns(false);
+            setTraceRecurrences(false);
+            clearSelection();
+          }}
           aria-label="Fechar revelação"
         >
           <X size={19} />

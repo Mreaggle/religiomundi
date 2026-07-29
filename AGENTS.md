@@ -1,44 +1,48 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+## Project Structure & Ownership
 
-`src/` contains the React/TypeScript application: reusable instruments live in
-`src/components/`, global state in `src/state/`, and deterministic parsing/filtering helpers in
-`src/utils/`. Browser flows are in `e2e/`. `scripts/rebuild_workbook.py` generates the canonical
-`public/data/UNO_reformulado.xlsx` and structured `data/UNO_reformulado.csv`;
-`scripts/normalize-data.mjs` produces the runtime JSON. Treat generated data and source scripts as
-one change. Role-specific review checklists are under `skills/`.
+`src/components/` contains React/D3 instruments; `src/state/` owns global atlas state; `src/utils/`
+contains pure temporal, filtering, clustering, collision, and analysis rules. Browser scenarios live
+in `e2e/`. `public/data/UNO_reformulado.xlsx` is canonical; `scripts/normalize-data.mjs` generates
+runtime JSON and `scripts/audit-data.mjs` guards historical/data regressions. Treat source scripts,
+the workbook, CSV, and generated JSON as one data change. Specialized review procedures live in
+`skills/`, including mandatory pre-publication Q.A. in `skills/qa-religiomundi/`.
 
-## Build, Test, and Development Commands
+## Commands
 
-- `npm install` installs frontend dependencies.
-- `npm run dev` starts Vite locally.
-- `npm run data:build` converts the workbook into normalized JSON.
-- `npm run data:audit` checks dimensions, IDs, signatures, sources, and temporal sentinels.
-- `npm test` runs Vitest unit and data-integrity tests.
-- `npm run test:e2e` runs Playwright desktop/mobile flows.
-- `npm run check` runs lint, tests, build, and the data audit before publication.
+- `npm run dev` — normalize data and start Vite.
+- `npm run data:build` / `npm run data:audit` — regenerate and validate the dataset.
+- `npm test` — run Vitest rules and data-integrity checks.
+- `npm run test:e2e` — exercise Chromium desktop and mobile flows.
+- `npm run build` — type-check and create the production bundle.
+- `npm run check` — run lint, unit tests, build, and data audit.
 
-Python workbook generation requires `openpyxl`; install dependencies with
-`python -m pip install -r requirements.txt`.
+Use Node.js 20.19+. Workbook reconstruction requires `python -m pip install -r requirements.txt`.
 
-## Coding Style & Naming Conventions
+## Code & Interaction Conventions
 
-Use two-space indentation in TypeScript and descriptive PascalCase component names such as
-`TraditionDossier.tsx`; hooks use `useCamelCase`. Keep transformations pure and counters derived
-from data rather than hard-coded. ESLint and Prettier-compatible formatting are enforced by
-`npm run lint`. Preserve Portuguese accents, diacritics, original cell text, and the five
-epistemic symbols (`●`, `≈`, `◇`, `?`, `—`).
+Use two-space TypeScript indentation, PascalCase components, `useCamelCase` hooks, and pure derived
+state. Biome is authoritative. Preserve Portuguese accents, cell text, diacritics, and `● ≈ ◇ ? —`.
+Never hard-code catalog counts.
+
+Color identifies an archetype; line pattern identifies epistemic status. Every active archetype
+must have a representative fiber. SVG zoom must progressively enlarge labels and targets without
+scaling them as fast as geometry. Selection closes exactly once through X, backdrop, outside click,
+or `Escape`; `Revelar padrões` must not mount a competing dossier. On phone landscape, the sticky
+timeline starts collapsed and remains manually reversible.
 
 ## Testing & Data Integrity
 
-Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Any data edit must reject duplicate full
-profiles, unexplained `-3200` fallbacks, invalid source codes, and family profiles presented as
-individual facts. Ambiguous dates remain unknown or approximate. Selecting a tradition/archetype
-must isolate related elements; clicking outside restores the scene without overlap regressions.
+Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Run the Q.A. skill for changes affecting
+SVG, timeline, responsive layout, dossiers, filters, SEO, or data. Validate at 1440×1000, 393×851,
+and 844×390. Reject duplicate full profiles, unexplained `-3200` fallbacks, unknown source codes,
+family profiles presented as individual facts, console errors, flicker, and horizontal overflow.
+Ambiguous dates remain approximate or unknown. The ÁRVORE draws sourced lineage/influence only.
 
-## Commits & Pull Requests
+## SEO, Commits & Pull Requests
 
-Use short imperative commits, for example `Audit temporal mappings`. PRs should explain the root
-cause, changed data sources, UI impact, and checks executed. Include screenshots for visual changes
-and never commit secrets, temporary workbooks, or build artifacts outside the publication workflow.
+Keep `index.html`, JSON-LD, canonical URL, Open Graph, `robots.txt`, `sitemap.xml`, README counts,
+and production metadata synchronized. Use imperative commits, e.g. `Fix archetype fiber coverage`.
+PRs must explain root cause, UI/data impact, checks run, and include visual evidence when relevant.
+Never commit secrets, temporary artifacts, `collision.png`, or unrelated user files.

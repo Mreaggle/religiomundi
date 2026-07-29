@@ -1,4 +1,5 @@
 import type { TraditionCluster as TraditionClusterData } from "../types/atlas";
+import { semanticZoomScale } from "../utils/collision";
 
 export function TraditionCluster({
   cluster,
@@ -20,7 +21,7 @@ export function TraditionCluster({
   onActivate: () => void;
 }) {
   const radius = Math.min(18, 5 + Math.sqrt(cluster.traditions.length) * 1.8);
-  const semanticScale = 1 / Math.max(1, visualScale);
+  const semanticScale = semanticZoomScale(visualScale);
   return (
     <g
       className={`tradition-cluster ${active ? "active" : ""} ${
