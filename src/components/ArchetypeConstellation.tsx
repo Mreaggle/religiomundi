@@ -11,7 +11,7 @@ import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, CorrelationType, Tradition } from "../types/atlas";
 import { clusterTraditions, countByCorrelation } from "../utils/atlas";
-import { selectCollisionFreeLabels } from "../utils/collision";
+import { selectCollisionFreeLabels, semanticZoomScale } from "../utils/collision";
 import { getArchetypeVisual } from "./archetypeVisuals";
 import { CorrelationFiber } from "./CorrelationFiber";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
@@ -163,10 +163,6 @@ export function ArchetypeConstellation() {
     [archetypeStats],
   );
   const maximum = Math.max(1, ...archetypeCounts.values());
-  const topArchetypes = [...data.archetypes]
-    .sort((a, b) => (archetypeCounts.get(b.code) ?? 0) - (archetypeCounts.get(a.code) ?? 0))
-    .slice(0, 6);
-
   const sourceForTradition = (tradition: Tradition, index = 0): [number, number] => {
     if (tradition.location) {
       return (
@@ -202,37 +198,23 @@ export function ArchetypeConstellation() {
         .sort((a, b) => TYPE_SCORE[b.correlation.type] - TYPE_SCORE[a.correlation.type])
         .slice(0, 110);
     }
-    return clusters
-      .map((cluster) => {
-        let best:
-          | {
-              tradition: Tradition;
-              archetype: Archetype;
-              correlation: Tradition["correlations"][string];
-            }
-          | undefined;
-        for (const tradition of cluster.traditions) {
-          for (const archetype of topArchetypes) {
-            const correlation = tradition.correlations[archetype.code];
-            if (!best || TYPE_SCORE[correlation.type] > TYPE_SCORE[best.correlation.type]) {
-              best = { tradition, archetype, correlation };
-            }
-          }
-        }
-        return best;
+    return data.archetypes
+      .map((archetype, archetypeIndex) => {
+        const ranked = visibleTraditions
+          .map((tradition) => ({
+            tradition,
+            archetype,
+            correlation: tradition.correlations[archetype.code],
+          }))
+          .filter((item) => item.correlation.type !== "absent")
+          .sort((a, b) => TYPE_SCORE[b.correlation.type] - TYPE_SCORE[a.correlation.type]);
+        if (!ranked.length) return undefined;
+        const bestScore = TYPE_SCORE[ranked[0].correlation.type];
+        const strongest = ranked.filter((item) => TYPE_SCORE[item.correlation.type] === bestScore);
+        return strongest[archetypeIndex % strongest.length];
       })
-      .filter((item): item is NonNullable<typeof item> => Boolean(item))
-      .filter((item) => item.correlation.type !== "absent")
-      .slice(0, 64);
-  }, [
-    clusters,
-    data.archetypes,
-    selectedArchetype,
-    selectedTradition,
-    showAbsences,
-    topArchetypes,
-    visibleTraditions,
-  ]);
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+  }, [data.archetypes, selectedArchetype, selectedTradition, showAbsences, visibleTraditions]);
 
   return (
     <section
@@ -391,7 +373,7 @@ export function ArchetypeConstellation() {
                             className="expanded-tradition"
                             transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
                               projected[1] + Math.sin(angle) * radius
-                            }) scale(${1 / Math.max(1, scale)})`}
+                            }) scale(${semanticZoomScale(scale)})`}
                             role="button"
                             tabIndex={0}
                             onClick={() => setSelectedTraditionId(tradition.id)}
@@ -474,7 +456,7 @@ export function ArchetypeConstellation() {
                     <title>
                       {archetype.code} — {archetype.name}. {archetype.inclusionCriteria}
                     </title>
-                    <g transform={`scale(${1 / Math.max(1, scale)})`}>
+                    <g transform={`scale(${semanticZoomScale(scale)})`}>
                       <circle className="archetype-halo" r={17 + intensity * 12} />
                       <circle className="archetype-disc" r={13 + intensity * 3} />
                       <ArchetypeIcon

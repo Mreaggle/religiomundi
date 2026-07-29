@@ -586,6 +586,58 @@ select:focus-visible,
   backdrop-filter: blur(18px);
 }
 
+.timeline-collapse-toggle {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  z-index: 5;
+  display: grid;
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  color: var(--gold);
+  background: rgba(7, 11, 10, 0.9);
+  cursor: pointer;
+  place-items: center;
+}
+
+.timeline-collapse-toggle svg {
+  width: 15px;
+}
+
+.timeline-collapsed-summary {
+  display: grid;
+  min-height: 42px;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 48px 6px 14px;
+}
+
+.timeline-collapsed-summary span {
+  color: var(--amber);
+  font: 0.54rem var(--mono);
+  letter-spacing: 0.12em;
+}
+
+.timeline-collapsed-summary strong {
+  color: var(--ivory);
+  font: 700 0.95rem var(--ritual);
+}
+
+.timeline-collapsed-summary small {
+  overflow: hidden;
+  color: var(--muted);
+  font: 0.58rem var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.temporal-glide.is-collapsed .temporal-glide-content {
+  display: none;
+}
+
 .timeline-primary {
   display: grid;
   min-height: 95px;

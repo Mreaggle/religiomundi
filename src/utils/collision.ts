@@ -23,23 +23,28 @@ export function selectCollisionFreeLabels(
 ): Set<string> {
   const accepted = new Set<string>();
   const boxes: LabelBox[] = [];
+  const visualGrowth = Math.sqrt(Math.max(1, scale));
   const ordered = [...candidates].sort(
     (a, b) => b.priority - a.priority || a.label.localeCompare(b.label, "pt-BR"),
   );
 
   for (const candidate of ordered) {
-    const width = Math.min(210, Math.max(54, candidate.label.length * 6.2));
+    const width = Math.min(310, Math.max(54, candidate.label.length * 6.2) * visualGrowth);
     const screenX = candidate.x * scale;
     const screenY = candidate.y * scale;
     const box = {
       left: screenX - width / 2 - 8,
       right: screenX + width / 2 + 8,
-      top: screenY + 11,
-      bottom: screenY + 33,
+      top: screenY + 9 * visualGrowth,
+      bottom: screenY + 36 * visualGrowth,
     };
     if (boxes.some((existing) => overlaps(existing, box))) continue;
     accepted.add(candidate.key);
     boxes.push(box);
   }
   return accepted;
+}
+
+export function semanticZoomScale(scale: number): number {
+  return 1 / Math.sqrt(Math.max(1, scale));
 }

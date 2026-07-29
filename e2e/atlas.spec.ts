@@ -25,6 +25,13 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
     "style",
     /--fiber-color:/,
   );
+  const activeArchetypes = await page.locator(".archetype-node:not(.inactive)").count();
+  const connectedArchetypes = await page
+    .locator(".correlation-fiber")
+    .evaluateAll(
+      (fibers) => new Set(fibers.map((fiber) => fiber.getAttribute("data-archetype-code"))).size,
+    );
+  expect(connectedArchetypes).toBe(activeArchetypes);
   await expect(page.getByText("471 × 44")).toHaveText("471 × 44");
 
   await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
@@ -70,6 +77,31 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
 });
 
+test("metadados de descoberta descrevem o atlas e seus índices públicos", async ({
+  page,
+  request,
+}, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"), "Metadados independem do viewport");
+  await page.goto("/");
+  await expect(page).toHaveTitle(/O Maior Atlas Religioso do Mundo/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    "content",
+    /471 religiões/,
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://mreaggle.github.io/religiomundi/",
+  );
+  const structuredData = JSON.parse(
+    (await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}",
+  );
+  expect(structuredData.name).toBe("RELIGIO MUNDI");
+  expect(structuredData.isAccessibleForFree).toBe(true);
+  for (const asset of ["/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/og-image.svg"]) {
+    expect((await request.get(asset)).ok(), asset).toBe(true);
+  }
+});
+
 test("constelação oferece zoom focal sem mover seus eixos entre períodos", async ({
   page,
 }, testInfo) => {
@@ -78,20 +110,52 @@ test("constelação oferece zoom focal sem mover seus eixos entre períodos", as
 
   const viewport = page.locator(".constellation-viewport");
   const before = await viewport.getAttribute("transform");
+  const textBefore = await page
+    .locator('[data-archetype-code="A15"] .archetype-name')
+    .evaluate((node) => node.getBoundingClientRect().height);
   const constellation = page.locator(".constellation-canvas > svg");
   await constellation.hover({ position: { x: 720, y: 390 } });
   await page.mouse.wheel(0, -650);
   await expect(page.getByLabel("Nível de zoom da constelação")).not.toHaveText("100%");
   await expect.poll(() => viewport.getAttribute("transform")).not.toBe(before);
   await expect(page.locator(".archetype-node")).toHaveCount(44);
+  const textAfter = await page
+    .locator('[data-archetype-code="A15"] .archetype-name')
+    .evaluate((node) => node.getBoundingClientRect().height);
+  expect(textAfter).toBeGreaterThan(textBefore * 1.1);
 
   await page.getByRole("button", { name: "Restaurar posição da constelação" }).click();
   await expect(page.getByLabel("Nível de zoom da constelação")).toHaveText("100%");
 
-  await page.locator('[data-archetype-code="A15"]').click();
+  await page.locator('.archetype-node[data-archetype-code="A15"]').click();
   await expect(page.locator(".archetype-node.focus-hidden")).toHaveCount(43);
   await page.getByLabel("Fechar dossiê e limpar seleção").click();
   await expect(page.locator(".archetype-node.focus-hidden")).toHaveCount(0);
+});
+
+test("revelação não reabre o dossiê do arquétipo em ciclo", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Revelar padrões", exact: true }).click();
+  await expect(page.getByRole("heading", { name: /Veja os nomes/ })).toBeVisible();
+  await expect(page.getByText("DOSSIÊ DO ARQUÉTIPO")).toHaveCount(0);
+  await page.getByRole("button", { name: "Fechar revelação" }).click();
+  await expect(page.getByRole("heading", { name: /Veja os nomes/ })).toHaveCount(0);
+  await expect(page.getByText("DOSSIÊ DO ARQUÉTIPO")).toHaveCount(0);
+});
+
+test("barra temporal recolhe automaticamente no celular deitado e pode reabrir", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.includes("mobile"), "Comportamento específico do celular");
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto("/");
+  await expect(page.getByRole("button", { name: "Expandir barra temporal" })).toBeVisible();
+  await expect(page.locator(".temporal-glide")).toHaveClass(/is-collapsed/);
+  await page.getByRole("button", { name: "Expandir barra temporal" }).click();
+  await expect(page.getByRole("button", { name: "Recolher barra temporal" })).toBeVisible();
+  await expect(page.locator(".temporal-glide")).not.toHaveClass(/is-collapsed/);
+  await page.getByRole("button", { name: "Recolher barra temporal" }).click();
+  await expect(page.locator(".temporal-glide")).toHaveClass(/is-collapsed/);
 });
 
 test("mapa oferece zoom focal e acesso explícito às 471 tradições", async ({ page }, testInfo) => {

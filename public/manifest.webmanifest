@@ -1,0 +1,19 @@
+{
+  "name": "RELIGIO MUNDI — Atlas Temporal das Religiões",
+  "short_name": "RELIGIO MUNDI",
+  "description": "Linha do tempo, mapas, árvores e arquétipos de 471 tradições.",
+  "start_url": "/religiomundi/",
+  "scope": "/religiomundi/",
+  "display": "standalone",
+  "background_color": "#070908",
+  "theme_color": "#070908",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
