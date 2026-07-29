@@ -49,8 +49,9 @@ O projeto permite investigar perguntas como:
 | Modo | O que revela |
 | --- | --- |
 | **Constelação** | 44 arquétipos fixos ligados às tradições do recorte temporal |
-| **Mapa** | distribuição regional aproximada, clustering, zoom e catálogo completo |
-| **Árvore** | derivações e influências curadas; bosque separado para proximidade sem genealogia |
+| **Mapa** | 54 recortes políticos temporais, distribuição religiosa, clustering e zoom |
+| **Árvore** | todas as tradições do recorte em ramos regionais; vínculos documentados e hipóteses diferenciados |
+| **Charts** | rankings de religiões, famílias e arquétipos, além da demografia religiosa mundial |
 | **Matriz** | heatmap virtualizado das 20.724 células comparativas |
 | **Assinaturas** | impressões funcionais de 44 segmentos para comparação |
 | **Fontes** | biblioteca navegável das referências usadas na revisão |
@@ -58,6 +59,12 @@ O projeto permite investigar perguntas como:
 Também estão disponíveis busca tolerante a acentos, filtros combináveis, dossiês, Câmara de
 Comparação, reprodução automática da história, lista acessível e a camada autoral **Aeons**,
 desativada e epistemicamente separada por padrão.
+
+Os charts internos são recalculados com a timeline e nunca ranqueiam “verdade” ou valor espiritual.
+O ranking de população compara **grupos religiosos globais, não países**, usando a estimativa de
+2020 publicada pelo [Pew Research Center em 2025](https://www.pewresearch.org/religion/2025/06/09/how-the-global-religious-landscape-changed-from-2010-to-2020/).
+“Sem filiação religiosa” permanece identificado como categoria demográfica, e “outras religiões”
+como agrupamento que não representa a granularidade das 471 tradições do atlas.
 
 ## Metodologia e limites
 
@@ -76,6 +83,22 @@ status de cada célula:
 Datas ambíguas continuam aproximadas. Coordenadas representam regiões modernas de interface, não
 precisão arqueológica. O catálogo é amplo, mas não exaustivo.
 
+### Cartografia política temporal
+
+O fundo do mapa acompanha a timeline com **54 snapshots**, de 123.000 a.C. ao presente. A aplicação
+usa sempre o último recorte disponível que não seja posterior ao ano observado e **não interpola
+fronteiras**. Traços diferentes comunicam a precisão registrada; transparência preserva áreas
+sobrepostas e limites difusos.
+
+Os polígonos históricos derivam do projeto
+[`historical-basemaps`](https://github.com/aourednik/historical-basemaps), fixado por commit e
+redistribuído sob GPL-3.0. O presente usa
+[Natural Earth](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/). As listas de
+[impérios](https://en.wikipedia.org/wiki/List_of_empires),
+[maiores impérios](https://en.wikipedia.org/wiki/List_of_largest_empires), países, GeaCron,
+civilizações e história humana funcionam como referências investigativas, não como fonte de
+geometria. Um polígono não prova controle uniforme, ocupação exclusiva ou consenso historiográfico.
+
 ## Fonte canônica e pipeline
 
 `public/data/UNO_reformulado.xlsx` é a autoridade editorial. O pipeline preserva texto integral,
@@ -87,7 +110,10 @@ flowchart LR
   NORMALIZE --> JSON["atlas.generated.json"]
   XLSX --> CSV["UNO_reformulado.csv<br>dados para agentes"]
   JSON --> AUDIT["audit-data.mjs"]
+  MAPS["Historical basemaps + Natural Earth"] --> POLITIES["54 snapshots simplificados"]
+  POLITIES --> MAPAUDIT["audit-political-map.mjs"]
   AUDIT --> APP["React + D3"]
+  MAPAUDIT --> APP
   APP --> PAGES["GitHub Pages"]
 ```
 
@@ -134,6 +160,7 @@ Abra `http://localhost:5173`.
 | --- | --- |
 | `npm run dev` | normaliza os dados e inicia o Vite |
 | `npm run data:build` | converte XLSX em JSON normalizado |
+| `npm run data:polities` | reconstrói os snapshots políticos a partir das fontes fixadas |
 | `npm run data:audit` | audita dimensões, IDs, fontes, assinaturas e datas-sentinela |
 | `npm test` | executa Vitest |
 | `npm run test:e2e` | executa Playwright em desktop e celular |
@@ -153,6 +180,10 @@ Toda alteração deve preservar:
 - isolamento reversível de tradição ou arquétipo;
 - cores por arquétipo e padrões de traço independentes da cor;
 - ausência de erros no console e de perfis integrais repetidos.
+- carregamento sob demanda de um recorte político, sem baixar a história cartográfica inteira;
+- separação explícita entre limites políticos aproximados e correlações religiosas.
+- árvore contendo todas as tradições visíveis, sem converter proximidade regional em genealogia;
+- charts determinísticos, com fonte/ano e ressalvas de cobertura junto de cada ranking externo.
 
 O procedimento completo está em
 [`skills/qa-religiomundi/SKILL.md`](./skills/qa-religiomundi/SKILL.md).

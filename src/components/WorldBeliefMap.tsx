@@ -1,10 +1,14 @@
-import { LocateFixed, Minus, Plus, X } from "lucide-react";
+import { Layers3, LocateFixed, Minus, Plus, X } from "lucide-react";
 import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { usePoliticalMap } from "../data/usePoliticalMap";
 import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, TraditionCluster as TraditionClusterData } from "../types/atlas";
+import type { PolityFeature } from "../types/polities";
 import { clusterTraditions } from "../utils/atlas";
 import { selectCollisionFreeLabels, semanticZoomScale } from "../utils/collision";
+import { formatYear } from "../utils/temporal";
+import { HistoricalPolityLayer } from "./HistoricalPolityLayer";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
 import { TraditionCluster } from "./TraditionCluster";
 
@@ -52,13 +56,22 @@ export function WorldBeliefMap() {
     selectedTradition,
     setSelectedTraditionId,
     clearSelection,
+    selectedYear,
     temporalMode,
     setTemporalMode,
   } = useAtlas();
   const [expanded, setExpanded] = useState<string>();
+  const [politicalLayerEnabled, setPoliticalLayerEnabled] = useState(true);
+  const [selectedPolityState, setSelectedPolityState] = useState<{
+    year: number;
+    feature: PolityFeature;
+  }>();
+  const selectedPolity =
+    selectedPolityState?.year === selectedYear ? selectedPolityState.feature : undefined;
   const svgRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<SVGGElement>(null);
   const { projection } = useWorldGeometry(EXTENT);
+  const politicalMap = usePoliticalMap(selectedYear, politicalLayerEnabled);
   const focusTraditions = useMemo(
     () => (selectedTradition ? [selectedTradition] : visibleTraditions),
     [selectedTradition, visibleTraditions],
@@ -180,6 +193,22 @@ export function WorldBeliefMap() {
           <button type="button" onClick={resetZoom} aria-label="Restaurar posição do mapa">
             <LocateFixed aria-hidden="true" />
           </button>
+          <button
+            type="button"
+            className={politicalLayerEnabled ? "is-active" : ""}
+            aria-label={
+              politicalLayerEnabled
+                ? "Ocultar territórios históricos"
+                : "Exibir territórios históricos"
+            }
+            aria-pressed={politicalLayerEnabled}
+            onClick={() => {
+              setPoliticalLayerEnabled((current) => !current);
+              setSelectedPolityState(undefined);
+            }}
+          >
+            <Layers3 aria-hidden="true" />
+          </button>
         </div>
 
         <div className="map-stage">
@@ -187,10 +216,58 @@ export function WorldBeliefMap() {
             ref={svgRef}
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
             role="img"
-            aria-label={`Distribuição aproximada de ${visibleTraditions.length} tradições`}
+            aria-label={`Distribuição aproximada de ${visibleTraditions.length} tradições${
+              politicalMap.snapshot
+                ? ` sobre o recorte político de ${formatYear(politicalMap.snapshot.snapshotYear)}`
+                : ""
+            }`}
           >
             <g ref={viewportRef} className="map-viewport">
-              <MapGeometry extent={EXTENT} className="map-full-geometry" />
+              <MapGeometry
+                extent={EXTENT}
+                className={`map-full-geometry ${
+                  politicalLayerEnabled && politicalMap.snapshot ? "has-political-layer" : ""
+                }`}
+              />
+              {selectedPolity && (
+                <rect
+                  className="polity-dismiss-surface"
+                  x="0"
+                  y="0"
+                  width={WIDTH}
+                  height={HEIGHT}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Limpar foco do território"
+                  onClick={() => setSelectedPolityState(undefined)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedPolityState(undefined);
+                    }
+                  }}
+                >
+                  <title>Clique fora do território para limpar o foco</title>
+                </rect>
+              )}
+              {politicalLayerEnabled && politicalMap.snapshot && (
+                <HistoricalPolityLayer
+                  snapshot={politicalMap.snapshot}
+                  projection={projection}
+                  scale={scale}
+                  stale={politicalMap.stale}
+                  selectedId={selectedPolity?.id}
+                  onSelect={(feature) => {
+                    clearSelection();
+                    setExpanded(undefined);
+                    setSelectedPolityState((current) =>
+                      current?.feature.id === feature.id
+                        ? undefined
+                        : { year: selectedYear, feature },
+                    );
+                  }}
+                />
+              )}
               {selectedTradition && (
                 <g
                   role="button"
@@ -213,7 +290,7 @@ export function WorldBeliefMap() {
                   </rect>
                 </g>
               )}
-              <g className="map-traditions">
+              <g className={`map-traditions ${selectedPolity ? "focus-muted" : ""}`}>
                 {clusterLayout.map(({ cluster, point: projected }) => {
                   const analysis = analyseCluster(cluster, data.archetypes);
                   return (
@@ -224,13 +301,18 @@ export function WorldBeliefMap() {
                         y={projected[1]}
                         active={expanded === cluster.key}
                         visualScale={scale}
-                        showLabel={visibleClusterLabels.has(cluster.key)}
+                        showLabel={
+                          politicalLayerEnabled
+                            ? expanded === cluster.key
+                            : visibleClusterLabels.has(cluster.key)
+                        }
                         summary={`Família predominante: ${analysis.family}. Status predominante: ${analysis.status}. Funções mais frequentes: ${analysis.topArchetypes
                           .slice(0, 3)
                           .map(({ archetype }) => archetype?.name)
                           .filter(Boolean)
                           .join(", ")}.`}
                         onActivate={() => {
+                          setSelectedPolityState(undefined);
                           if (cluster.traditions.length === 1) {
                             setSelectedTraditionId(cluster.traditions[0].id);
                             return;
@@ -295,12 +377,104 @@ export function WorldBeliefMap() {
           Roda do mouse: zoom focal · arrastar: mover · duplo clique: aproximar · teclado: + − 0 e
           setas
         </p>
+        {politicalLayerEnabled && (
+          <details className="political-map-status">
+            <summary>
+              <span>RECORTE POLÍTICO</span>
+              <strong>
+                {politicalMap.loading && !politicalMap.snapshot
+                  ? "Carregando cartografia…"
+                  : politicalMap.requested
+                    ? `${politicalMap.requested.label} · ${politicalMap.requested.featureCount} regiões`
+                    : "Sem recorte cartográfico defensável"}
+              </strong>
+            </summary>
+            <p>
+              {politicalMap.index?.caveat ??
+                "A camada usa snapshots descontínuos e não interpola fronteiras."}
+            </p>
+            {politicalMap.requested && politicalMap.requested.year !== selectedYear && (
+              <p>
+                Ano observado: <b>{formatYear(selectedYear)}</b>. Base cartográfica utilizada:{" "}
+                <b>{formatYear(politicalMap.requested.year)}</b>, o último snapshot disponível não
+                posterior ao recorte.
+              </p>
+            )}
+            {politicalMap.loading && politicalMap.snapshot && (
+              <p aria-live="polite">Atualizando a cartografia sem interromper a cena…</p>
+            )}
+            {politicalMap.error && <p className="political-map-error">{politicalMap.error}</p>}
+            <div>
+              {politicalMap.index?.sources.slice(0, 2).map((source) => (
+                <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
+                  {source.institution}
+                </a>
+              ))}
+            </div>
+          </details>
+        )}
         {selectedTradition && (
           <button className="focus-status map-focus-status" type="button" onClick={clearSelection}>
             <span>FOCO ISOLADO</span>
             <strong>{selectedTradition.name}</strong>
             <small>Clique aqui ou fora do marcador para mostrar tudo</small>
           </button>
+        )}
+
+        {selectedPolity && politicalMap.snapshot && (
+          <aside
+            className="polity-inspector"
+            aria-label={`Território ${selectedPolity.properties.name}`}
+          >
+            <button
+              className="map-inspector-close"
+              type="button"
+              onClick={() => setSelectedPolityState(undefined)}
+              aria-label="Fechar território"
+            >
+              <X aria-hidden="true" />
+            </button>
+            <p className="eyebrow">TERRITÓRIO NO RECORTE</p>
+            <h3>{selectedPolity.properties.name}</h3>
+            <dl>
+              <div>
+                <dt>Tipo registrado</dt>
+                <dd>{selectedPolity.properties.polityType || "Não especificado"}</dd>
+              </div>
+              <div>
+                <dt>Autoridade / área</dt>
+                <dd>{selectedPolity.properties.subject || selectedPolity.properties.name}</dd>
+              </div>
+              {selectedPolity.properties.partOf && (
+                <div>
+                  <dt>Parte de</dt>
+                  <dd>{selectedPolity.properties.partOf}</dd>
+                </div>
+              )}
+              <div>
+                <dt>Snapshot cartográfico</dt>
+                <dd>{formatYear(politicalMap.snapshot.snapshotYear)}</dd>
+              </div>
+              <div>
+                <dt>Precisão da fronteira</dt>
+                <dd>{selectedPolity.properties.borderPrecision} de 3</dd>
+              </div>
+            </dl>
+            {selectedPolity.properties.sourceUrl && (
+              <a
+                className="polity-source-link"
+                href={selectedPolity.properties.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Consultar referência associada
+              </a>
+            )}
+            <p className="map-location-note">
+              O polígono é uma aproximação cartográfica, não prova controle uniforme, soberania
+              exclusiva, fronteira consensual ou identidade cultural única.
+            </p>
+          </aside>
         )}
 
         {expandedCluster && clusterAnalysis && (

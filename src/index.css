@@ -78,6 +78,10 @@ select:focus-visible,
   outline-offset: 3px;
 }
 
+svg [tabindex] {
+  outline: none;
+}
+
 ::selection {
   color: #07100f;
   background: var(--cyan);
@@ -1039,6 +1043,95 @@ select:focus-visible,
   fill: rgba(48, 68, 64, 0.82);
 }
 
+.map-full-geometry.has-political-layer .map-countries {
+  fill: rgba(20, 33, 31, 0.24);
+  stroke: rgba(190, 197, 189, 0.12);
+}
+
+.historical-polity-layer {
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+
+.historical-polity-layer.is-stale {
+  opacity: 0.42;
+}
+
+.historical-polity {
+  fill: color-mix(in srgb, var(--polity-color) 56%, rgba(9, 15, 14, 0.82));
+  fill-opacity: 0.76;
+  stroke: color-mix(in srgb, var(--polity-color) 58%, #ddd3bf);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill-opacity 180ms ease,
+    opacity 180ms ease,
+    stroke-width 180ms ease;
+}
+
+.historical-polity.precision-1 {
+  stroke-dasharray: 3 2.5;
+  stroke-opacity: 0.56;
+}
+
+.historical-polity.precision-2 {
+  stroke-dasharray: 1.5 1;
+  stroke-opacity: 0.72;
+}
+
+.historical-polity.precision-3 {
+  stroke-opacity: 0.9;
+}
+
+.historical-polity:hover,
+.historical-polity:focus-visible {
+  fill-opacity: 1;
+  stroke: #f1e7d2;
+  stroke-width: 1.5;
+  outline: none;
+}
+
+.historical-polity.selected {
+  fill-opacity: 1;
+  stroke: var(--ivory);
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--polity-color) 75%, transparent));
+}
+
+.historical-polity.focus-hidden {
+  opacity: 0.035;
+  pointer-events: none;
+}
+
+.historical-polity-labels {
+  pointer-events: none;
+}
+
+.historical-polity-labels text {
+  fill: #e1d9c9;
+  stroke: rgba(5, 9, 8, 0.96);
+  stroke-width: 3px;
+  paint-order: stroke;
+  font: 600 8px / 1 var(--interface);
+  letter-spacing: 0.015em;
+  text-rendering: geometricPrecision;
+}
+
+.polity-dismiss-surface {
+  fill: rgba(4, 7, 7, 0.66);
+  cursor: zoom-out;
+  pointer-events: all;
+}
+
+.map-traditions {
+  transition: opacity 180ms ease;
+}
+
+.map-traditions.focus-muted {
+  opacity: 0.06;
+  pointer-events: none;
+}
+
 .map-canvas {
   position: relative;
   height: 615px;
@@ -1161,6 +1254,11 @@ select:focus-visible,
   background: rgba(87, 200, 212, 0.09);
 }
 
+.map-tools button.is-active {
+  color: var(--cyan);
+  background: rgba(87, 200, 212, 0.13);
+}
+
 .map-tools svg {
   width: 16px;
   height: 16px;
@@ -1235,6 +1333,79 @@ select:focus-visible,
   pointer-events: none;
 }
 
+.political-map-status {
+  position: absolute;
+  right: 14px;
+  bottom: 11px;
+  z-index: 7;
+  width: min(410px, calc(100% - 390px));
+  border: 1px solid rgba(87, 200, 212, 0.24);
+  color: var(--muted);
+  background: rgba(6, 10, 9, 0.92);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+  font-size: 0.68rem;
+}
+
+.political-map-status summary {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.political-map-status summary::-webkit-details-marker {
+  display: none;
+}
+
+.political-map-status summary span {
+  color: var(--cyan);
+  font: 700 0.58rem / 1 var(--mono);
+  letter-spacing: 0.13em;
+}
+
+.political-map-status summary strong {
+  color: var(--ivory);
+  font: 600 0.64rem / 1.2 var(--mono);
+  text-align: right;
+}
+
+.political-map-status[open] {
+  padding-bottom: 10px;
+}
+
+.political-map-status[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.political-map-status p {
+  margin: 10px 12px 0;
+  line-height: 1.45;
+}
+
+.political-map-status b {
+  color: var(--ivory);
+}
+
+.political-map-status > div {
+  display: flex;
+  gap: 12px;
+  margin: 10px 12px 0;
+}
+
+.political-map-status a,
+.polity-source-link {
+  color: var(--cyan);
+  font-family: var(--mono);
+}
+
+.political-map-error {
+  color: #e39387;
+}
+
 .map-overflow-label {
   fill: var(--gold);
   stroke: #070a09;
@@ -1243,7 +1414,8 @@ select:focus-visible,
   font: 8px var(--mono);
 }
 
-.map-cluster-inspector {
+.map-cluster-inspector,
+.polity-inspector {
   position: absolute;
   top: 13px;
   right: 14px;
@@ -1258,6 +1430,49 @@ select:focus-visible,
     linear-gradient(160deg, rgba(210, 183, 124, 0.07), transparent 180px), rgba(8, 12, 11, 0.97);
   box-shadow: 0 18px 56px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(18px);
+}
+
+.polity-inspector {
+  width: min(365px, 34vw);
+}
+
+.polity-inspector h3 {
+  margin: 3px 28px 15px 0;
+  color: var(--ivory);
+  font: 700 1.35rem / 1.1 var(--interface);
+}
+
+.polity-inspector dl {
+  display: grid;
+  gap: 9px;
+  margin: 0 0 15px;
+}
+
+.polity-inspector dl div {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.72fr) 1fr;
+  gap: 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.polity-inspector dt {
+  color: var(--muted);
+  font: 0.61rem / 1.3 var(--mono);
+  text-transform: uppercase;
+}
+
+.polity-inspector dd {
+  margin: 0;
+  color: var(--ivory);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.polity-source-link {
+  display: inline-flex;
+  margin-bottom: 14px;
+  font-size: 0.65rem;
 }
 
 .map-cluster-inspector h3 {
@@ -1410,9 +1625,16 @@ select:focus-visible,
 }
 
 .tradition-cluster:hover .cluster-pulse,
+.tradition-cluster:focus-visible .cluster-pulse,
 .tradition-cluster.active .cluster-pulse {
   opacity: 1;
   fill: rgba(213, 154, 74, 0.12);
+}
+
+.tradition-cluster:focus-visible .cluster-core {
+  stroke: var(--cyan);
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 6px rgba(87, 200, 212, 0.7));
 }
 
 .cluster-count {
@@ -1453,6 +1675,12 @@ select:focus-visible,
   fill: #121b1a;
   stroke: var(--cyan);
   stroke-width: 0.8;
+}
+
+.expanded-tradition:focus-visible circle {
+  fill: rgba(87, 200, 212, 0.2);
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 4px var(--cyan));
 }
 
 .expanded-tradition text {
@@ -1588,9 +1816,16 @@ select:focus-visible,
 }
 
 .archetype-node:hover .archetype-halo,
+.archetype-node:focus-visible .archetype-halo,
 .archetype-node.selected .archetype-halo {
   fill-opacity: 0.19;
   stroke-opacity: 0.9;
+}
+
+.archetype-node:focus-visible .archetype-disc {
+  stroke: var(--ivory);
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 7px var(--archetype-color));
 }
 
 .archetype-node.selected .archetype-disc {
@@ -1609,6 +1844,13 @@ select:focus-visible,
   vector-effect: non-scaling-stroke;
   cursor: pointer;
   transition: opacity 420ms ease;
+}
+
+.correlation-fiber:focus-visible {
+  outline: none;
+  stroke-opacity: 1;
+  stroke-width: 2.8;
+  filter: drop-shadow(0 0 3px var(--fiber-color));
 }
 
 .fiber-direct {
@@ -1767,6 +2009,10 @@ select:focus-visible,
   filter: drop-shadow(0 0 5px var(--cyan));
 }
 
+.lineage-node:focus-visible {
+  outline: none;
+}
+
 .lineage-root circle {
   stroke: var(--amber);
 }
@@ -1813,6 +2059,145 @@ select:focus-visible,
   margin-left: auto;
   color: #b5b2aa;
   font-weight: 500;
+}
+
+.lineage-time-grid line {
+  stroke: rgba(87, 200, 212, 0.11);
+  stroke-width: 1;
+  stroke-dasharray: 2 8;
+  vector-effect: non-scaling-stroke;
+}
+
+.lineage-time-grid text {
+  fill: #777e78;
+  font: 700 8px var(--mono);
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+}
+
+.lineage-region-band rect {
+  fill: rgba(18, 28, 26, 0.42);
+  stroke: rgba(185, 154, 98, 0.13);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.lineage-region-band:nth-of-type(even) rect {
+  fill: rgba(12, 23, 22, 0.57);
+}
+
+.lineage-region-branch {
+  stroke: rgba(87, 200, 212, 0.18);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.lineage-region-title,
+.lineage-region-count {
+  fill: #d4bc89;
+  font: 700 10px var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.lineage-region-count {
+  fill: var(--muted);
+  font-size: 8px;
+  text-anchor: end;
+}
+
+.lineage-hypothesis {
+  stroke: #bc86a5;
+  stroke-dasharray: 8 6;
+  stroke-opacity: 0.72;
+}
+
+.lineage-edge:hover,
+.lineage-edge:focus-visible,
+.lineage-edge.selected {
+  stroke-width: 3;
+  stroke-opacity: 1;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+.lineage-axis-readout {
+  position: absolute;
+  z-index: 7;
+  right: 14px;
+  bottom: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: rgba(4, 8, 7, 0.88);
+  font: 0.58rem var(--mono);
+  pointer-events: none;
+}
+
+.lineage-axis-readout svg {
+  width: 14px;
+}
+
+.lineage-axis-readout i {
+  width: 42px;
+  border-top: 1px solid var(--amber);
+}
+
+.lineage-axis-readout strong {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.lineage-relation-inspector {
+  position: absolute;
+  z-index: 18;
+  right: 14px;
+  bottom: 48px;
+  width: min(440px, calc(100% - 28px));
+  padding: 17px;
+  border: 1px solid var(--line-bright);
+  background: rgba(6, 10, 9, 0.97);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.58);
+}
+
+.lineage-relation-inspector h3 {
+  margin: 5px 32px 9px 0;
+  color: var(--ivory);
+  font-size: 0.9rem;
+}
+
+.lineage-relation-inspector h3 span {
+  color: var(--amber);
+}
+
+.lineage-relation-inspector p:not(.eyebrow) {
+  margin: 0 0 9px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.55;
+}
+
+.lineage-relation-inspector small,
+.lineage-relation-inspector a {
+  display: block;
+  color: #8f9690;
+  font: 0.57rem / 1.5 var(--mono);
+}
+
+.lineage-relation-inspector a {
+  margin-top: 7px;
+  color: var(--cyan);
+}
+
+.lineage-key .key-hypothesis::before {
+  border-color: #bc86a5;
+  border-top-style: dashed;
+}
+
+.lineage-key .key-region::before {
+  border-color: var(--cyan);
+  opacity: 0.35;
 }
 
 .context-grove {
@@ -4073,6 +4458,238 @@ select:focus-visible,
   font-size: 0.68rem;
 }
 
+/* Charts */
+.charts-lab {
+  overflow: visible;
+}
+
+.charts-heading {
+  min-height: 88px;
+}
+
+.charts-context {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font: 0.62rem var(--mono);
+}
+
+.charts-context svg {
+  width: 16px;
+  color: var(--cyan);
+}
+
+.charts-context strong {
+  margin-left: auto;
+  color: #d7c8a8;
+  font-weight: 500;
+}
+
+.charts-grid {
+  display: grid;
+  padding: 12px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.charts-card {
+  grid-column: span 6;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(135deg, rgba(87, 200, 212, 0.025), transparent 48%), rgba(8, 13, 12, 0.88);
+}
+
+.charts-card > header {
+  margin-bottom: 16px;
+}
+
+.charts-card h3 {
+  margin: 4px 0 0;
+  color: var(--ivory);
+  font: 700 1.02rem / 1.3 var(--ritual);
+}
+
+.charts-card header > span {
+  color: var(--muted);
+  font-size: 0.63rem;
+}
+
+.charts-card ol {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.charts-card li {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 30px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.ranking-position {
+  padding-top: 1px;
+  color: #68716c;
+  font: 0.62rem var(--mono);
+}
+
+.charts-card li > div > span {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.charts-card li strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #d7d2c6;
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.charts-card li b {
+  flex: none;
+  color: var(--amber);
+  font: 700 0.64rem var(--mono);
+}
+
+.charts-card li i {
+  display: flex;
+  height: 5px;
+  margin: 5px 0 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.charts-card li i em {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #9e6934, var(--amber));
+}
+
+.charts-card li small {
+  display: block;
+  overflow: hidden;
+  color: #7f8781;
+  font: 0.53rem / 1.4 var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.population-ranking {
+  grid-column: span 7;
+}
+
+.archetype-ranking {
+  grid-column: span 5;
+}
+
+.population-ranking .nonreligious i em {
+  background: linear-gradient(90deg, #426b70, var(--cyan));
+}
+
+.population-ranking footer {
+  padding-top: 13px;
+  margin-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.population-ranking footer p,
+.population-ranking footer a {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  color: #9a9b94;
+  font-size: 0.58rem;
+  line-height: 1.45;
+}
+
+.population-ranking footer svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+.population-ranking footer a {
+  margin-top: 8px;
+  color: var(--cyan);
+}
+
+.archetype-ranking li {
+  grid-template-columns: 34px 1fr;
+}
+
+.archetype-ranking li > span {
+  color: var(--cyan);
+  font: 700 0.58rem var(--mono);
+}
+
+.archetype-ranking .chart-segment {
+  min-width: 0;
+}
+
+.charts-card li i .chart-direct {
+  background: #d59a4a;
+}
+
+.charts-card li i .chart-partial {
+  background: #ba9d6e;
+}
+
+.charts-card li i .chart-impersonal {
+  background: var(--cyan);
+}
+
+.charts-card li i .chart-uncertain {
+  background: #a24f58;
+}
+
+.chart-manifesto {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(213, 154, 74, 0.1), transparent 43%),
+    rgba(8, 13, 12, 0.88);
+}
+
+.chart-manifesto > svg {
+  width: 32px;
+  height: 32px;
+  color: var(--amber);
+}
+
+.chart-manifesto p {
+  max-width: 580px;
+  color: var(--muted);
+  font-size: 0.69rem;
+  line-height: 1.6;
+}
+
+.chart-manifesto span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--cyan);
+  font: 0.58rem var(--mono);
+}
+
+.chart-manifesto span svg {
+  width: 14px;
+}
+
 /* Responsive */
 @media (max-width: 1260px) {
   .atlas-header {
@@ -4118,7 +4735,7 @@ select:focus-visible,
     z-index: 80;
     display: grid;
     height: 58px;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     border-top: 1px solid var(--line);
     background: rgba(6, 9, 8, 0.97);
     backdrop-filter: blur(16px);
@@ -4235,6 +4852,16 @@ select:focus-visible,
     display: none;
   }
 
+  .charts-heading > p {
+    display: none;
+  }
+
+  .charts-card,
+  .population-ranking,
+  .archetype-ranking {
+    grid-column: span 12;
+  }
+
   .context-grove > div:first-child {
     grid-template-columns: 1fr;
   }
@@ -4246,6 +4873,29 @@ select:focus-visible,
 }
 
 @media (max-width: 720px) {
+  .charts-context {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .charts-context strong {
+    width: 100%;
+    margin-left: 25px;
+  }
+
+  .charts-grid {
+    padding: 7px;
+    gap: 7px;
+  }
+
+  .charts-card {
+    padding: 14px;
+  }
+
+  .charts-card li small {
+    white-space: normal;
+  }
+
   .atlas-header {
     min-height: 54px;
   }
@@ -4450,7 +5100,8 @@ select:focus-visible,
     white-space: nowrap;
   }
 
-  .map-cluster-inspector {
+  .map-cluster-inspector,
+  .polity-inspector {
     top: auto;
     right: 0;
     bottom: 0;
@@ -4460,6 +5111,18 @@ select:focus-visible,
     border-right: 0;
     border-bottom: 0;
     border-left: 0;
+  }
+
+  .political-map-status {
+    right: 9px;
+    bottom: 45px;
+    left: 9px;
+    width: auto;
+  }
+
+  .political-map-status[open] {
+    max-height: 235px;
+    overflow-y: auto;
   }
 
   .period-mirror {

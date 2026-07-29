@@ -16,6 +16,14 @@ describe("seleção de rótulos sem colisão", () => {
     expect(selectCollisionFreeLabels(candidates, 8)).toEqual(new Set(["large", "small", "far"]));
   });
 
+  it("trata rótulos políticos como textos centrados no território", () => {
+    const centered = [
+      { key: "north", x: 100, y: 100, label: "Território setentrional", priority: 2 },
+      { key: "south", x: 100, y: 112, label: "Território meridional", priority: 1 },
+    ];
+    expect(selectCollisionFreeLabels(centered, 1, "center")).toEqual(new Set(["north"]));
+  });
+
   it("aumenta progressivamente o texto sem deixá-lo crescer na mesma razão do mapa", () => {
     expect(semanticZoomScale(1)).toBe(1);
     expect(semanticZoomScale(4)).toBe(0.5);

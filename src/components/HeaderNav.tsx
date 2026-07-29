@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BookOpen,
+  ChartNoAxesCombined,
   CircleDotDashed,
   Columns3,
   GitCompareArrows,
@@ -19,6 +20,7 @@ const VIEWS: Array<{ id: ViewMode; label: string; icon: LucideIcon }> = [
   { id: "constellation", label: "Constelação", icon: CircleDotDashed },
   { id: "map", label: "Mapa", icon: MapIcon },
   { id: "tree", label: "Árvore", icon: Trees },
+  { id: "charts", label: "Charts", icon: ChartNoAxesCombined },
   { id: "matrix", label: "Matriz", icon: Columns3 },
   { id: "signatures", label: "Assinaturas", icon: Radar },
   { id: "sources", label: "Fontes", icon: Library },

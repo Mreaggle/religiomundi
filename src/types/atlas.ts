@@ -1,7 +1,14 @@
 export type CorrelationType = "direct" | "partial" | "impersonal" | "uncertain" | "absent";
 export type TemporalPrecision = "exact" | "approximate" | "century" | "macroperiod" | "unknown";
 export type TemporalMode = "panorama" | "emergences" | "catalog";
-export type ViewMode = "constellation" | "map" | "tree" | "matrix" | "signatures" | "sources";
+export type ViewMode =
+  | "constellation"
+  | "map"
+  | "tree"
+  | "charts"
+  | "matrix"
+  | "signatures"
+  | "sources";
 
 export interface Correlation {
   archetypeCode: string;

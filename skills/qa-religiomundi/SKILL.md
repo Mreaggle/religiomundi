@@ -31,15 +31,35 @@ reproduzível e impedir que correções locais quebrem outras visualizações, �
 - `Revelar padrões` não pode montar um dossiê concorrente.
 - Em celular deitado, a timeline inicia recolhida e continua expansível e recolhível.
 - Nenhuma visualização pode introduzir rolagem horizontal da página, flicker ou erro de console.
-- A ÁRVORE só desenha genealogia ou influência sustentada; agrupamento contextual permanece sem aresta.
+- A ÁRVORE renderiza todas as tradições visíveis. Faixas regionais organizam proximidade sem
+  parentesco; aresta sólida exige vínculo histórico documentado e tracejada exige hipótese/debate
+  com referência acadêmica externa. Todo endpoint deve existir no catálogo.
+- CHARTS contém rankings de religiões, tradições, famílias ou arquétipos — nunca rankings de países.
+  Métricas internas respondem ao recorte; demografia externa exibe instituição, ano de publicação,
+  ano estimado e ressalva de agregação. “Sem filiação” nunca recebe status de religião.
+- A camada política usa o último snapshot não posterior ao ano observado; nunca interpola
+  fronteiras nem apresenta o mapa de uma época futura como se fosse contemporâneo ao recorte.
+- Apenas o snapshot político solicitado e, em ociosidade, seus dois vizinhos podem ser baixados. A
+  timeline não pode importar todos os arquivos cartográficos nem remontar a projeção a cada frame.
+- Nomes territoriais preservam a fonte; `BORDERPRECISION` controla o tratamento visual. Fronteira,
+  cultura e área de influência não podem ser apresentadas como soberania uniforme ou exclusiva.
+- Selecionar um território isola a camada política e deve fechar uma única vez por X, teclado ou
+  clique fora. Marcadores religiosos continuam semanticamente independentes dos polígonos.
 - O catálogo deve conservar 471 tradições, 44 arquétipos, textos originais e datas-sentinela, salvo
   revisão documental explícita.
 
 ## Matriz mínima
 
-Validar em 1440×1000, 393×851 e 844×390. Exercitar Constelação, Mapa, Árvore, Matriz, busca, timeline,
-dossiês, Revelar Padrões e Aeons. Em mudanças de SEO, verificar título, descrição, canonical,
+Validar em 1440×1000, 393×851 e 844×390. Exercitar Constelação, Mapa, Árvore, Charts, Matriz, busca,
+timeline, dossiês, Revelar Padrões e Aeons. Na ÁRVORE, comparar a contagem de nós ao recorte, navegar
+verticalmente pelos oito ramos e inspecionar ambos os traços. Em CHARTS, verificar soma de 100%,
+ordenação, rótulo não religioso e fonte Pew. Em mudanças de SEO, verificar título, descrição, canonical,
 Open Graph, JSON-LD, `robots.txt`, `sitemap.xml` e URL de produção.
+
+Para cartografia temporal, testar no mínimo o presente, Império Mongol em 1200, Babilônia em
+1.500 a.C. e um ano anterior ao primeiro snapshot. Executar `npm run data:audit`, conferir a licença
+em `public/data/polities/` e validar que os links investigativos de listas de impérios, países,
+GeaCron, civilizações e história humana permanecem registrados no índice.
 
 ## Relatório
 

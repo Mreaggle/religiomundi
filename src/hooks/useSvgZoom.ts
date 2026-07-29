@@ -8,6 +8,9 @@ interface SvgZoomOptions {
   maxScale?: number;
   contentWidth?: number;
   contentHeight?: number;
+  initialScale?: number;
+  initialX?: number;
+  initialY?: number;
 }
 
 export function useSvgZoom(
@@ -20,6 +23,9 @@ export function useSvgZoom(
     maxScale = 9,
     contentWidth = width,
     contentHeight = height,
+    initialScale = 1,
+    initialX = 0,
+    initialY = 0,
   }: SvgZoomOptions,
 ) {
   const behaviorRef = useRef<ZoomBehavior<SVGSVGElement, unknown>>();
@@ -58,12 +64,26 @@ export function useSvgZoom(
 
     behaviorRef.current = behavior;
     select(svg).call(behavior);
+    const initial = zoomIdentity.translate(initialX, initialY).scale(initialScale);
+    select(svg).call(behavior.transform, initial);
 
     return () => {
       select(svg).on(".zoom", null);
       behaviorRef.current = undefined;
     };
-  }, [contentHeight, contentWidth, height, maxScale, minScale, svgRef, viewportRef, width]);
+  }, [
+    contentHeight,
+    contentWidth,
+    height,
+    initialScale,
+    initialX,
+    initialY,
+    maxScale,
+    minScale,
+    svgRef,
+    viewportRef,
+    width,
+  ]);
 
   const animate = useCallback(
     (
@@ -99,9 +119,10 @@ export function useSvgZoom(
   const resetZoom = useCallback(
     () =>
       animate((selection, behavior) => {
-        selection.transition().duration(220).call(behavior.transform, zoomIdentity);
+        const initial = zoomIdentity.translate(initialX, initialY).scale(initialScale);
+        selection.transition().duration(220).call(behavior.transform, initial);
       }),
-    [animate],
+    [animate, initialScale, initialX, initialY],
   );
 
   const focusAt = useCallback(

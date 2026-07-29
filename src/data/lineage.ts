@@ -1,4 +1,4 @@
-export type LineageRelationKind = "documented" | "influence" | "catalog";
+export type LineageRelationKind = "documented" | "hypothesis";
 
 export interface LineageGroup {
   id: string;
@@ -12,8 +12,9 @@ export interface LineageGroup {
 export interface LineageRelation {
   from: string;
   to: string;
-  kind: Exclude<LineageRelationKind, "catalog">;
+  kind: LineageRelationKind;
   sourceCodes: string[];
+  sourceUrls?: string[];
   note: string;
 }
 
@@ -186,21 +187,21 @@ export const LINEAGE_RELATIONS: LineageRelation[] = [
   {
     from: "Hermetic Order of the Golden Dawn",
     to: "A∴A∴ e linhagens thelêmicas",
-    kind: "influence",
+    kind: "documented",
     sourceCodes: ["E01", "C04"],
     note: "Influência histórica documentável; não continuidade institucional simples.",
   },
   {
     from: "Metodismo/Wesleyanismo",
     to: "Pentecostalismo",
-    kind: "influence",
+    kind: "documented",
     sourceCodes: ["B02", "C06"],
     note: "Uma entre múltiplas matrizes do movimento de santidade e do pentecostalismo.",
   },
   {
     from: "Pentecostalismo",
     to: "Movimento Carismático",
-    kind: "influence",
+    kind: "documented",
     sourceCodes: ["B02", "C06"],
     note: "Circulação de práticas carismáticas em igrejas já existentes; não descendência exclusiva.",
   },
@@ -210,5 +211,73 @@ export const LINEAGE_RELATIONS: LineageRelation[] = [
     kind: "documented",
     sourceCodes: ["B05"],
     note: "Formação bahá’í historicamente ligada ao movimento bábí.",
+  },
+  {
+    from: "Religião suméria",
+    to: "Judaísmo bíblico/Israel antigo",
+    kind: "hypothesis",
+    sourceCodes: ["A01", "B01"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-the-hebrew-bibleold-testament/ancient-near-eastern-context/1FC1D4297FFE78377FAD0BA790302CAE",
+    ],
+    note: "Paralelos literários mesopotâmicos são documentados, mas empréstimo direto da religião suméria ao judaísmo não está demonstrado; a transmissão pode ter sido indireta e multietápica.",
+  },
+  {
+    from: "Zoroastrismo/Mazdeísmo",
+    to: "Judaísmo bíblico/Israel antigo",
+    kind: "hypothesis",
+    sourceCodes: ["A03", "B01"],
+    sourceUrls: ["https://www.iranicaonline.org/articles/eschatology-i/"],
+    note: "A influência iraniana sobre desenvolvimentos escatológicos do judaísmo do Segundo Templo é uma tese acadêmica relevante, mas sua extensão, direção e cronologia permanecem debatidas.",
+  },
+  {
+    from: "Religião nórdica antiga",
+    to: "Heathenry/Ásatrú",
+    kind: "hypothesis",
+    sourceCodes: ["A10", "E03"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-new-religious-movements/neopaganism/A42AADD375DA9BF3448CB957E688F801",
+    ],
+    note: "Reconstrução e inspiração modernas declaradas; não há continuidade institucional ininterrupta demonstrada.",
+  },
+  {
+    from: "Religiões bálticas históricas",
+    to: "Romuva",
+    kind: "hypothesis",
+    sourceCodes: ["A10", "E03"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-new-religious-movements/neopaganism/A42AADD375DA9BF3448CB957E688F801",
+    ],
+    note: "Reconstrução moderna de referências bálticas; proximidade reivindicada não equivale a uma linhagem institucional contínua.",
+  },
+  {
+    from: "Religião eslava pré-cristã",
+    to: "Rodnovery",
+    kind: "hypothesis",
+    sourceCodes: ["A10", "E03"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-new-religious-movements/neopaganism/A42AADD375DA9BF3448CB957E688F801",
+    ],
+    note: "Reconstrução moderna baseada em fontes fragmentárias, folclore e reinterpretação; não descendência institucional comprovada.",
+  },
+  {
+    from: "Religião egípcia antiga",
+    to: "Kemetismo moderno",
+    kind: "hypothesis",
+    sourceCodes: ["A02", "E03"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-new-religious-movements/neopaganism/A42AADD375DA9BF3448CB957E688F801",
+    ],
+    note: "Revival moderno inspirado em repertórios egípcios antigos; a aresta não afirma transmissão institucional contínua.",
+  },
+  {
+    from: "Religião grega arcaica e clássica",
+    to: "Helenismo reconstrucionista",
+    kind: "hypothesis",
+    sourceCodes: ["A09", "E03"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-new-religious-movements/neopaganism/A42AADD375DA9BF3448CB957E688F801",
+    ],
+    note: "Reconstrução religiosa moderna inspirada em fontes gregas antigas; sem cadeia institucional ininterrupta demonstrada.",
   },
 ];

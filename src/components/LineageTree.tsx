@@ -1,130 +1,179 @@
-import { GitBranch, LocateFixed, Minus, Plus, Trees, X } from "lucide-react";
+import { GitBranch, LocateFixed, Minus, Plus, X } from "lucide-react";
 import { type KeyboardEvent, useMemo, useRef, useState } from "react";
-import { LINEAGE_GROUPS, LINEAGE_RELATIONS } from "../data/lineage";
+import { LINEAGE_GROUPS, LINEAGE_RELATIONS, type LineageRelation } from "../data/lineage";
 import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Tradition } from "../types/atlas";
 import { semanticZoomScale } from "../utils/collision";
-import { yearToPosition } from "../utils/temporal";
+import { formatYear, yearToPosition } from "../utils/temporal";
 
-const WIDTH = 1580;
-const MIN_HEIGHT = 760;
+const VIEW_WIDTH = 1600;
+const VIEW_HEIGHT = 850;
+const CONTENT_WIDTH = 2520;
+const LABEL_SPACING = 205;
+const LANE_GAP = 30;
+
+const REGION_ORDER = [
+  "África",
+  "Ásia Ocidental e Norte da África",
+  "Sul e Centro da Ásia",
+  "Leste e Sudeste da Ásia",
+  "Europa",
+  "Américas",
+  "Oceania",
+  "Global, diáspora ou região indeterminada",
+] as const;
 
 interface PositionedNode {
   tradition: Tradition;
   x: number;
   y: number;
-  groupId: string;
-  root: boolean;
+  region: string;
+  lane: number;
 }
 
-function temporalX(tradition: Tradition): number {
-  return 90 + yearToPosition(tradition.startYear ?? 2026) * 1.38;
+interface RegionBand {
+  name: string;
+  top: number;
+  height: number;
+  laneCount: number;
+  traditions: Tradition[];
 }
 
-function broadFamily(value: string): string {
-  return value.split(/[/:]/)[0]?.trim() || value;
+interface DisplayRelation extends LineageRelation {
+  id: string;
 }
+
+function stableNumber(value: string): number {
+  let hash = 2166136261;
+  for (const character of value) {
+    hash ^= character.codePointAt(0) ?? 0;
+    hash = Math.imul(hash, 16777619);
+  }
+  return Math.abs(hash);
+}
+
+function regionForTradition(tradition: Tradition): (typeof REGION_ORDER)[number] {
+  if (tradition.isGlobal) return "Global, diáspora ou região indeterminada";
+  const location = tradition.locations[0] ?? tradition.location;
+  if (!location) return "Global, diáspora ou região indeterminada";
+  const { latitude, longitude } = location;
+  if (longitude < -25) return "Américas";
+  if (longitude >= 110 && latitude < -10) return "Oceania";
+  if (longitude >= 90) return "Leste e Sudeste da Ásia";
+  if (longitude >= 55) return "Sul e Centro da Ásia";
+  if (longitude >= 25 && latitude < 45) return "Ásia Ocidental e Norte da África";
+  if (latitude < 32 && longitude > -25) return "África";
+  return "Europa";
+}
+
+function temporalX(tradition: Tradition, selectedYear: number): number {
+  const year = tradition.startYear ?? selectedYear;
+  const jitter = (stableNumber(tradition.id) % 17) - 8;
+  return 180 + yearToPosition(year) * 2.25 + jitter;
+}
+
+function buildRelations(): DisplayRelation[] {
+  const relations = new Map<string, DisplayRelation>();
+  for (const group of LINEAGE_GROUPS) {
+    for (const child of group.children) {
+      const id = `${group.root}→${child}`;
+      relations.set(id, {
+        id,
+        from: group.root,
+        to: child,
+        kind: "documented",
+        sourceCodes: group.sourceCodes,
+        note: `${group.note} Relação catalogal documentada; não implica ancestralidade institucional simples.`,
+      });
+    }
+  }
+  for (const relation of LINEAGE_RELATIONS) {
+    const id = `${relation.from}→${relation.to}`;
+    relations.set(id, { ...relation, id });
+  }
+  return [...relations.values()];
+}
+
+const DISPLAY_RELATIONS = buildRelations();
 
 export function LineageTree() {
-  const { visibleTraditions, selectedYear, setSelectedTraditionId, clearSelection } = useAtlas();
-  const [contextKey, setContextKey] = useState<string>();
+  const { data, visibleTraditions, selectedYear, setSelectedTraditionId } = useAtlas();
+  const [selectedRelation, setSelectedRelation] = useState<DisplayRelation>();
   const svgRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<SVGGElement>(null);
-  const byName = useMemo(
-    () => new Map(visibleTraditions.map((tradition) => [tradition.name, tradition])),
-    [visibleTraditions],
-  );
 
   const layout = useMemo(() => {
-    const positions = new Map<string, PositionedNode>();
-    const groups: Array<{
-      id: string;
-      title: string;
-      note: string;
-      sources: string[];
-      top: number;
-      height: number;
-      root: Tradition;
-      children: Tradition[];
-    }> = [];
-    let top = 64;
+    const grouped = new Map<string, Tradition[]>(
+      REGION_ORDER.map((region) => [region, [] as Tradition[]]),
+    );
+    for (const tradition of visibleTraditions) {
+      grouped.get(regionForTradition(tradition))?.push(tradition);
+    }
 
-    for (const definition of LINEAGE_GROUPS) {
-      const root = byName.get(definition.root);
-      const children = definition.children
-        .map((name) => byName.get(name))
-        .filter((item): item is Tradition => Boolean(item))
-        .sort((a, b) => (a.startYear ?? 2026) - (b.startYear ?? 2026));
-      if (!root || children.length === 0) continue;
+    const positions = new Map<string, PositionedNode>();
+    const bands: RegionBand[] = [];
+    let top = 68;
+
+    for (const region of REGION_ORDER) {
+      const traditions = (grouped.get(region) ?? []).sort(
+        (a, b) =>
+          temporalX(a, selectedYear) - temporalX(b, selectedYear) ||
+          a.name.localeCompare(b.name, "pt-BR"),
+      );
+      if (traditions.length === 0) continue;
 
       const laneEnds: number[] = [];
-      const childPositions = children.map((tradition) => {
-        const x = Math.max(temporalX(root) + 125, temporalX(tradition));
-        let lane = laneEnds.findIndex((lastX) => x - lastX > 205);
+      for (const tradition of traditions) {
+        const x = temporalX(tradition, selectedYear);
+        let lane = laneEnds.findIndex((lastX) => x - lastX >= LABEL_SPACING);
         if (lane < 0) {
           lane = laneEnds.length;
           laneEnds.push(x);
         } else {
           laneEnds[lane] = x;
         }
-        return { tradition, x, lane };
-      });
-      const height = Math.max(112, 62 + laneEnds.length * 34);
-      const rootY = top + height / 2;
-      positions.set(root.name, {
-        tradition: root,
-        x: temporalX(root),
-        y: rootY,
-        groupId: definition.id,
-        root: true,
-      });
-      for (const child of childPositions) {
-        positions.set(child.tradition.name, {
-          tradition: child.tradition,
-          x: child.x,
-          y: top + 48 + child.lane * 34,
-          groupId: definition.id,
-          root: false,
-        });
+        positions.set(tradition.name, { tradition, x, y: 0, region, lane });
       }
-      groups.push({
-        id: definition.id,
-        title: definition.title,
-        note: definition.note,
-        sources: definition.sourceCodes,
+
+      const height = Math.max(116, 82 + laneEnds.length * LANE_GAP);
+      for (const tradition of traditions) {
+        const node = positions.get(tradition.name);
+        if (node) node.y = top + 58 + node.lane * LANE_GAP;
+      }
+      bands.push({
+        name: region,
         top,
         height,
-        root,
-        children,
+        laneCount: laneEnds.length,
+        traditions,
       });
-      top += height + 24;
+      top += height + 22;
     }
-    return { groups, positions, height: Math.max(MIN_HEIGHT, top + 36) };
-  }, [byName]);
 
-  const linkedNames = useMemo(() => new Set(layout.positions.keys()), [layout.positions]);
-  const contextualGroups = useMemo(() => {
-    const grouped = new Map<string, Tradition[]>();
-    for (const tradition of visibleTraditions) {
-      if (linkedNames.has(tradition.name)) continue;
-      const family = broadFamily(tradition.family);
-      const region = tradition.isGlobal ? "Global/diáspora" : tradition.region.split("/")[0];
-      const key = `${family} · ${region}`;
-      grouped.set(key, [...(grouped.get(key) ?? []), tradition]);
-    }
-    return [...grouped.entries()]
-      .map(([key, traditions]) => ({ key, traditions }))
-      .sort((a, b) => b.traditions.length - a.traditions.length || a.key.localeCompare(b.key));
-  }, [linkedNames, visibleTraditions]);
-  const selectedContext = contextualGroups.find((group) => group.key === contextKey);
+    return { positions, bands, height: Math.max(VIEW_HEIGHT, top + 36) };
+  }, [selectedYear, visibleTraditions]);
+
+  const visibleRelations = useMemo(
+    () =>
+      DISPLAY_RELATIONS.filter(
+        (relation) => layout.positions.has(relation.from) && layout.positions.has(relation.to),
+      ),
+    [layout.positions],
+  );
   const { scale, zoomBy, panBy, resetZoom } = useSvgZoom(svgRef, viewportRef, {
-    width: WIDTH,
-    height: MIN_HEIGHT,
+    width: VIEW_WIDTH,
+    height: VIEW_HEIGHT,
+    contentWidth: CONTENT_WIDTH,
     contentHeight: layout.height,
-    minScale: 0.65,
-    maxScale: 5,
+    minScale: 0.08,
+    maxScale: 6,
+    initialScale: 0.55,
+    initialX: 18,
+    initialY: 18,
   });
+  const nodeVisualScale =
+    scale < 1 ? Math.min(3.4, 1 / Math.sqrt(Math.max(scale, 0.08))) : semanticZoomScale(scale);
 
   function handleKey(event: KeyboardEvent) {
     if (event.key === "+" || event.key === "=") zoomBy(1.3);
@@ -134,6 +183,7 @@ export function LineageTree() {
     else if (event.key === "ArrowRight") panBy(-54, 0);
     else if (event.key === "ArrowUp") panBy(0, 54);
     else if (event.key === "ArrowDown") panBy(0, -54);
+    else if (event.key === "Escape") setSelectedRelation(undefined);
     else return;
     event.preventDefault();
   }
@@ -142,12 +192,13 @@ export function LineageTree() {
     <section className="lineage-view instrument-panel" aria-labelledby="lineage-title">
       <div className="instrument-heading lineage-heading">
         <div>
-          <p className="eyebrow">GENEALOGIA DOCUMENTAL E BOSQUE CONTEXTUAL</p>
+          <p className="eyebrow">GENEALOGIA TEMPORAL · TODAS AS TRADIÇÕES VISÍVEIS</p>
           <h2 id="lineage-title">Árvore das tradições</h2>
         </div>
         <p>
-          Linhas sólidas indicam continuidade documentada; pontilhadas, influência parcial; linhas
-          azuladas ligam somente categorias do catálogo. Proximidade não cria parentesco.
+          O tempo avança da esquerda para a direita. Faixas regionais organizam proximidade visual,
+          sem criar parentesco. Arestas existem somente quando registradas como relação documentada
+          ou hipótese/debate. Arraste para percorrer todos os ramos.
         </p>
       </div>
 
@@ -172,177 +223,159 @@ export function LineageTree() {
 
         <svg
           ref={svgRef}
-          viewBox={`0 0 ${WIDTH} ${MIN_HEIGHT}`}
+          viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
           role="img"
-          aria-label={`Árvore temporal com ${layout.positions.size} tradições ligadas e ${contextualGroups.length} agrupamentos sem parentesco demonstrado`}
+          aria-label={`Árvore linear com ${layout.positions.size} tradições e ${visibleRelations.length} relações explícitas`}
         >
           <g ref={viewportRef} className="lineage-viewport">
-            <defs>
-              <linearGradient id="lineage-trunk" x1="0" x2="1">
-                <stop offset="0" stopColor="#d59a4a" stopOpacity=".12" />
-                <stop offset="1" stopColor="#57c8d4" stopOpacity=".04" />
-              </linearGradient>
-            </defs>
-            <rect className="lineage-background" width={WIDTH} height={layout.height} />
-            {layout.groups.map((group) => (
-              <g key={group.id}>
-                <rect
-                  className="lineage-band"
-                  x="18"
-                  y={group.top}
-                  width={WIDTH - 36}
-                  height={group.height}
+            <rect className="lineage-background" width={CONTENT_WIDTH} height={layout.height} />
+
+            <g className="lineage-time-grid">
+              {data.chronology.map((period) => {
+                const x = 180 + yearToPosition(period.startYear) * 2.25;
+                return (
+                  <g key={period.id} transform={`translate(${x} 0)`}>
+                    <line y1="36" y2={layout.height} />
+                    <text y="26">{period.name.split("/")[0]}</text>
+                  </g>
+                );
+              })}
+            </g>
+
+            {layout.bands.map((band) => (
+              <g key={band.name} className="lineage-region-band">
+                <rect x="24" y={band.top} width={CONTENT_WIDTH - 48} height={band.height} />
+                <line
+                  className="lineage-region-branch"
+                  x1="150"
+                  x2={CONTENT_WIDTH - 42}
+                  y1={band.top + 43}
+                  y2={band.top + 43}
                 />
-                <text className="lineage-group-title" x="34" y={group.top + 23}>
-                  {group.title}
+                <text className="lineage-region-title" x="42" y={band.top + 27}>
+                  {band.name}
                 </text>
-                <text className="lineage-group-source" x={WIDTH - 34} y={group.top + 23}>
-                  {group.sources.join(" · ")}
+                <text className="lineage-region-count" x={CONTENT_WIDTH - 48} y={band.top + 27}>
+                  {band.traditions.length} tradições · {band.laneCount} linhas de leitura
                 </text>
-                {group.children.map((child) => {
-                  const source = layout.positions.get(group.root.name);
-                  const target = layout.positions.get(child.name);
-                  if (!source || !target) return null;
-                  if (
-                    LINEAGE_RELATIONS.some(
-                      (relation) => relation.from === group.root.name && relation.to === child.name,
-                    )
-                  ) {
-                    return null;
-                  }
-                  const mid = Math.max(source.x + 62, (source.x + target.x) / 2);
-                  return (
-                    <path
-                      key={`${group.root.id}-${child.id}`}
-                      className="lineage-edge lineage-catalog"
-                      d={`M${source.x},${source.y} C${mid},${source.y} ${mid},${target.y} ${target.x},${target.y}`}
-                    >
-                      <title>
-                        Agrupamento catalogal — {group.note} Fontes: {group.sources.join(", ")}
-                      </title>
-                    </path>
-                  );
-                })}
               </g>
             ))}
 
-            {LINEAGE_RELATIONS.map((relation) => {
-              const source = layout.positions.get(relation.from);
-              const target = layout.positions.get(relation.to);
-              if (!source || !target) return null;
-              const mid = (source.x + target.x) / 2;
-              return (
-                <path
-                  key={`${relation.from}-${relation.to}`}
-                  className={`lineage-edge lineage-${relation.kind}`}
-                  d={`M${source.x},${source.y} C${mid},${source.y} ${mid},${target.y} ${target.x},${target.y}`}
+            <g className="lineage-relations">
+              {visibleRelations.map((relation) => {
+                const source = layout.positions.get(relation.from);
+                const target = layout.positions.get(relation.to);
+                if (!source || !target) return null;
+                const direction = target.x >= source.x ? 1 : -1;
+                const curve = Math.max(50, Math.abs(target.x - source.x) * 0.42);
+                const selected = selectedRelation?.id === relation.id;
+                return (
+                  <path
+                    key={relation.id}
+                    className={`lineage-edge lineage-${relation.kind} ${
+                      selected ? "selected" : ""
+                    }`}
+                    d={`M${source.x},${source.y} C${source.x + curve * direction},${source.y} ${
+                      target.x - curve * direction
+                    },${target.y} ${target.x},${target.y}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${relation.kind === "documented" ? "Relação documentada" : "Hipótese ou debate"}: ${relation.from} para ${relation.to}`}
+                    onClick={() =>
+                      setSelectedRelation((current) =>
+                        current?.id === relation.id ? undefined : relation,
+                      )
+                    }
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedRelation((current) =>
+                          current?.id === relation.id ? undefined : relation,
+                        );
+                      }
+                    }}
+                  >
+                    <title>
+                      {relation.kind === "documented"
+                        ? "Relação documentada"
+                        : "Hipótese ou debate"}
+                      : {relation.note}
+                    </title>
+                  </path>
+                );
+              })}
+            </g>
+
+            <g className="lineage-nodes">
+              {[...layout.positions.values()].map(({ tradition, x, y, region }) => (
+                <g
+                  key={tradition.id}
+                  className="lineage-node"
+                  transform={`translate(${x} ${y}) scale(${nodeVisualScale})`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${tradition.name}, ${tradition.periodLabel}, faixa ${region}`}
+                  onClick={() => setSelectedTraditionId(tradition.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedTraditionId(tradition.id);
+                    }
+                  }}
                 >
+                  <circle r="5" />
+                  <text x="10" y="3">
+                    {tradition.name}
+                  </text>
                   <title>
-                    {relation.kind === "documented" ? "Continuidade documentada" : "Influência"}:{" "}
-                    {relation.note} Fontes: {relation.sourceCodes.join(", ")}
+                    {tradition.name} · {tradition.periodLabel} · {tradition.region}
                   </title>
-                </path>
-              );
-            })}
-
-            {[...layout.positions.values()].map(({ tradition, x, y, root }) => (
-              <g
-                key={tradition.id}
-                className={`lineage-node ${root ? "lineage-root" : ""}`}
-                transform={`translate(${x} ${y}) scale(${semanticZoomScale(scale)})`}
-                role="button"
-                tabIndex={0}
-                aria-label={`${tradition.name}, ${tradition.periodLabel}`}
-                onClick={() => setSelectedTraditionId(tradition.id)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setSelectedTraditionId(tradition.id);
-                  }
-                }}
-              >
-                <circle r={root ? 8 : 5} />
-                <text
-                  x={x > WIDTH - 260 ? -12 : 12}
-                  y="4"
-                  textAnchor={x > WIDTH - 260 ? "end" : "start"}
-                >
-                  {tradition.name}
-                </text>
-                <title>
-                  {tradition.name} · {tradition.periodLabel} · {tradition.region}
-                </title>
-              </g>
-            ))}
+                </g>
+              ))}
+            </g>
           </g>
         </svg>
+
+        <div className="lineage-axis-readout" aria-hidden="true">
+          <GitBranch />
+          <span>mais antigo</span>
+          <i />
+          <strong>{formatYear(selectedYear)}</strong>
+        </div>
+
+        {selectedRelation && (
+          <aside className="lineage-relation-inspector" aria-label="Relação histórica selecionada">
+            <button
+              type="button"
+              className="map-inspector-close"
+              onClick={() => setSelectedRelation(undefined)}
+              aria-label="Fechar relação histórica"
+            >
+              <X aria-hidden="true" />
+            </button>
+            <p className="eyebrow">
+              {selectedRelation.kind === "documented" ? "RELAÇÃO DOCUMENTADA" : "HIPÓTESE / DEBATE"}
+            </p>
+            <h3>
+              {selectedRelation.from} <span>→</span> {selectedRelation.to}
+            </h3>
+            <p>{selectedRelation.note}</p>
+            <small>Fontes do catálogo: {selectedRelation.sourceCodes.join(" · ")}</small>
+            {selectedRelation.sourceUrls?.map((url) => (
+              <a key={url} href={url} target="_blank" rel="noreferrer">
+                Consultar referência acadêmica
+              </a>
+            ))}
+          </aside>
+        )}
       </div>
 
       <div className="lineage-key" role="group" aria-label="Legenda da árvore">
-        <span className="key-documented">Continuidade documentada</span>
-        <span className="key-influence">Influência parcial</span>
-        <span className="key-catalog">Ramo catalogal</span>
-        <strong>Ausência de linha = sem parentesco demonstrado nos dados</strong>
+        <span className="key-documented">Relação documentada</span>
+        <span className="key-hypothesis">Hipótese, reconstrução ou debate</span>
+        <span className="key-region">Faixa regional de proximidade</span>
+        <strong>Ausência de aresta = sem parentesco demonstrado nos dados</strong>
       </div>
-
-      <section className="context-grove" aria-labelledby="context-grove-title">
-        <div>
-          <p className="eyebrow">BOSQUE CONTEXTUAL · {selectedYear}</p>
-          <h3 id="context-grove-title">Tradições sem vínculo histórico explícito</h3>
-          <p>
-            Agrupadas apenas por família e contexto regional para reduzir colisões. Os cartões não
-            representam descendência.
-          </p>
-        </div>
-        <div className="context-grove-grid">
-          {contextualGroups.map((group) => (
-            <button
-              type="button"
-              key={group.key}
-              onClick={() => setContextKey(contextKey === group.key ? undefined : group.key)}
-            >
-              <Trees aria-hidden="true" />
-              <span>{group.key}</span>
-              <b>{group.traditions.length}</b>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {selectedContext && (
-        <aside className="context-grove-inspector" aria-label={selectedContext.key}>
-          <button
-            type="button"
-            className="map-inspector-close"
-            onClick={() => setContextKey(undefined)}
-            aria-label="Fechar bosque contextual"
-          >
-            <X aria-hidden="true" />
-          </button>
-          <p className="eyebrow">SEM PARENTESCO DEMONSTRADO</p>
-          <h3>{selectedContext.key}</h3>
-          <div>
-            {selectedContext.traditions.map((tradition) => (
-              <button
-                type="button"
-                key={tradition.id}
-                onClick={() => setSelectedTraditionId(tradition.id)}
-              >
-                <GitBranch aria-hidden="true" />
-                <span>
-                  <strong>{tradition.name}</strong>
-                  <small>
-                    {tradition.periodLabel} · {tradition.region}
-                  </small>
-                </span>
-              </button>
-            ))}
-          </div>
-          <button type="button" className="context-clear" onClick={clearSelection}>
-            Limpar seleção
-          </button>
-        </aside>
-      )}
     </section>
   );
 }
