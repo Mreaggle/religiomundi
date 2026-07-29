@@ -1,5 +1,6 @@
 import {
   CalendarRange,
+  Compass,
   ExternalLink,
   GitCompareArrows,
   MapPin,
@@ -70,11 +71,30 @@ export function TraditionDossier() {
       <dl className="metadata-grid">
         <div>
           <dt>
-            <MapPin size={13} /> Região
+            <MapPin size={13} /> Origem / formação
           </dt>
           <dd>
             {tradition.region}
-            <small>Localização aproximada segundo a região informada no catálogo.</small>
+            <small>
+              Âncora regional ampla; não representa um ponto arqueológico ou fronteira precisa.
+            </small>
+          </dd>
+        </div>
+        <div>
+          <dt>
+            <Orbit size={13} /> Alcance registrado
+          </dt>
+          <dd>
+            {tradition.distributionLabel}
+            <small>
+              {tradition.geographicReach === "global"
+                ? "Presença global; a origem histórica continua indicada separadamente."
+                : tradition.geographicReach === "diasporic"
+                  ? "Presença diaspórica; não substitui a região de formação."
+                  : tradition.geographicReach === "multi-regional"
+                    ? "Formação ou presença catalogada em mais de uma região."
+                    : "Distribuição regional catalogada."}
+            </small>
           </dd>
         </div>
         <div>
@@ -106,6 +126,19 @@ export function TraditionDossier() {
                 ? `Perfil de família: ${tradition.individualizedCells} de 44 células individualizadas.`
                 : `${tradition.individualizedCells} de 44 células individualizadas.`}{" "}
               Cobertura documental não representa validade religiosa.
+            </small>
+          </dd>
+        </div>
+        <div>
+          <dt>
+            <Compass size={13} /> Base geográfica
+          </dt>
+          <dd>
+            {tradition.originBasis === "editorial-broad-region"
+              ? "Região formativa ampla, normalizada editorialmente"
+              : "Região derivada diretamente do catálogo"}
+            <small>
+              A classificação evita transformar expansão mundial em um local de origem fictício.
             </small>
           </dd>
         </div>

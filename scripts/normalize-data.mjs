@@ -53,6 +53,12 @@ const REGION_ANCHORS = [
   ["europa ocidental", 50, 3],
   ["europa oriental", 51, 29],
   ["europa setentrional", 60, 16],
+  ["europa central", 50, 12],
+  ["alemanha", 51, 10],
+  ["suíça", 47, 8],
+  ["países baixos", 52, 5],
+  ["frança", 46, 2],
+  ["bálcãs", 43, 21],
   ["europa", 51, 10],
   ["sápmi", 68, 20],
   ["sibéria", 60, 90],
@@ -63,6 +69,7 @@ const REGION_ANCHORS = [
   ["índia", 22, 78],
   ["nepal", 28, 84],
   ["paquistão", 30, 70],
+  ["afeganistão", 34, 66],
   ["sul da ásia", 22, 78],
   ["himalaia", 30, 85],
   ["tibete", 31, 88],
@@ -116,6 +123,78 @@ const REGION_ANCHORS = [
   ["melanésia", -8, 160],
   ["oceania", -12, 160],
 ];
+
+const ORIGIN_OVERRIDE_GROUPS = [
+  [["T318"], "Levante/Mesopotâmia"],
+  [["T319", "T320", "T321"], "Europa"],
+  [["T322", "T323"], "Estados Unidos"],
+  [["T330"], "Levante/Mediterrâneo"],
+  [["T331"], "Mediterrâneo/Europa"],
+  [["T332"], "Mediterrâneo/Europa Oriental"],
+  [["T333"], "Levante/África"],
+  [["T334"], "Mesopotâmia"],
+  [["T335"], "Grã-Bretanha"],
+  [["T336"], "Alemanha"],
+  [["T337"], "Suíça/Europa Ocidental"],
+  [["T338"], "Países Baixos/Grã-Bretanha"],
+  [["T339"], "Grã-Bretanha"],
+  [["T340", "T341", "T342"], "Estados Unidos"],
+  [["T343"], "Grã-Bretanha"],
+  [["T344"], "Europa Central"],
+  [["T351"], "Estados Unidos"],
+  [["T352"], "Estados Unidos/Grã-Bretanha"],
+  [["T353"], "Filipinas"],
+  [["T354"], "Estados Unidos"],
+  [["T356"], "Península Arábica"],
+  [["T357"], "Iraque"],
+  [["T358"], "Península Arábica"],
+  [["T359"], "Iraque/Egito"],
+  [["T360"], "Iraque"],
+  [["T366"], "Oriente Médio"],
+  [["T367"], "Iraque"],
+  [["T368"], "Ásia Central"],
+  [["T369"], "Afeganistão/Sul da Ásia"],
+  [["T370"], "Anatólia"],
+  [["T371"], "Norte da África"],
+  [["T372"], "Anatólia/Bálcãs"],
+  [["T379"], "Irã/Iraque"],
+  [["T389"], "Estados Unidos/Europa"],
+  [["T390"], "Alemanha/Suíça"],
+  [["T399"], "Grã-Bretanha"],
+  [["T400"], "Grã-Bretanha/Europa"],
+  [["T401"], "Estados Unidos/Grã-Bretanha"],
+  [["T402", "T403"], "Estados Unidos"],
+  [["T404"], "Grã-Bretanha/Egito"],
+  [["T405"], "Europa Central"],
+  [["T406", "T407"], "Grã-Bretanha"],
+  [["T413"], "Grã-Bretanha/Europa"],
+  [["T424", "T426"], "Estados Unidos"],
+  [["T427"], "Europa/América do Norte"],
+  [["T428", "T429", "T430", "T431"], "Estados Unidos"],
+  [["T432", "T433"], "América do Norte/Europa Ocidental"],
+  [["T434", "T435"], "Estados Unidos"],
+  [["T436"], "América do Norte/Europa"],
+  [["T437", "T438"], "Europa"],
+  [["T439", "T440"], "Estados Unidos"],
+  [["T441", "T442", "T443", "T444"], "Índia"],
+  [["T445"], "Indonésia"],
+  [["T453", "T454", "T455"], "Coreia"],
+  [["T456"], "Estados Unidos"],
+  [["T457"], "França"],
+  [["T458"], "Grã-Bretanha"],
+  [["T459"], "Estados Unidos"],
+  [["T460"], "Taiwan"],
+  [["T461"], "Estados Unidos"],
+  [["T467"], "Europa"],
+  [["T468"], "Europa/América do Norte"],
+  [["T469"], "França"],
+  [["T470"], "Estados Unidos"],
+  [["T471"], "Europa/América do Norte"],
+];
+
+const ORIGIN_OVERRIDES = new Map(
+  ORIGIN_OVERRIDE_GROUPS.flatMap(([ids, region]) => ids.map((id) => [id, region])),
+);
 
 function text(value) {
   return value === null || value === undefined ? "" : String(value).trim();
@@ -324,11 +403,10 @@ function parseTemporal(label, status) {
 
 function approximateLocations(region) {
   const normalized = fold(region);
-  const isGlobal = normalized.includes("global") || normalized.includes("diaspora");
   const parts = normalized.split(/[/;]/).map((part) => part.trim());
   const locations = [];
   for (const part of parts) {
-    if (!part || part === "global" || part === "diaspora") continue;
+    if (!part) continue;
     const anchor = REGION_ANCHORS.find(([name]) => part.includes(fold(name)));
     if (!anchor) continue;
     const [, latitude, longitude] = anchor;
@@ -341,7 +419,7 @@ function approximateLocations(region) {
       });
     }
   }
-  if (!locations.length && !isGlobal) {
+  if (!locations.length) {
     const anchor = REGION_ANCHORS.find(([name]) => normalized.includes(fold(name)));
     if (anchor) {
       locations.push({
@@ -352,7 +430,40 @@ function approximateLocations(region) {
       });
     }
   }
-  return { location: locations[0], locations: locations.slice(0, 3), isGlobal };
+  return { location: locations[0], locations: locations.slice(0, 3) };
+}
+
+function normalizeGeography(id, distributionLabel) {
+  const normalized = fold(distributionLabel);
+  const hasGlobalReach = normalized.split(/[/;]/).some((part) => part.trim() === "global");
+  const hasDiaspora = normalized.split(/[/;]/).some((part) => part.trim() === "diaspora");
+  const catalogOrigins = text(distributionLabel)
+    .split(/[/;]/)
+    .map((part) => part.trim())
+    .filter((part) => !["global", "diáspora", "diaspora"].includes(fold(part)));
+  const override = ORIGIN_OVERRIDES.get(id);
+  const region = override || catalogOrigins.join("/");
+  if (!region) throw new Error(`${id}: alcance “${distributionLabel}” sem origem editorial`);
+
+  const locationData = approximateLocations(region);
+  if (!locationData.location) {
+    throw new Error(`${id}: origem “${region}” sem âncora cartográfica controlada`);
+  }
+  const geographicReach = hasGlobalReach
+    ? "global"
+    : hasDiaspora
+      ? "diasporic"
+      : locationData.locations.length > 1
+        ? "multi-regional"
+        : "regional";
+  return {
+    region,
+    distributionLabel: text(distributionLabel),
+    geographicReach,
+    originBasis: override ? "editorial-broad-region" : "catalog-region",
+    ...locationData,
+    isGlobal: hasGlobalReach,
+  };
 }
 
 function correlationType(value) {
@@ -444,12 +555,13 @@ const traditions = catalogRows.map((catalog) => {
   );
   const periodLabel = text(catalog["Período / atestação"]);
   const status = text(catalog.Status);
-  const region = text(catalog.Região);
+  const distributionLabel = text(catalog.Região);
+  const geography = normalizeGeography(id, distributionLabel);
   return {
     id,
     name: text(catalog["Tradição / cosmovisão"]),
     family: text(catalog.Família),
-    region,
+    region: geography.region,
     periodLabel,
     type: text(catalog.Tipo),
     status,
@@ -467,7 +579,7 @@ const traditions = catalogRows.map((catalog) => {
       absent: Number(catalog["—"] ?? 0),
     },
     ...parseTemporal(periodLabel, status),
-    ...approximateLocations(region),
+    ...geography,
     correlations,
   };
 });
@@ -544,7 +656,7 @@ const output = {
     correlationCount,
     sourceCount: sources.length,
     locationMethod:
-      "Coordenadas regionais aproximadas para navegação; não representam sítios arqueológicos precisos.",
+      "A origem regional é separada do alcance global/diaspórico. Coordenadas são âncoras amplas de navegação, não sítios precisos.",
   },
   methodology: nonEmptyLines(sheet["LEIA-ME"]),
   chronology,
@@ -565,6 +677,8 @@ console.log(
     correlations: correlationCount,
     sources: sources.length,
     located: traditions.filter((tradition) => tradition.location).length,
-    globalOrDiaspora: traditions.filter((tradition) => tradition.isGlobal).length,
+    transregionalOrDiasporic: traditions.filter(
+      (tradition) => tradition.geographicReach !== "regional",
+    ).length,
   }),
 );

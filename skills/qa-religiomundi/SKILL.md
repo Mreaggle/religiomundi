@@ -37,6 +37,9 @@ reproduzível e impedir que correções locais quebrem outras visualizações, �
 - CHARTS contém rankings de religiões, tradições, famílias ou arquétipos — nunca rankings de países.
   Métricas internas respondem ao recorte; demografia externa exibe instituição, ano de publicação,
   ano estimado e ressalva de agregação. “Sem filiação” nunca recebe status de religião.
+- Origem/formação e alcance são campos distintos. Nenhuma tradição pode usar `Global`, `diáspora`
+  ou “indeterminada” como origem do mapa/ÁRVORE; as 471 precisam de âncora regional ampla. Validar
+  separadamente `region`, `distributionLabel`, `geographicReach` e overrides editoriais por ID.
 - A camada política usa o último snapshot não posterior ao ano observado; nunca interpola
   fronteiras nem apresenta o mapa de uma época futura como se fosse contemporâneo ao recorte.
 - Apenas o snapshot político solicitado e, em ociosidade, seus dois vizinhos podem ser baixados. A

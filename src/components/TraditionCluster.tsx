@@ -43,7 +43,7 @@ export function TraditionCluster({
         <title>
           {cluster.label} · {cluster.traditions.length} tradições · cobertura predominante:{" "}
           {cluster.coverage}. Período predominante: {cluster.predominantPeriod}. {summary ?? ""}
-          Localização aproximada segundo a região informada no catálogo.
+          Origem/formação aproximada; alcance global ou diaspórico é registrado separadamente.
         </title>
         <circle className="cluster-pulse" r={radius + 8} />
         <circle className="cluster-core" r={radius} />

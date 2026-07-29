@@ -56,6 +56,13 @@ for (const tradition of data.traditions) {
     tradition.startYear !== -3200 || tradition.periodLabel.includes("3.200"),
     `${tradition.name}: início -3200 parece fallback de “Antiguidade”`,
   );
+  assert(Boolean(tradition.region), `${tradition.name}: origem regional vazia`);
+  assert(tradition.region !== "Global", `${tradition.name}: alcance global usado como origem`);
+  assert(Boolean(tradition.location), `${tradition.name}: origem sem âncora cartográfica`);
+  assert(
+    ["regional", "multi-regional", "diasporic", "global"].includes(tradition.geographicReach),
+    `${tradition.name}: alcance geográfico inválido`,
+  );
 }
 
 for (const peers of signatures.values()) {

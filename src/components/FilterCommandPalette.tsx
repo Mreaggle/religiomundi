@@ -148,7 +148,7 @@ export function FilterCommandPalette({ onClose }: { onClose: () => void }) {
             options={options.families}
           />
           <FilterSelect
-            label="Região"
+            label="Origem regional"
             value={filters.region}
             onChange={(value) => set("region", value)}
             options={options.regions}

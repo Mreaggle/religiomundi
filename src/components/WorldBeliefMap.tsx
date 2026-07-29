@@ -540,8 +540,9 @@ export function WorldBeliefMap() {
                 ))}
             </div>
             <p className="map-location-note">
-              Localização aproximada segundo a região informada no catálogo. Agrupamento visual não
-              implica parentesco histórico.
+              A posição representa origem/formação regional aproximada. Alcance global ou diaspórico
+              não transforma uma tradição em religião “sem região”. Agrupamento visual não implica
+              parentesco histórico.
             </p>
           </aside>
         )}

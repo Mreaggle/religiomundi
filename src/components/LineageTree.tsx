@@ -21,7 +21,6 @@ const REGION_ORDER = [
   "Europa",
   "Américas",
   "Oceania",
-  "Global, diáspora ou região indeterminada",
 ] as const;
 
 interface PositionedNode {
@@ -54,9 +53,10 @@ function stableNumber(value: string): number {
 }
 
 function regionForTradition(tradition: Tradition): (typeof REGION_ORDER)[number] {
-  if (tradition.isGlobal) return "Global, diáspora ou região indeterminada";
   const location = tradition.locations[0] ?? tradition.location;
-  if (!location) return "Global, diáspora ou região indeterminada";
+  if (!location) {
+    throw new Error(`${tradition.id}: origem regional sem coordenada de interface`);
+  }
   const { latitude, longitude } = location;
   if (longitude < -25) return "Américas";
   if (longitude >= 110 && latitude < -10) return "Oceania";

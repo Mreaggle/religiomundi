@@ -46,6 +46,11 @@ labeled dataset with institution, publication year, estimate year, aggregation c
 machine-tested total. Never present unaffiliated people as a religion or compare Pew’s seven broad
 groups as though they had the catalog’s 471-row granularity.
 
+Geography separates `region` (origin/formation anchor) from `distributionLabel` and
+`geographicReach` (regional, multi-regional, diasporic, or global presence). Never use “Global”,
+“diaspora,” or an “unknown region” as a map/tree origin. Every tradition must resolve to a broad,
+explicitly approximate regional anchor; editorial overrides must remain auditable by stable ID.
+
 Historical polygons use the latest snapshot not after the selected year; never interpolate borders.
 Keep `BORDERPRECISION` visible through line style, preserve upstream names, and state that polygons
 may represent polities, cultures, influence, or approximate control rather than modern sovereignty.
@@ -61,6 +66,7 @@ family profiles presented as individual facts, console errors, flicker, and hori
 Ambiguous dates remain approximate or unknown. The ÁRVORE must contain exactly the
 visible-tradition count and draws sourced lineage/influence only. CHARTS must retain seven ordered
 Pew groups totaling 100%, keep “sem filiação” nonreligious, and avoid country rankings.
+All traditions must have a non-global origin region and a cartographic anchor.
 For map changes, verify present-day Brazil, Mongol Empire at 1200, Babylonia at 1500 BCE, no
 political coverage before the earliest snapshot, snapshot request count, and data-license notices.
 
