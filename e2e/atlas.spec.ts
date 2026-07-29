@@ -266,6 +266,17 @@ test("mapa político acompanha a timeline sem carregar o arquivo histórico inte
   await expect(page.locator('[data-polity-name="Mongol Empire"]')).toBeVisible();
   await expect(page.locator(".political-map-status")).toContainText("1200");
 
+  await page.locator("#temporal-range").fill("727");
+  await expect(page.locator(".political-map-status")).toContainText("1650");
+  const algiers = page.locator('[data-polity-name="Algiers"]');
+  await expect(algiers).toHaveCount(1);
+  const algiersBounds = await algiers.evaluate((node) => {
+    const bounds = (node as SVGGraphicsElement).getBBox();
+    return { width: bounds.width, height: bounds.height };
+  });
+  expect(algiersBounds.width).toBeLessThan(100);
+  expect(algiersBounds.height).toBeLessThan(100);
+
   await page.locator("#temporal-range").fill("299");
   await expect(page.locator('[data-polity-name="Babylonia"]')).toBeVisible();
   await expect(page.locator(".political-map-status")).toContainText("1.500 a.C.");

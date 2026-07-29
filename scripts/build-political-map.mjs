@@ -70,8 +70,8 @@ const investigativeSources = [
   },
 ];
 
-function roundCoordinate(value) {
-  const factor = 10 ** COORDINATE_PRECISION;
+function roundCoordinate(value, precision = COORDINATE_PRECISION) {
+  const factor = 10 ** precision;
   return Math.round(value * factor) / factor;
 }
 
@@ -172,11 +172,11 @@ function simplifyGeometry(geometry) {
   return undefined;
 }
 
-function roundGeometry(geometry) {
+function roundGeometry(geometry, precision = COORDINATE_PRECISION) {
   if (!geometry || !["Polygon", "MultiPolygon"].includes(geometry.type)) return undefined;
   const roundCoordinates = (value) =>
     typeof value[0] === "number"
-      ? [roundCoordinate(value[0]), roundCoordinate(value[1])]
+      ? [roundCoordinate(value[0], precision), roundCoordinate(value[1], precision)]
       : value.map(roundCoordinates);
   return { type: geometry.type, coordinates: roundCoordinates(geometry.coordinates) };
 }
@@ -200,11 +200,21 @@ function normalizeFeature(sourceFeature, snapshotYear, index, contemporary = fal
     properties: {},
     geometry: simplifiedGeometry,
   });
-  const geometry =
-    simplifiedArea > Math.max(Math.PI, originalArea * 4 + 0.01)
-      ? roundGeometry(sourceFeature.geometry)
-      : simplifiedGeometry;
+  const distortionLimit = Math.max(Math.PI, originalArea * 4 + 0.01);
+  let geometry = simplifiedGeometry;
+  if (simplifiedArea > distortionLimit) {
+    const roundedGeometry = roundGeometry(sourceFeature.geometry);
+    const roundedArea = roundedGeometry
+      ? geoArea({ type: "Feature", properties: {}, geometry: roundedGeometry })
+      : Number.POSITIVE_INFINITY;
+    geometry =
+      roundedArea > distortionLimit ? roundGeometry(sourceFeature.geometry, 5) : roundedGeometry;
+  }
   if (!geometry) return undefined;
+  const outputArea = geoArea({ type: "Feature", properties: {}, geometry });
+  if (originalArea < Math.PI && outputArea > distortionLimit) {
+    return undefined;
+  }
   const subject = String(properties.SUBJECTO ?? "").trim() || name;
   const partOf = String(properties.PARTOF ?? "").trim();
   const polityType = String(properties.type ?? "").trim() || (contemporary ? "country" : "polity");
