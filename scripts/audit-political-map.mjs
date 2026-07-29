@@ -1,6 +1,7 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { geoArea, geoBounds } from "d3";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DATA_DIR = path.join(ROOT, "public", "data", "polities");
@@ -53,6 +54,21 @@ for (const entry of index.snapshots) {
     assert(
       ["Polygon", "MultiPolygon"].includes(feature.geometry?.type),
       `${entry.file}: geometria inválida em ${feature.properties.name}`,
+    );
+    const sphericalArea = geoArea(feature);
+    const bounds = geoBounds(feature);
+    assert(
+      sphericalArea < Math.PI,
+      `${entry.file}: ${feature.properties.name} ocupa mais de um hemisfério (${sphericalArea})`,
+    );
+    assert(
+      !(
+        bounds[0][0] === -180 &&
+        bounds[0][1] === -90 &&
+        bounds[1][0] === 180 &&
+        bounds[1][1] === 90
+      ),
+      `${entry.file}: ${feature.properties.name} foi interpretada como o globo inteiro`,
     );
   }
 }
