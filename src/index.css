@@ -3650,22 +3650,6 @@ svg [tabindex] {
 }
 
 /* Sources */
-.source-downloads {
-  margin-right: 150px;
-}
-
-.source-downloads a,
-.about-actions a {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 9px;
-  border: 1px solid rgba(87, 200, 212, 0.25);
-  color: var(--cyan);
-  font: 0.54rem var(--mono);
-  text-decoration: none;
-}
-
 .source-intro {
   max-width: 820px;
   margin: 14px 20px;
@@ -5202,10 +5186,6 @@ svg [tabindex] {
 
   .source-library {
     grid-template-columns: 1fr;
-  }
-
-  .source-downloads {
-    display: none;
   }
 
   .revelation-controls {

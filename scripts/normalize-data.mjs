@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import readXlsxFile from "read-excel-file/node";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const WORKBOOK_PATH = path.join(ROOT, "public", "data", "UNO_reformulado.xlsx");
+const WORKBOOK_PATH = path.join(ROOT, "data", "UNO_reformulado.xlsx");
 const OUTPUT_PATH = path.join(ROOT, "public", "data", "atlas.generated.json");
 const CURRENT_YEAR = 2026;
 

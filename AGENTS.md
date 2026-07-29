@@ -4,7 +4,7 @@
 
 `src/components/` contains React/D3 instruments; `src/state/` owns global atlas state; `src/utils/`
 contains pure temporal, filtering, clustering, collision, and analysis rules. Browser scenarios live
-in `e2e/`. `public/data/UNO_reformulado.xlsx` is canonical; `scripts/normalize-data.mjs` generates
+in `e2e/`. `data/UNO_reformulado.xlsx` is canonical; `scripts/normalize-data.mjs` generates
 runtime JSON and `scripts/audit-data.mjs` guards historical/data regressions. Treat source scripts,
 the workbook, CSV, and generated JSON as one data change. Specialized review procedures live in
 `skills/`, including mandatory pre-publication Q.A. in `skills/qa-religiomundi/`.

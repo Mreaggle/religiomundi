@@ -1,6 +1,5 @@
-import { FileDown, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useAtlas } from "../state/AtlasProvider";
-import { assetUrl } from "../utils/assets";
 import { formatCount } from "../utils/text";
 import { ModalShell } from "./ModalShell";
 
@@ -102,17 +101,11 @@ export function AboutProject({ onClose }: { onClose: () => void }) {
         <div>
           <h3>Integridade dos dados</h3>
           <p>
-            A aplicação é gerada de <code>{data.metadata.workbook}</code>. Textos das células,
-            símbolos, diacríticos e ressalvas são preservados.
+            Os dados publicados passam por validações de estrutura e consistência. Textos das
+            células, símbolos, diacríticos e ressalvas são preservados.
           </p>
-          <small>SHA-256 · {data.metadata.workbookSha256}</small>
         </div>
       </section>
-      <div className="about-actions">
-        <a href={assetUrl("data/UNO_reformulado.xlsx")} download>
-          <FileDown size={15} /> Baixar planilha canônica
-        </a>
-      </div>
     </ModalShell>
   );
 }
