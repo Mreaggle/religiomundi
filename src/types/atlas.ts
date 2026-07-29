@@ -29,6 +29,9 @@ export interface Tradition {
   name: string;
   family: string;
   region: string;
+  distributionLabel: string;
+  geographicReach: "regional" | "multi-regional" | "diasporic" | "global";
+  originBasis: "catalog-region" | "editorial-broad-region";
   periodLabel: string;
   type: string;
   status: string;

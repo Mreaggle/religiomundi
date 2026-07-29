@@ -127,7 +127,7 @@ export function PatternRevelation() {
                   <dl>
                     <div>
                       <dt>
-                        <MapPinned size={12} /> Região
+                        <MapPinned size={12} /> Origem / formação
                       </dt>
                       <dd>{tradition.region}</dd>
                     </div>

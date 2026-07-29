@@ -63,4 +63,16 @@ describe("integração da planilha canônica", () => {
     );
     expect(byName.get("Igreja Católica")?.correlations.A34.originalText).toContain("Santa Cecília");
   });
+
+  it("separa origem regional de alcance global ou diaspórico", () => {
+    expect(data.traditions.every((tradition) => tradition.region !== "Global")).toBe(true);
+    expect(data.traditions.every((tradition) => Boolean(tradition.location))).toBe(true);
+    const catholic = data.traditions.find((tradition) => tradition.name === "Igreja Católica");
+    expect(catholic?.region).toBe("Mediterrâneo/Europa");
+    expect(catholic?.distributionLabel).toBe("Global");
+    expect(catholic?.geographicReach).toBe("global");
+    const yoruba = data.traditions.find((tradition) => tradition.name === "Religião Yorùbá e Ifá");
+    expect(yoruba?.region).toBe("Nigéria/Benim");
+    expect(yoruba?.geographicReach).toBe("diasporic");
+  });
 });

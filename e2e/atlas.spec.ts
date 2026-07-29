@@ -88,6 +88,22 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
 });
 
+test("origem regional permanece separada do alcance global ou diaspórico", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
+  await page.getByLabel("Busca global").fill("Igreja Católica");
+  await page
+    .locator(".command-results > button")
+    .filter({ hasText: "Igreja Católica" })
+    .first()
+    .click();
+  await expect(page.getByText("Origem / formação")).toBeVisible();
+  await expect(page.locator(".metadata-grid")).toContainText("Mediterrâneo/Europa");
+  await expect(page.getByText("Alcance registrado")).toBeVisible();
+  await expect(page.locator(".metadata-grid")).toContainText("Global");
+  await expect(page.getByText("Global, diáspora ou região indeterminada")).toHaveCount(0);
+});
+
 test("metadados de descoberta descrevem o atlas e seus índices públicos", async ({
   page,
   request,

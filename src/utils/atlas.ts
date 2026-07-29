@@ -39,6 +39,7 @@ export function traditionSearchText(tradition: Tradition, archetypes: Archetype[
       tradition.name,
       tradition.family,
       tradition.region,
+      tradition.distributionLabel,
       tradition.periodLabel,
       tradition.type,
       tradition.status,
@@ -106,25 +107,22 @@ function dominant(values: string[]): string {
 export function clusterTraditions(traditions: Tradition[]): TraditionCluster[] {
   const grouped = new Map<string, Tradition[]>();
   for (const tradition of traditions) {
-    const key =
-      tradition.isGlobal && !tradition.location
-        ? "global"
-        : tradition.location
-          ? `${Math.round(tradition.location.latitude / 5) * 5}:${
-              Math.round(tradition.location.longitude / 5) * 5
-            }`
-          : `unlocated:${tradition.region}`;
+    const key = tradition.location
+      ? `${Math.round(tradition.location.latitude / 5) * 5}:${
+          Math.round(tradition.location.longitude / 5) * 5
+        }`
+      : `unlocated:${tradition.region}`;
     const group = grouped.get(key) ?? [];
     group.push(tradition);
     grouped.set(key, group);
   }
   return [...grouped.entries()].map(([key, items]) => ({
     key,
-    label: key === "global" ? "Global / diásporas" : dominant(items.map((item) => item.region)),
+    label: dominant(items.map((item) => item.region)),
     traditions: items,
     latitude: items.find((item) => item.location)?.location?.latitude,
     longitude: items.find((item) => item.location)?.location?.longitude,
-    isGlobal: key === "global",
+    isGlobal: false,
     coverage: dominant(items.map((item) => item.coverage)),
     predominantPeriod: dominant(items.map((item) => item.macroPeriodId)),
   }));

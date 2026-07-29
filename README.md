@@ -83,6 +83,14 @@ status de cada célula:
 Datas ambíguas continuam aproximadas. Coordenadas representam regiões modernas de interface, não
 precisão arqueológica. O catálogo é amplo, mas não exaustivo.
 
+### Origem não é alcance
+
+O atlas separa a região ampla de **origem/formação** da distribuição posterior. “Global” e
+“diáspora” descrevem alcance: nunca funcionam como uma localização substituta. Cada uma das 471
+tradições possui uma âncora regional aproximada; tradições hoje mundiais continuam ligadas ao seu
+contexto formativo, enquanto o alcance permanece visível no dossiê. Em formações policêntricas, o
+rótulo conserva mais de uma região e não inventa um ponto de nascimento único.
+
 ### Cartografia política temporal
 
 O fundo do mapa acompanha a timeline com **54 snapshots**, de 123.000 a.C. ao presente. A aplicação
