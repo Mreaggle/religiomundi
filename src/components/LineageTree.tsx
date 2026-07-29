@@ -97,17 +97,38 @@ function buildRelations(): DisplayRelation[] {
 
 const DISPLAY_RELATIONS = buildRelations();
 
+const RELATION_LABELS = {
+  documented: "Relação documentada",
+  syncretism: "Sincretismo / incorporação documentada",
+  hypothesis: "Hipótese, reconstrução ou debate",
+} as const;
+
 export function LineageTree() {
-  const { data, visibleTraditions, selectedYear, setSelectedTraditionId } = useAtlas();
+  const { data, filteredTraditions, selectedYear, temporalMode, setSelectedTraditionId } =
+    useAtlas();
   const [selectedRelation, setSelectedRelation] = useState<DisplayRelation>();
   const svgRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<SVGGElement>(null);
+  const screenWidth = typeof window === "undefined" ? VIEW_WIDTH : window.innerWidth;
+  const canvasWidth = screenWidth < 700 ? 600 : screenWidth < 1000 ? 900 : VIEW_WIDTH;
+  const initialScale = screenWidth < 700 ? 1.6 : screenWidth < 1000 ? 1.1 : 0.68;
+  const initialX = screenWidth < 700 ? -140 : screenWidth < 1000 ? -70 : 18;
+
+  const treeTraditions = useMemo(
+    () =>
+      filteredTraditions.filter((tradition) => {
+        if (temporalMode === "catalog") return true;
+        if (tradition.startYear !== undefined) return tradition.startYear <= selectedYear;
+        return selectedYear >= data.metadata.currentYear;
+      }),
+    [data.metadata.currentYear, filteredTraditions, selectedYear, temporalMode],
+  );
 
   const layout = useMemo(() => {
     const grouped = new Map<string, Tradition[]>(
       REGION_ORDER.map((region) => [region, [] as Tradition[]]),
     );
-    for (const tradition of visibleTraditions) {
+    for (const tradition of treeTraditions) {
       grouped.get(regionForTradition(tradition))?.push(tradition);
     }
 
@@ -152,7 +173,7 @@ export function LineageTree() {
     }
 
     return { positions, bands, height: Math.max(VIEW_HEIGHT, top + 36) };
-  }, [selectedYear, visibleTraditions]);
+  }, [selectedYear, treeTraditions]);
 
   const visibleRelations = useMemo(
     () =>
@@ -162,14 +183,14 @@ export function LineageTree() {
     [layout.positions],
   );
   const { scale, zoomBy, panBy, resetZoom } = useSvgZoom(svgRef, viewportRef, {
-    width: VIEW_WIDTH,
+    width: canvasWidth,
     height: VIEW_HEIGHT,
     contentWidth: CONTENT_WIDTH,
     contentHeight: layout.height,
     minScale: 0.08,
     maxScale: 6,
-    initialScale: 0.55,
-    initialX: 18,
+    initialScale,
+    initialX,
     initialY: 18,
   });
   const nodeVisualScale =
@@ -192,13 +213,14 @@ export function LineageTree() {
     <section className="lineage-view instrument-panel" aria-labelledby="lineage-title">
       <div className="instrument-heading lineage-heading">
         <div>
-          <p className="eyebrow">GENEALOGIA TEMPORAL · TODAS AS TRADIÇÕES VISÍVEIS</p>
+          <p className="eyebrow">GENEALOGIA TEMPORAL · HISTÓRIA ACUMULADA ATÉ O RECORTE</p>
           <h2 id="lineage-title">Árvore das tradições</h2>
         </div>
         <p>
           O tempo avança da esquerda para a direita. Faixas regionais organizam proximidade visual,
-          sem criar parentesco. Arestas existem somente quando registradas como relação documentada
-          ou hipótese/debate. Arraste para percorrer todos os ramos.
+          sem criar parentesco. Tradições anteriores permanecem na árvore depois de seu término,
+          para que suas relações históricas continuem examináveis. Tracejados distinguem sincretismo
+          documentado de hipótese/debate. Arraste para percorrer todos os ramos.
         </p>
       </div>
 
@@ -223,7 +245,7 @@ export function LineageTree() {
 
         <svg
           ref={svgRef}
-          viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+          viewBox={`0 0 ${canvasWidth} ${VIEW_HEIGHT}`}
           role="img"
           aria-label={`Árvore linear com ${layout.positions.size} tradições e ${visibleRelations.length} relações explícitas`}
         >
@@ -280,7 +302,7 @@ export function LineageTree() {
                     },${target.y} ${target.x},${target.y}`}
                     role="button"
                     tabIndex={0}
-                    aria-label={`${relation.kind === "documented" ? "Relação documentada" : "Hipótese ou debate"}: ${relation.from} para ${relation.to}`}
+                    aria-label={`${RELATION_LABELS[relation.kind]}: ${relation.from} para ${relation.to}`}
                     onClick={() =>
                       setSelectedRelation((current) =>
                         current?.id === relation.id ? undefined : relation,
@@ -296,10 +318,7 @@ export function LineageTree() {
                     }}
                   >
                     <title>
-                      {relation.kind === "documented"
-                        ? "Relação documentada"
-                        : "Hipótese ou debate"}
-                      : {relation.note}
+                      {RELATION_LABELS[relation.kind]}: {relation.note}
                     </title>
                   </path>
                 );
@@ -353,9 +372,7 @@ export function LineageTree() {
             >
               <X aria-hidden="true" />
             </button>
-            <p className="eyebrow">
-              {selectedRelation.kind === "documented" ? "RELAÇÃO DOCUMENTADA" : "HIPÓTESE / DEBATE"}
-            </p>
+            <p className="eyebrow">{RELATION_LABELS[selectedRelation.kind].toUpperCase()}</p>
             <h3>
               {selectedRelation.from} <span>→</span> {selectedRelation.to}
             </h3>
@@ -372,9 +389,10 @@ export function LineageTree() {
 
       <div className="lineage-key" role="group" aria-label="Legenda da árvore">
         <span className="key-documented">Relação documentada</span>
+        <span className="key-syncretism">Sincretismo / incorporação documentada</span>
         <span className="key-hypothesis">Hipótese, reconstrução ou debate</span>
         <span className="key-region">Faixa regional de proximidade</span>
-        <strong>Ausência de aresta = sem parentesco demonstrado nos dados</strong>
+        <strong>Proximidade sem fonte não gera aresta</strong>
       </div>
     </section>
   );

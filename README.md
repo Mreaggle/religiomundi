@@ -50,7 +50,7 @@ O projeto permite investigar perguntas como:
 | --- | --- |
 | **Constelação** | 44 arquétipos fixos ligados às tradições do recorte temporal |
 | **Mapa** | 54 recortes políticos temporais, distribuição religiosa, clustering e zoom |
-| **Árvore** | todas as tradições do recorte em ramos regionais; vínculos documentados e hipóteses diferenciados |
+| **Árvore** | história acumulada até o recorte em ramos regionais; vínculos documentados, sincretismos e hipóteses diferenciados |
 | **Charts** | rankings de religiões, famílias e arquétipos, além da demografia religiosa mundial |
 | **Matriz** | heatmap virtualizado das 20.724 células comparativas |
 | **Assinaturas** | impressões funcionais de 44 segmentos para comparação |

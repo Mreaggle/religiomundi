@@ -1995,7 +1995,7 @@ svg [tabindex] {
 .lineage-node text {
   fill: var(--ivory);
   font:
-    600 10px "Inter",
+    600 12px "Inter",
     sans-serif;
   paint-order: stroke;
   stroke: #060908;
@@ -2111,6 +2111,13 @@ svg [tabindex] {
   stroke-opacity: 0.72;
 }
 
+.lineage-syncretism {
+  stroke: #5fc8c8;
+  stroke-dasharray: 11 4 2 4;
+  stroke-opacity: 0.84;
+  filter: drop-shadow(0 0 3px rgba(95, 200, 200, 0.3));
+}
+
 .lineage-edge:hover,
 .lineage-edge:focus-visible,
 .lineage-edge.selected {
@@ -2193,6 +2200,18 @@ svg [tabindex] {
 .lineage-key .key-hypothesis::before {
   border-color: #bc86a5;
   border-top-style: dashed;
+}
+
+.lineage-key .key-syncretism::before {
+  height: 2px;
+  border: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    #5fc8c8 0 10px,
+    transparent 10px 14px,
+    #5fc8c8 14px 16px,
+    transparent 16px 20px
+  );
 }
 
 .lineage-key .key-region::before {

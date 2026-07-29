@@ -31,9 +31,12 @@ reproduzível e impedir que correções locais quebrem outras visualizações, �
 - `Revelar padrões` não pode montar um dossiê concorrente.
 - Em celular deitado, a timeline inicia recolhida e continua expansível e recolhível.
 - Nenhuma visualização pode introduzir rolagem horizontal da página, flicker ou erro de console.
-- A ÁRVORE renderiza todas as tradições visíveis. Faixas regionais organizam proximidade sem
-  parentesco; aresta sólida exige vínculo histórico documentado e tracejada exige hipótese/debate
-  com referência acadêmica externa. Todo endpoint deve existir no catálogo.
+- A ÁRVORE acumula todas as tradições surgidas/atestadas até o ano observado, inclusive antecessoras
+  já encerradas. Faixas regionais organizam proximidade sem parentesco; aresta sólida exige vínculo
+  histórico documentado, tracejado longo-curto exige sincretismo/incorporação documentada e tracejado
+  regular exige hipótese/debate. As duas classes tracejadas exigem referência acadêmica externa.
+  Todo endpoint deve existir no catálogo, a origem deve anteceder o destino e proximidade geográfica
+  sem fonte nunca pode produzir aresta.
 - CHARTS contém rankings de religiões, tradições, famílias ou arquétipos — nunca rankings de países.
   Métricas internas respondem ao recorte; demografia externa exibe instituição, ano de publicação,
   ano estimado e ressalva de agregação. “Sem filiação” nunca recebe status de religião.
@@ -54,8 +57,8 @@ reproduzível e impedir que correções locais quebrem outras visualizações, �
 ## Matriz mínima
 
 Validar em 1440×1000, 393×851 e 844×390. Exercitar Constelação, Mapa, Árvore, Charts, Matriz, busca,
-timeline, dossiês, Revelar Padrões e Aeons. Na ÁRVORE, comparar a contagem de nós ao recorte, navegar
-verticalmente pelos oito ramos e inspecionar ambos os traços. Em CHARTS, verificar soma de 100%,
+timeline, dossiês, Revelar Padrões e Aeons. Na ÁRVORE, verificar a acumulação histórica até o recorte,
+navegar verticalmente pelos ramos e inspecionar os três traços. Em CHARTS, verificar soma de 100%,
 ordenação, rótulo não religioso e fonte Pew. Em mudanças de SEO, verificar título, descrição, canonical,
 Open Graph, JSON-LD, `robots.txt`, `sitemap.xml` e URL de produção.
 

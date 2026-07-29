@@ -29,4 +29,28 @@ describe("relações da árvore", () => {
       expect(relation.note.length).toBeGreaterThan(30);
     }
   });
+
+  it("separa sincretismos documentados e exige referência externa", () => {
+    const syncretisms = LINEAGE_RELATIONS.filter((relation) => relation.kind === "syncretism");
+    expect(syncretisms.length).toBeGreaterThanOrEqual(8);
+    for (const relation of syncretisms) {
+      expect(relation.sourceUrls?.length, `${relation.from} → ${relation.to}`).toBeGreaterThan(0);
+      expect(relation.note.length).toBeGreaterThan(60);
+    }
+  });
+
+  it("não duplica pares nem inverte a anterioridade catalogada", () => {
+    const seen = new Set<string>();
+    const traditions = new Map(data.traditions.map((tradition) => [tradition.name, tradition]));
+    for (const relation of LINEAGE_RELATIONS) {
+      const key = `${relation.from}→${relation.to}`;
+      expect(seen.has(key), key).toBe(false);
+      seen.add(key);
+      const source = traditions.get(relation.from);
+      const target = traditions.get(relation.to);
+      if (source?.startYear !== undefined && target?.startYear !== undefined) {
+        expect(source.startYear, key).toBeLessThanOrEqual(target.startYear);
+      }
+    }
+  });
 });

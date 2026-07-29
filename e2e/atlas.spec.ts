@@ -54,12 +54,10 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   ).toBeVisible();
   await page.getByRole("button", { name: "Árvore", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Árvore das tradições" })).toBeVisible();
-  const visibleCount = Number(
-    (await page.locator(".workspace-readout b").textContent())?.split("/")[0] ?? 0,
-  );
-  await expect(page.locator(".lineage-node")).toHaveCount(visibleCount);
+  expect(await page.locator(".lineage-node").count()).toBeGreaterThan(400);
   expect(await page.locator(".lineage-documented").count()).toBeGreaterThan(0);
   expect(await page.locator(".lineage-hypothesis").count()).toBeGreaterThan(0);
+  expect(await page.locator(".lineage-syncretism").count()).toBeGreaterThan(0);
   await page.getByRole("button", { name: "Charts", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "CHARTS — Anatomia comparada do sagrado" }),
@@ -86,6 +84,31 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await page.getByRole("button", { name: "Ativar interpretação autoral" }).click();
   await expect(page.getByLabel("Interpretação autoral e esotérica")).toBeVisible();
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
+});
+
+test("árvore antiga acumula antecessores e separa três classes de evidência", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  await page.locator("#temporal-range").fill("459");
+  await expect(page.locator("#temporal-range")).toHaveAttribute("aria-valuetext", /7 a\.C\./);
+  await page.getByRole("button", { name: "Árvore", exact: true }).click();
+
+  await expect(page.locator(".lineage-node")).toHaveCount(56);
+  expect(await page.locator(".lineage-documented").count()).toBeGreaterThanOrEqual(3);
+  expect(await page.locator(".lineage-syncretism").count()).toBeGreaterThanOrEqual(8);
+  expect(await page.locator(".lineage-hypothesis").count()).toBeGreaterThanOrEqual(4);
+
+  if (!testInfo.project.name.includes("mobile")) {
+    await page.locator(".lineage-syncretism").first().click();
+    await expect(page.locator(".lineage-relation-inspector")).toContainText(
+      "SINCRETISMO / INCORPORAÇÃO DOCUMENTADA",
+    );
+    await expect(page.locator(".lineage-relation-inspector a").first()).toHaveAttribute(
+      "href",
+      /^https:\/\/(www\.)?(cambridge|metmuseum|britishmuseum|oracc)/,
+    );
+  }
 });
 
 test("origem regional permanece separada do alcance global ou diaspórico", async ({ page }) => {
