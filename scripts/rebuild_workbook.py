@@ -3611,7 +3611,7 @@ MAPPING_REVISIONS = {
         "A34": "● Liturgia siríaca oriental",
         "A38": "● Escritura e tradição apostólica; cristologia da Igreja do Oriente",
         "A41": "● Salvação em Cristo",
-        "A42": "? Referência provisória: Segunda vinda, juízo, ressurreição e nova criação",
+        "A42": "Referência provisória: Segunda vinda, juízo, ressurreição e nova criação",
         "A43": "● Qurbana e sacramentos",
     },
     "Anglicanismo": {
