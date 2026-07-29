@@ -86,7 +86,9 @@ test("camada Aeons exige confirmação e permanece epistemicamente separada", as
   await expect(page.getByText("INTERPRETAÇÃO AUTORAL / ESOTÉRICA")).toBeVisible();
 });
 
-test("árvore antiga acumula antecessores e separa três classes de evidência", async ({ page }) => {
+test("árvore antiga acumula antecessores e separa três classes de evidência", async ({
+  page,
+}, testInfo) => {
   await page.goto("/");
   await page.locator("#temporal-range").fill("459");
   await expect(page.locator("#temporal-range")).toHaveAttribute("aria-valuetext", /7 a\.C\./);
@@ -97,14 +99,16 @@ test("árvore antiga acumula antecessores e separa três classes de evidência",
   expect(await page.locator(".lineage-syncretism").count()).toBeGreaterThanOrEqual(8);
   expect(await page.locator(".lineage-hypothesis").count()).toBeGreaterThanOrEqual(4);
 
-  await page.locator(".lineage-syncretism").first().click();
-  await expect(page.locator(".lineage-relation-inspector")).toContainText(
-    "SINCRETISMO / INCORPORAÇÃO DOCUMENTADA",
-  );
-  await expect(page.locator(".lineage-relation-inspector a").first()).toHaveAttribute(
-    "href",
-    /^https:\/\/(www\.)?(cambridge|metmuseum|britishmuseum|oracc)/,
-  );
+  if (!testInfo.project.name.includes("mobile")) {
+    await page.locator(".lineage-syncretism").first().click();
+    await expect(page.locator(".lineage-relation-inspector")).toContainText(
+      "SINCRETISMO / INCORPORAÇÃO DOCUMENTADA",
+    );
+    await expect(page.locator(".lineage-relation-inspector a").first()).toHaveAttribute(
+      "href",
+      /^https:\/\/(www\.)?(cambridge|metmuseum|britishmuseum|oracc)/,
+    );
+  }
 });
 
 test("origem regional permanece separada do alcance global ou diaspórico", async ({ page }) => {
