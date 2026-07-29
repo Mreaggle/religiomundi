@@ -18,6 +18,7 @@ Compare funções sem apagar identidades. Recorrência classificatória não dem
 5. Preserve tradições locais, indígenas, africanas e fragmentárias sem extrapolar corpus escasso.
 6. Marque disputa acadêmica, atestação aproximada e limites da periodização.
 7. Separe semelhança funcional de continuidade histórica documentada.
+8. Compare assinaturas completas para detectar fichas copiadas e audite datas-sentinela de movimentos modernos.
 
 ## Linguagem
 
@@ -26,3 +27,7 @@ Nomeie todas as entidades, tradições e regiões envolvidas. Prefira “neste c
 ## Entrega
 
 Forneça análise rastreável à planilha, indique o tipo de evidência e proponha correções conservadoras. Não invente lacunas nem converta hipóteses em fatos.
+
+## Referências investigativas
+
+Use recursivamente [Wikimedia Commons — Religion](https://commons.wikimedia.org/wiki/Category:Religion), [Wikipedia — List of religions and spiritual traditions](https://en.wikipedia.org/wiki/List_of_religions_and_spiritual_traditions) e [Open Mind Project — All Faiths](https://www.openmindproject.com/all-faiths-religions-2) para descobrir lacunas. São taxonomias/checklists, não fontes suficientes: confirme cada candidato em corpus acadêmico, institucional ou primário adequado antes de incluí-lo.

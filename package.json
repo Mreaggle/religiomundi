@@ -8,6 +8,7 @@
   },
   "scripts": {
     "data:build": "node scripts/normalize-data.mjs",
+    "data:audit": "node scripts/audit-data.mjs",
     "dev": "npm run data:build && vite",
     "build": "npm run data:build && tsc -b && vite build",
     "preview": "vite preview",
@@ -15,7 +16,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:watch": "vitest",
-    "check": "npm run lint && npm run test && npm run build"
+    "check": "npm run lint && npm run test && npm run build && npm run data:audit"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "5.3.0",

@@ -18,6 +18,8 @@ function tradition(id: string, direct: boolean): Tradition {
     status: "Histórica",
     coverage: "Detalhado",
     profileBase: "",
+    mappingScope: "Individualizado",
+    individualizedCells: 1,
     sourceCodes: ["A01"],
     counts: { direct: 1, partial: 0, impersonal: 0, uncertain: 0, absent: 43 },
     temporalPrecision: "approximate",

@@ -9,7 +9,7 @@ import { DrawerShell } from "./DrawerShell";
 export function ArchetypeDossier() {
   const {
     selectedArchetype: archetype,
-    setSelectedArchetypeCode,
+    clearSelection,
     visibleTraditions,
     setSelectedTraditionId,
     setRevealPatterns,
@@ -47,7 +47,7 @@ export function ArchetypeDossier() {
     <DrawerShell
       eyebrow="DOSSIÊ DO ARQUÉTIPO"
       title={`${archetype.code} — ${archetype.name}`}
-      onClose={() => setSelectedArchetypeCode(undefined)}
+      onClose={clearSelection}
     >
       <div
         className="archetype-seal"

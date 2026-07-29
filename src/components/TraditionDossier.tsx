@@ -23,6 +23,7 @@ export function TraditionDossier() {
     toggleComparison,
     setComparisonOpen,
     setViewMode,
+    clearSelection,
   } = useAtlas();
   const related = useMemo(() => {
     if (!tradition) return [];
@@ -46,14 +47,7 @@ export function TraditionDossier() {
   const inComparison = comparisonIds.includes(tradition.id);
 
   return (
-    <DrawerShell
-      eyebrow="DOSSIÊ DA TRADIÇÃO"
-      title={tradition.name}
-      onClose={() => {
-        setSelectedTraditionId(undefined);
-        setSelectedArchetypeCode(undefined);
-      }}
-    >
+    <DrawerShell eyebrow="DOSSIÊ DA TRADIÇÃO" title={tradition.name} onClose={clearSelection}>
       <div className="dossier-identity">
         <span>{tradition.id}</span>
         <span>{tradition.family}</span>
@@ -107,10 +101,25 @@ export function TraditionDossier() {
           </dt>
           <dd>
             {tradition.coverage}
-            <small>Cobertura documental não representa validade religiosa.</small>
+            <small>
+              {tradition.mappingScope === "family"
+                ? `Perfil de família: ${tradition.individualizedCells} de 44 células individualizadas.`
+                : `${tradition.individualizedCells} de 44 células individualizadas.`}{" "}
+              Cobertura documental não representa validade religiosa.
+            </small>
           </dd>
         </div>
       </dl>
+      {tradition.mappingScope === "family" && (
+        <section className="scope-note mapping-audit-note">
+          <h3>Mapeamento provisório</h3>
+          <p>
+            As células ainda herdadas do perfil de família aparecem como hipóteses, não como
+            equivalências próprias desta tradição. Somente as funções individualizadas recebem
+            classificação mais forte.
+          </p>
+        </section>
+      )}
       {tradition.scopeNote && (
         <section className="scope-note">
           <h3>Nota de escopo</h3>

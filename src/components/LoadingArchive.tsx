@@ -8,7 +8,7 @@ export function LoadingArchive({ error }: { error?: string }) {
       </div>
       <p className="eyebrow">ARQUIVO EM ABERTURA</p>
       <h1>RELIGIO MUNDI</h1>
-      <p>{error ?? "Decifrando 20.240 relações documentadas…"}</p>
+      <p>{error ?? "Decifrando as relações documentadas…"}</p>
       {error && <button onClick={() => window.location.reload()}>Tentar novamente</button>}
     </main>
   );

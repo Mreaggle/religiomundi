@@ -10,7 +10,7 @@ const OUTPUT_PATH = path.join(ROOT, "public", "data", "atlas.generated.json");
 const CURRENT_YEAR = 2026;
 
 const MACRO_PERIODS = [
-  { id: "prehistory", start: -100000, end: -3201 },
+  { id: "prehistory", start: -180000, end: -3201 },
   { id: "bronze", start: -3200, end: -1201 },
   { id: "iron", start: -1200, end: -201 },
   { id: "late-antiquity", start: -200, end: 599 },
@@ -233,9 +233,11 @@ function parseTemporal(label, status) {
       /[IVXLCDM]+(?:\s*[–-]\s*[IVXLCDM]+)?\s+mil(?:ê|e)nios?\s*(?:a\.?\s*C\.?|d\.?\s*C\.?)/gi,
       "",
     );
-  const numericMatches = [...masked.matchAll(/\d{1,3}(?:\.\d{3})*|\d{4}/g)];
+  const numericMatches = [...masked.matchAll(/\d{1,3}(?:\.\d{3})+|\d{4,6}|\d{1,3}/g)];
   const onlyBce = normalized.includes("a.c") && !normalized.includes("d.c");
   const onlyCe = normalized.includes("d.c") && !normalized.includes("a.c");
+  const onlyBeforePresent =
+    (normalized.includes("anos ap") || normalized.includes(" years bp")) && !onlyBce && !onlyCe;
 
   for (const match of numericMatches) {
     const raw = match[0];
@@ -244,11 +246,15 @@ function parseTemporal(label, status) {
     const after = fold(masked.slice(match.index + raw.length, match.index + raw.length + 24));
     const before = fold(masked.slice(Math.max(0, match.index - 18), match.index));
     let sign = 1;
-    if (after.match(/a\.?\s*c\.?/)) sign = -1;
-    else if (after.match(/d\.?\s*c\.?/)) sign = 1;
+    if (onlyBeforePresent) {
+      points.push(1950 - number);
+      continue;
+    }
+    if (after.match(/(?:^|\W)a\.?\s*c\.?(?:\W|$)/)) sign = -1;
+    else if (after.match(/(?:^|\W)d\.?\s*c\.?(?:\W|$)/)) sign = 1;
     else if (onlyBce) sign = -1;
     else if (onlyCe) sign = 1;
-    else if (before.match(/a\.?\s*c\.?/)) sign = -1;
+    else if (before.match(/(?:^|\W)a\.?\s*c\.?(?:\W|$)/)) sign = -1;
     points.push(number * sign);
   }
 
@@ -259,22 +265,21 @@ function parseTemporal(label, status) {
   const notes = [];
 
   if (startYear === undefined) {
-    if (normalized.includes("antiguidade")) {
-      startYear = -3200;
-      notes.push("Início associado apenas ao macroperíodo da Antiguidade para navegação.");
+    if (normalized.includes("antiguidade tardia")) {
+      startYear = -200;
+      notes.push("Início associado apenas ao macroperíodo da Antiguidade tardia.");
     } else if (normalized.includes("medieval")) {
       startYear = 600;
-      notes.push("Início associado apenas ao macroperíodo medieval para navegação.");
+      notes.push("Início associado apenas ao macroperíodo medieval.");
     } else {
-      startYear = macro?.start;
       notes.push(
-        "Sem data inicial convertível com segurança; associado apenas ao macroperíodo mais defensável.",
+        "Sem data inicial convertível com segurança; não foi criada uma data de surgimento.",
       );
     }
   }
   if (isStillActive) {
     endYear = CURRENT_YEAR;
-  } else if (endYear === undefined) {
+  } else if (endYear === undefined && startYear !== undefined) {
     endYear = macro?.end;
   }
 
@@ -286,7 +291,7 @@ function parseTemporal(label, status) {
         ? "exact"
         : points.length
           ? "approximate"
-          : macroPeriodId
+          : startYear !== undefined
             ? "macroperiod"
             : "unknown";
   const isApproximate =
@@ -444,6 +449,8 @@ const traditions = catalogRows.map((catalog) => {
     status,
     coverage: text(catalog.Cobertura),
     profileBase: text(catalog["Perfil-base"]),
+    mappingScope: text(catalog["Escopo do mapeamento"]) || "Individualizado",
+    individualizedCells: Number(catalog["Células individualizadas"] ?? 0),
     sourceCodes: sourceCodes(catalog.Fontes),
     scopeNote: text(catalog["Nota de escopo"]) || undefined,
     counts: {
@@ -506,16 +513,16 @@ const aeons = aeonRows.map((row) => ({
   epistemicStatus: "Interpretação autoral / esotérica",
 }));
 
-if (traditions.length !== 460)
-  throw new Error(`Esperadas 460 tradições; obtidas ${traditions.length}`);
 if (archetypes.length !== 44)
   throw new Error(`Esperados 44 arquétipos; obtidos ${archetypes.length}`);
 const correlationCount = traditions.reduce(
   (total, tradition) => total + Object.keys(tradition.correlations).length,
   0,
 );
-if (correlationCount !== 20240) {
-  throw new Error(`Esperadas 20.240 correlações; obtidas ${correlationCount}`);
+if (correlationCount !== traditions.length * archetypes.length) {
+  throw new Error(
+    `Matriz incompleta: ${correlationCount} correlações para ${traditions.length} × ${archetypes.length}`,
+  );
 }
 
 const output = {
@@ -524,7 +531,7 @@ const output = {
     subtitle: "Atlas Temporal das Religiões, Cosmovisões e Arquétipos Humanos",
     workbook: "UNO_reformulado.xlsx",
     workbookSha256: workbookHash,
-    generatedAt: "2026-07-28",
+    generatedAt: "2026-07-29",
     currentYear: CURRENT_YEAR,
     traditionCount: traditions.length,
     archetypeCount: archetypes.length,

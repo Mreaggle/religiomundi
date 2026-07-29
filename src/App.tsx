@@ -31,7 +31,13 @@ export default function App() {
   return (
     <AtlasProvider data={data}>
       <AtlasExperience />
-      {introOpen && <IntroSequence onEnter={() => setIntroOpen(false)} />}
+      {introOpen && (
+        <IntroSequence
+          traditionCount={data.metadata.traditionCount}
+          archetypeCount={data.metadata.archetypeCount}
+          onEnter={() => setIntroOpen(false)}
+        />
+      )}
     </AtlasProvider>
   );
 }

@@ -21,7 +21,7 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await expect(page.locator(".archetype-icon")).toHaveCount(44);
   await expect(page.locator('[data-archetype-code="A15"] .lucide-heart')).toBeVisible();
   await expect(page.locator('[data-archetype-code="A01"] .lucide-sprout')).toBeVisible();
-  await expect(page.getByText("460 × 44")).toHaveText("460 × 44");
+  await expect(page.getByText("471 × 44")).toHaveText("471 × 44");
 
   await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
   await page.getByLabel("Busca global").fill("Šamaš");
@@ -42,7 +42,7 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await expect(page.locator(".matrix-cell").first()).toBeVisible();
   await page.getByRole("button", { name: "Fontes", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Biblioteca de fontes" })).toBeVisible();
-  await expect(page.locator(".source-library article")).toHaveCount(32);
+  await expect(page.locator(".source-library article")).toHaveCount(44);
 
   expect(errors, `Erros de console em ${testInfo.project.name}`).toEqual([]);
 });
@@ -75,9 +75,14 @@ test("constelação oferece zoom focal sem mover seus eixos entre períodos", as
 
   await page.getByRole("button", { name: "Restaurar posição da constelação" }).click();
   await expect(page.getByLabel("Nível de zoom da constelação")).toHaveText("100%");
+
+  await page.locator('[data-archetype-code="A15"]').click();
+  await expect(page.locator(".archetype-node.focus-hidden")).toHaveCount(43);
+  await page.getByLabel("Fechar dossiê e limpar seleção").click();
+  await expect(page.locator(".archetype-node.focus-hidden")).toHaveCount(0);
 });
 
-test("mapa oferece zoom focal e acesso explícito às 460 tradições", async ({ page }, testInfo) => {
+test("mapa oferece zoom focal e acesso explícito às 471 tradições", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name.includes("mobile"), "Roda do mouse é verificada no desktop");
   await page.goto("/");
   await page.getByRole("button", { name: "Mapa", exact: true }).click();
@@ -90,9 +95,9 @@ test("mapa oferece zoom focal e acesso explícito às 460 tradições", async ({
   await expect(page.getByLabel("Nível de zoom")).not.toHaveText("100%");
   await expect.poll(() => viewport.getAttribute("transform")).not.toBe(before);
 
-  await page.getByRole("button", { name: "Catálogo · 460" }).click();
-  await expect(page.locator(".map-summary")).toContainText("460 tradições");
-  await expect(page.getByText("460 de 460 tradições")).toBeVisible();
+  await page.getByRole("button", { name: "Catálogo · 471" }).click();
+  await expect(page.locator(".map-summary")).toContainText("471 tradições");
+  await expect(page.getByText("471 de 471 tradições")).toBeVisible();
 
   await page.getByRole("button", { name: "Restaurar posição do mapa" }).click();
   const clusterNodes = page.locator(".tradition-cluster");

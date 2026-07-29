@@ -1014,6 +1014,62 @@ select:focus-visible,
   cursor: grabbing;
 }
 
+.focus-dismiss-surface {
+  fill: rgba(4, 7, 7, 0.72);
+  cursor: zoom-out;
+  pointer-events: all;
+}
+
+.archetype-node {
+  transition:
+    opacity 260ms ease,
+    filter 260ms ease;
+}
+
+.archetype-node.focus-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.focus-status {
+  position: absolute;
+  z-index: 12;
+  top: 58px;
+  left: 14px;
+  display: grid;
+  max-width: min(360px, calc(100% - 28px));
+  gap: 2px;
+  padding: 9px 12px;
+  border: 1px solid rgba(213, 154, 74, 0.52);
+  color: var(--ivory);
+  text-align: left;
+  background: rgba(8, 12, 11, 0.96);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.focus-status span {
+  color: var(--amber);
+  font: 700 0.58rem / 1.2 var(--mono);
+  letter-spacing: 0.14em;
+}
+
+.focus-status strong {
+  overflow: hidden;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.focus-status small {
+  color: var(--muted);
+  font-size: 0.63rem;
+}
+
+.map-focus-status {
+  top: 58px;
+}
+
 .map-tools:focus-within {
   border-color: var(--cyan);
 }
@@ -1872,6 +1928,17 @@ select:focus-visible,
 }
 
 /* Drawers and dossiers */
+.dossier-backdrop {
+  position: fixed;
+  z-index: 299;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(2, 4, 4, 0.56);
+  cursor: default;
+  backdrop-filter: blur(1.5px);
+}
+
 .dossier-drawer {
   position: fixed;
   top: 0;

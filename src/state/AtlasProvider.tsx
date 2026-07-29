@@ -37,6 +37,7 @@ interface AtlasContextValue {
   selectedArchetype?: Archetype;
   selectedArchetypeCode?: string;
   setSelectedArchetypeCode: Dispatch<SetStateAction<string | undefined>>;
+  clearSelection: () => void;
   comparisonIds: string[];
   toggleComparison: (id: string) => void;
   comparisonOpen: boolean;
@@ -113,6 +114,10 @@ export function AtlasProvider({ data, children }: { data: AtlasData; children: R
     selectedArchetype,
     selectedArchetypeCode,
     setSelectedArchetypeCode,
+    clearSelection: () => {
+      setSelectedTraditionId(undefined);
+      setSelectedArchetypeCode(undefined);
+    },
     comparisonIds,
     toggleComparison,
     comparisonOpen,

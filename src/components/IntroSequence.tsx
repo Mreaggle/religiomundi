@@ -1,7 +1,15 @@
 import { ArrowRight, X } from "lucide-react";
 import { useState } from "react";
 
-export function IntroSequence({ onEnter }: { onEnter: () => void }) {
+export function IntroSequence({
+  onEnter,
+  traditionCount,
+  archetypeCount,
+}: {
+  onEnter: () => void;
+  traditionCount: number;
+  archetypeCount: number;
+}) {
   const [neverAgain, setNeverAgain] = useState(false);
 
   function close() {
@@ -30,13 +38,14 @@ export function IntroSequence({ onEnter }: { onEnter: () => void }) {
         </p>
         <div className="intro-numbers" role="group" aria-label="Dimensões do acervo">
           <span>
-            <strong>460</strong> tradições
+            <strong>{traditionCount}</strong> tradições
           </span>
           <span>
-            <strong>44</strong> funções comparativas
+            <strong>{archetypeCount}</strong> funções comparativas
           </span>
           <span>
-            <strong>20.240</strong> relações examináveis
+            <strong>{(traditionCount * archetypeCount).toLocaleString("pt-BR")}</strong> relações
+            examináveis
           </span>
         </div>
         <p className="intro-invitation">

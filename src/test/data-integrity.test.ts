@@ -9,15 +9,17 @@ const data = JSON.parse(
 
 describe("integração da planilha canônica", () => {
   it("mantém as dimensões declaradas", () => {
-    expect(data.traditions).toHaveLength(460);
+    expect(data.traditions.length).toBeGreaterThanOrEqual(470);
     expect(data.archetypes).toHaveLength(44);
-    expect(data.sources).toHaveLength(32);
+    expect(data.sources.length).toBeGreaterThanOrEqual(44);
+    expect(data.metadata.traditionCount).toBe(data.traditions.length);
+    expect(data.metadata.archetypeCount).toBe(data.archetypes.length);
     expect(
       data.traditions.reduce(
         (total, tradition) => total + Object.keys(tradition.correlations).length,
         0,
       ),
-    ).toBe(20240);
+    ).toBe(data.traditions.length * data.archetypes.length);
   });
 
   it("mantém todos os símbolos de correlação classificáveis", () => {
@@ -38,5 +40,25 @@ describe("integração da planilha canônica", () => {
   it("preserva a camada autoral separada", () => {
     expect(data.aeons.length).toBeGreaterThan(0);
     expect(data.aeons.every((item) => item.epistemicStatus.includes("autoral"))).toBe(true);
+  });
+
+  it("não replica fichas integrais entre tradições distintas", () => {
+    const signatures = data.traditions.map((tradition) =>
+      JSON.stringify(
+        data.archetypes.map((archetype) => tradition.correlations[archetype.code].originalText),
+      ),
+    );
+    expect(new Set(signatures).size).toBe(signatures.length);
+  });
+
+  it("preserva datas modernas e patronatos católicos auditados", () => {
+    const byName = new Map(data.traditions.map((tradition) => [tradition.name, tradition]));
+    expect(byName.get("Hermetic Order of the Golden Dawn")?.startYear).toBe(1888);
+    expect(byName.get("Romuva")?.startYear).toBe(1967);
+    expect(byName.get("Rodnovery")?.startYear).toBe(1980);
+    expect(byName.get("Igreja Católica")?.correlations.A23.originalText).toContain(
+      "São Camilo de Lellis",
+    );
+    expect(byName.get("Igreja Católica")?.correlations.A34.originalText).toContain("Santa Cecília");
   });
 });

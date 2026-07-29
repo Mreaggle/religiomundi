@@ -18,6 +18,7 @@ Entregue um instrumento científico interativo, estável e responsivo. Faça a i
 5. Renderize conexões selecionadas, agregadas ou visíveis; virtualize a matriz.
 6. Implemente teclado, foco, leitores de tela e movimento reduzido junto com a interação.
 7. Teste build, lint, unidade e fluxos críticos antes de publicar.
+8. Ao selecionar tradição ou arquétipo, isole apenas nós relacionados; clique/tap fora e `Escape` devem limpar o foco.
 
 ## Restrições
 
@@ -26,7 +27,9 @@ Entregue um instrumento científico interativo, estável e responsivo. Faça a i
 - Evite animações que desmontem e remontem a cena; prefira transições de opacidade e geometria estável.
 - Evite dependências e backend sem benefício verificável.
 - Preserve o texto original da célula nos tooltips e dossiês.
+- Não codifique contagens do catálogo na interface; use `data.metadata`.
+- Previna colisões por clustering, limite de rótulos, zoom e painéis listáveis.
 
 ## Critério de conclusão
 
-Confirme pesquisa das 460 tradições, 44 nós fixos, escala temporal, filtros combinados, dossiês, comparação, matriz virtualizada, fontes e Aeons isolados. Não entregue com erros de console ou regressões de teclado.
+Confirme pesquisa integral do catálogo, 44 nós fixos, escala temporal, filtros combinados, foco reversível, dossiês, comparação, matriz virtualizada, fontes e Aeons isolados. Rode `npm run check` e o Playwright antes de publicar.

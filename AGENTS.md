@@ -2,35 +2,43 @@
 
 ## Project Structure & Module Organization
 
-This repository is centered on `UNO.xlsx`, an Excel workbook containing the primary `uno` matrix plus the supporting `Planilha11` timeline and `Planilha1` correspondence table. Keep the workbook at the repository root unless a future migration is documented. `UNO.xlsx:Zone.Identifier` is Windows download metadata; do not treat it as project data or edit it.
-
-When adding documentation or automation, place prose in `docs/` and reusable validation scripts in `scripts/`. Avoid committing temporary lock files such as `~$UNO.xlsx`, exported PDFs, or duplicate workbook copies.
+`src/` contains the React/TypeScript application: reusable instruments live in
+`src/components/`, global state in `src/state/`, and deterministic parsing/filtering helpers in
+`src/utils/`. Browser flows are in `e2e/`. `scripts/rebuild_workbook.py` generates the canonical
+`public/data/UNO_reformulado.xlsx` and structured `data/UNO_reformulado.csv`;
+`scripts/normalize-data.mjs` produces the runtime JSON. Treat generated data and source scripts as
+one change. Role-specific review checklists are under `skills/`.
 
 ## Build, Test, and Development Commands
 
-There is no compilation step or package-managed development environment. Edit `UNO.xlsx` with Microsoft Excel, LibreOffice Calc, or another OOXML-compatible application.
+- `npm install` installs frontend dependencies.
+- `npm run dev` starts Vite locally.
+- `npm run data:build` converts the workbook into normalized JSON.
+- `npm run data:audit` checks dimensions, IDs, signatures, sources, and temporal sentinels.
+- `npm test` runs Vitest unit and data-integrity tests.
+- `npm run test:e2e` runs Playwright desktop/mobile flows.
+- `npm run check` runs lint, tests, build, and the data audit before publication.
 
-- `unzip -t UNO.xlsx` checks that the workbook remains a valid ZIP/OOXML container.
-- `git diff --stat` reviews the scope of tracked changes after Git is initialized.
-- `git status --short` identifies unintended exports or editor-generated files.
+Python workbook generation requires `openpyxl`; install dependencies with
+`python -m pip install -r requirements.txt`.
 
-Always open and save the workbook once in a spreadsheet application after automated processing.
+## Coding Style & Naming Conventions
 
-## Data Style & Naming Conventions
+Use two-space indentation in TypeScript and descriptive PascalCase component names such as
+`TraditionDossier.tsx`; hooks use `useCamelCase`. Keep transformations pure and counters derived
+from data rather than hard-coded. ESLint and Prettier-compatible formatting are enforced by
+`npm run lint`. Preserve Portuguese accents, diacritics, original cell text, and the five
+epistemic symbols (`●`, `≈`, `◇`, `?`, `—`).
 
-Preserve existing Portuguese terminology, accents, sheet names, merged cells, formatting, and chronological ordering. Keep category labels in column A and historical or cultural entries in the corresponding period columns. Use concise, factual cell text and consistent date notation, such as `10.000 a.C.`. Do not rename sheets or reorder columns without documenting downstream impacts.
+## Testing & Data Integrity
 
-## Testing Guidelines
+Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Any data edit must reject duplicate full
+profiles, unexplained `-3200` fallbacks, invalid source codes, and family profiles presented as
+individual facts. Ambiguous dates remain unknown or approximate. Selecting a tradition/archetype
+must isolate related elements; clicking outside restores the scene without overlap regressions.
 
-No automated test suite or coverage target currently exists. For every workbook change:
+## Commits & Pull Requests
 
-1. Run `unzip -t UNO.xlsx`.
-2. Open all three sheets and check for repair warnings, clipped text, broken merges, or unexpected style changes.
-3. Spot-check edited rows against their source material and verify dates, names, and accents.
-
-For large edits, compare a before-and-after export or screenshot of the affected range.
-
-## Commit & Pull Request Guidelines
-
-No Git history is available, so use short imperative commits, for example `Correct Era Axial dates`. Keep workbook edits focused and avoid bundling unrelated formatting changes. Pull requests should describe the affected sheets and ranges, explain the source or rationale, list manual checks performed, and include screenshots when layout or formatting changes.
-
+Use short imperative commits, for example `Audit temporal mappings`. PRs should explain the root
+cause, changed data sources, UI impact, and checks executed. Include screenshots for visual changes
+and never commit secrets, temporary workbooks, or build artifacts outside the publication workflow.
