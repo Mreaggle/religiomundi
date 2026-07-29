@@ -1,6 +1,6 @@
 # RELIGIO MUNDI
 
-Atlas temporal interativo de 471 religiões, cosmovisões, tradições e registros arqueológicos, correlacionados a 44 funções comparativas. A experiência combina uma constelação arquetípica fixa, cartografia regional, escala temporal híbrida, matriz virtualizada, dossiês e comparação lado a lado.
+Atlas temporal interativo de 471 religiões, cosmovisões, tradições e registros arqueológicos, correlacionados a 44 funções comparativas. A experiência combina uma constelação arquetípica fixa, cartografia regional, árvore historiográfica, escala temporal híbrida, matriz virtualizada, dossiês e comparação lado a lado.
 
 > Os nomes mudam. As funções reaparecem. As diferenças continuam importando.
 
@@ -11,6 +11,8 @@ Atlas temporal interativo de 471 religiões, cosmovisões, tradições e registr
 Coordenadas são aproximações regionais de interface, nunca localizações arqueológicas precisas. Datas ambíguas permanecem marcadas como aproximadas, por século, macroperíodo ou desconhecidas.
 
 Na constelação e no mapa, use a roda do mouse ou gesto de pinça para aproximar no ponto focal e arraste para navegar. Os marcadores são agrupamentos: o número indica quantas tradições estão reunidas ali. `Catálogo · 471` ignora temporariamente o recorte cronológico para tornar todo o acervo pesquisável. Uma seleção isola somente seus elementos relacionados; clique fora do dossiê para restaurar a cena.
+
+A guia `Árvore` mostra apenas derivações ou influências sustentadas pelas fontes do catálogo. Tradições sem vínculo demonstrável ficam no bosque contextual, agrupadas sem linha genealógica; proximidade geográfica ou classificatória não é tratada como descendência.
 
 ## Desenvolvimento
 

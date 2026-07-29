@@ -9,6 +9,7 @@ import { EpistemicLegend } from "./components/EpistemicLegend";
 import { FilterCommandPalette } from "./components/FilterCommandPalette";
 import { HeaderNav } from "./components/HeaderNav";
 import { IntroSequence } from "./components/IntroSequence";
+import { LineageTree } from "./components/LineageTree";
 import { LoadingArchive } from "./components/LoadingArchive";
 import { PatternRevelation } from "./components/PatternRevelation";
 import { PeriodMirror } from "./components/PeriodMirror";
@@ -88,6 +89,7 @@ function AtlasExperience() {
               </div>
               {viewMode === "constellation" && <ArchetypeConstellation />}
               {viewMode === "map" && <WorldBeliefMap />}
+              {viewMode === "tree" && <LineageTree />}
               {viewMode === "matrix" && <VirtualMatrix />}
               {viewMode === "signatures" && <SignatureGallery />}
               {viewMode === "sources" && <SourceLibrary />}

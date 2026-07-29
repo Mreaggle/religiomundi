@@ -1379,6 +1379,18 @@ select:focus-visible,
   stroke: #080b0a;
   stroke-width: 2px;
   pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.tradition-cluster.label-collapsed .cluster-label {
+  opacity: 0;
+}
+
+.tradition-cluster.label-collapsed:hover .cluster-label,
+.tradition-cluster.label-collapsed:focus .cluster-label,
+.tradition-cluster.label-collapsed:focus-visible .cluster-label,
+.tradition-cluster.label-collapsed.active .cluster-label {
+  opacity: 1;
 }
 
 .expanded-tradition {
@@ -1548,25 +1560,29 @@ select:focus-visible,
 }
 
 .fiber-direct {
-  stroke: rgba(213, 154, 74, 0.58);
+  stroke: var(--fiber-color);
+  stroke-opacity: 0.7;
   stroke-width: 1.15;
-  filter: drop-shadow(0 0 2px rgba(213, 154, 74, 0.4));
+  filter: drop-shadow(0 0 2px var(--fiber-color));
 }
 
 .fiber-partial {
-  stroke: rgba(201, 173, 120, 0.33);
+  stroke: var(--fiber-color);
+  stroke-opacity: 0.42;
   stroke-width: 0.8;
   stroke-dasharray: 5 4;
 }
 
 .fiber-impersonal {
-  stroke: rgba(87, 200, 212, 0.47);
+  stroke: var(--fiber-color);
+  stroke-opacity: 0.52;
   stroke-width: 0.85;
   stroke-dasharray: 1 4;
 }
 
 .fiber-uncertain {
-  stroke: rgba(143, 61, 55, 0.43);
+  stroke: var(--fiber-color);
+  stroke-opacity: 0.35;
   stroke-width: 0.75;
   stroke-dasharray: 2 7;
 }
@@ -1574,11 +1590,310 @@ select:focus-visible,
 .correlation-fiber:hover,
 .correlation-fiber:focus {
   opacity: 1;
+  stroke-opacity: 1;
   stroke-width: 2.1;
 }
 
 .absence-mark {
   fill: rgba(113, 128, 145, 0.28);
+}
+
+/* Lineage tree */
+.lineage-view {
+  position: relative;
+  min-height: 760px;
+}
+
+.lineage-heading {
+  align-items: start;
+}
+
+.lineage-stage {
+  position: relative;
+  height: 660px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(rgba(87, 200, 212, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(87, 200, 212, 0.022) 1px, transparent 1px), #070b0a;
+  background-size: 30px 30px;
+}
+
+.lineage-stage > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.lineage-stage > svg:active,
+.lineage-stage > svg.is-interacting {
+  cursor: grabbing;
+}
+
+.lineage-tools {
+  top: 14px;
+  z-index: 8;
+}
+
+.lineage-background {
+  fill: #070b0a;
+}
+
+.lineage-band {
+  fill: url("#lineage-trunk");
+  stroke: rgba(185, 154, 98, 0.12);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.lineage-group-title,
+.lineage-group-source {
+  fill: #bca77b;
+  font: 700 10px var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.lineage-group-source {
+  fill: var(--muted);
+  font-size: 8px;
+  text-anchor: end;
+}
+
+.lineage-edge {
+  fill: none;
+  stroke-width: 1.35;
+  vector-effect: non-scaling-stroke;
+  pointer-events: stroke;
+}
+
+.lineage-documented {
+  stroke: var(--amber);
+  filter: drop-shadow(0 0 3px rgba(213, 154, 74, 0.42));
+}
+
+.lineage-influence {
+  stroke: #c9ad78;
+  stroke-dasharray: 7 5;
+  stroke-opacity: 0.72;
+}
+
+.lineage-catalog {
+  stroke: var(--cyan);
+  stroke-dasharray: 2 6;
+  stroke-opacity: 0.32;
+}
+
+.lineage-node {
+  cursor: pointer;
+}
+
+.lineage-node circle {
+  fill: #0b1514;
+  stroke: var(--cyan);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.lineage-node text {
+  fill: var(--ivory);
+  font:
+    600 10px "Inter",
+    sans-serif;
+  paint-order: stroke;
+  stroke: #060908;
+  stroke-width: 3px;
+  pointer-events: none;
+}
+
+.lineage-node:hover circle,
+.lineage-node:focus-visible circle {
+  fill: rgba(87, 200, 212, 0.18);
+  filter: drop-shadow(0 0 5px var(--cyan));
+}
+
+.lineage-root circle {
+  stroke: var(--amber);
+}
+
+.lineage-root text {
+  fill: #e0bd7f;
+  font-weight: 700;
+}
+
+.lineage-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font: 0.66rem var(--mono);
+}
+
+.lineage-key span::before {
+  display: inline-block;
+  width: 28px;
+  margin-right: 7px;
+  border-top: 2px solid;
+  content: "";
+  vertical-align: middle;
+}
+
+.lineage-key .key-documented::before {
+  border-color: var(--amber);
+}
+
+.lineage-key .key-influence::before {
+  border-color: #c9ad78;
+  border-top-style: dashed;
+}
+
+.lineage-key .key-catalog::before {
+  border-color: var(--cyan);
+  border-top-style: dotted;
+}
+
+.lineage-key strong {
+  margin-left: auto;
+  color: #b5b2aa;
+  font-weight: 500;
+}
+
+.context-grove {
+  padding: 20px;
+}
+
+.context-grove > div:first-child {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.55fr) 1fr;
+  gap: 6px 28px;
+  align-items: end;
+}
+
+.context-grove h3 {
+  margin: 0;
+  color: var(--ivory);
+  font-size: 1.05rem;
+}
+
+.context-grove > div:first-child > p:last-child {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.context-grove-grid {
+  display: grid;
+  max-height: 285px;
+  margin-top: 16px;
+  overflow: auto;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 7px;
+}
+
+.context-grove-grid button {
+  display: grid;
+  min-height: 48px;
+  grid-template-columns: 20px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  color: #c8c5bd;
+  text-align: left;
+  background: rgba(10, 16, 15, 0.82);
+  cursor: pointer;
+}
+
+.context-grove-grid button:hover,
+.context-grove-grid button:focus-visible {
+  border-color: var(--cyan);
+  background: rgba(87, 200, 212, 0.07);
+}
+
+.context-grove-grid svg {
+  color: var(--cyan);
+}
+
+.context-grove-grid span {
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.context-grove-grid b {
+  color: var(--amber);
+  font: 700 0.72rem var(--mono);
+}
+
+.context-grove-inspector {
+  position: absolute;
+  z-index: 18;
+  right: 14px;
+  bottom: 14px;
+  width: min(430px, calc(100% - 28px));
+  max-height: 520px;
+  padding: 17px;
+  overflow: auto;
+  border: 1px solid var(--line-bright);
+  background: rgba(6, 10, 9, 0.98);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.58);
+}
+
+.context-grove-inspector h3 {
+  margin: 5px 30px 14px 0;
+  color: var(--ivory);
+}
+
+.context-grove-inspector > div {
+  display: grid;
+  gap: 5px;
+}
+
+.context-grove-inspector > div > button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 9px;
+  border: 1px solid var(--line);
+  color: var(--ivory);
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+
+.context-grove-inspector > div > button:hover {
+  border-color: var(--cyan);
+}
+
+.context-grove-inspector > div svg {
+  flex: 0 0 auto;
+  color: var(--cyan);
+}
+
+.context-grove-inspector > div span {
+  display: grid;
+  gap: 3px;
+}
+
+.context-grove-inspector small {
+  color: var(--muted);
+  font: 0.58rem var(--mono);
+}
+
+.context-clear {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: transparent;
 }
 
 .fiber-tooltip {
@@ -3751,7 +4066,7 @@ select:focus-visible,
     z-index: 80;
     display: grid;
     height: 58px;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     border-top: 1px solid var(--line);
     background: rgba(6, 9, 8, 0.97);
     backdrop-filter: blur(16px);
@@ -3858,6 +4173,23 @@ select:focus-visible,
   .revelation-orbits {
     width: 200px;
     height: 200px;
+  }
+
+  .lineage-stage {
+    height: 600px;
+  }
+
+  .lineage-heading > p {
+    display: none;
+  }
+
+  .context-grove > div:first-child {
+    grid-template-columns: 1fr;
+  }
+
+  .context-grove > div:first-child > p:last-child {
+    grid-column: 1;
+    grid-row: auto;
   }
 }
 
@@ -3998,6 +4330,33 @@ select:focus-visible,
 
   .map-canvas svg {
     min-width: 0;
+  }
+
+  .lineage-stage {
+    height: 540px;
+  }
+
+  .lineage-tools {
+    top: 10px;
+    left: 9px;
+  }
+
+  .lineage-key {
+    gap: 8px 12px;
+  }
+
+  .lineage-key strong {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .context-grove {
+    padding: 15px;
+  }
+
+  .context-grove-grid {
+    max-height: 340px;
+    grid-template-columns: 1fr;
   }
 
   .map-heading {

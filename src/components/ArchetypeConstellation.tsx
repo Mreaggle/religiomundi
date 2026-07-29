@@ -11,14 +11,15 @@ import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, CorrelationType, Tradition } from "../types/atlas";
 import { clusterTraditions, countByCorrelation } from "../utils/atlas";
+import { selectCollisionFreeLabels } from "../utils/collision";
 import { getArchetypeVisual } from "./archetypeVisuals";
 import { CorrelationFiber } from "./CorrelationFiber";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
 import { TraditionCluster } from "./TraditionCluster";
 
 const EXTENT: [[number, number], [number, number]] = [
-  [315, 170],
-  [885, 505],
+  [105, 105],
+  [1095, 595],
 ];
 const WIDTH = 1200;
 const HEIGHT = 700;
@@ -80,6 +81,33 @@ export function ArchetypeConstellation() {
     minScale: 0.75,
     maxScale: 9,
   });
+  const clusterLayout = useMemo(
+    () =>
+      clusters
+        .map((cluster, index) => {
+          const point =
+            cluster.latitude !== undefined && cluster.longitude !== undefined
+              ? projection([cluster.longitude, cluster.latitude])
+              : [420 + (index % 11) * 36, 245 + Math.floor(index / 11) * 32];
+          return point ? { cluster, index, point: point as [number, number] } : undefined;
+        })
+        .filter((item): item is NonNullable<typeof item> => Boolean(item)),
+    [clusters, projection],
+  );
+  const visibleClusterLabels = useMemo(
+    () =>
+      selectCollisionFreeLabels(
+        clusterLayout.map(({ cluster, point }) => ({
+          key: cluster.key,
+          x: point[0],
+          y: point[1],
+          label: cluster.label,
+          priority: cluster.traditions.length,
+        })),
+        scale,
+      ),
+    [clusterLayout, scale],
+  );
 
   useEffect(() => {
     if (Number.isFinite(selectedYear)) setTooltip(undefined);
@@ -333,12 +361,7 @@ export function ArchetypeConstellation() {
             </g>
 
             <g className="tradition-layer">
-              {clusters.map((cluster, index) => {
-                const projected =
-                  cluster.latitude !== undefined && cluster.longitude !== undefined
-                    ? projection([cluster.longitude, cluster.latitude])
-                    : [520 + (index % 7) * 27, 300 + Math.floor(index / 7) * 25];
-                if (!projected) return null;
+              {clusterLayout.map(({ cluster, point: projected }) => {
                 return (
                   <g key={cluster.key}>
                     <TraditionCluster
@@ -346,6 +369,8 @@ export function ArchetypeConstellation() {
                       x={projected[0]}
                       y={projected[1]}
                       active={expanded === cluster.key}
+                      visualScale={scale}
+                      showLabel={visibleClusterLabels.has(cluster.key)}
                       onActivate={() => {
                         if (cluster.traditions.length === 1) {
                           if (!selectedArchetype) setSelectedArchetypeCode(undefined);
@@ -366,7 +391,7 @@ export function ArchetypeConstellation() {
                             className="expanded-tradition"
                             transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
                               projected[1] + Math.sin(angle) * radius
-                            })`}
+                            }) scale(${1 / Math.max(1, scale)})`}
                             role="button"
                             tabIndex={0}
                             onClick={() => setSelectedTraditionId(tradition.id)}
@@ -449,23 +474,25 @@ export function ArchetypeConstellation() {
                     <title>
                       {archetype.code} — {archetype.name}. {archetype.inclusionCriteria}
                     </title>
-                    <circle className="archetype-halo" r={17 + intensity * 12} />
-                    <circle className="archetype-disc" r={13 + intensity * 3} />
-                    <ArchetypeIcon
-                      className="archetype-icon"
-                      x={-7}
-                      y={-7}
-                      width={14}
-                      height={14}
-                      strokeWidth={1.65}
-                      aria-hidden="true"
-                    />
-                    <text className="archetype-code" y={-20}>
-                      {archetype.code}
-                    </text>
-                    <text className="archetype-name" y={28}>
-                      {archetype.name}
-                    </text>
+                    <g transform={`scale(${1 / Math.max(1, scale)})`}>
+                      <circle className="archetype-halo" r={17 + intensity * 12} />
+                      <circle className="archetype-disc" r={13 + intensity * 3} />
+                      <ArchetypeIcon
+                        className="archetype-icon"
+                        x={-7}
+                        y={-7}
+                        width={14}
+                        height={14}
+                        strokeWidth={1.65}
+                        aria-hidden="true"
+                      />
+                      <text className="archetype-code" y={-20}>
+                        {archetype.code}
+                      </text>
+                      <text className="archetype-name" y={28}>
+                        {archetype.name}
+                      </text>
+                    </g>
                   </g>
                 );
               })}

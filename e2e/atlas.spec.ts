@@ -21,6 +21,10 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await expect(page.locator(".archetype-icon")).toHaveCount(44);
   await expect(page.locator('[data-archetype-code="A15"] .lucide-heart')).toBeVisible();
   await expect(page.locator('[data-archetype-code="A01"] .lucide-sprout')).toBeVisible();
+  await expect(page.locator(".correlation-fiber").first()).toHaveAttribute(
+    "style",
+    /--fiber-color:/,
+  );
   await expect(page.getByText("471 × 44")).toHaveText("471 × 44");
 
   await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
@@ -32,11 +36,19 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
     .getByRole("button", { name: /Fechar/ })
     .first()
     .click();
+  await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
+  await page.getByRole("button", { name: "Limpar" }).click();
+  await page.getByRole("button", { name: /Fechar/ }).click();
+  await page.getByRole("button", { name: "Hoje" }).click();
 
   await page.getByRole("button", { name: "Mapa", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Mapa das tradições documentadas" }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "Árvore", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Árvore das tradições" })).toBeVisible();
+  await expect(page.locator(".lineage-node").first()).toBeVisible();
+  expect(await page.locator(".lineage-documented").count()).toBeGreaterThan(0);
   await page.getByRole("button", { name: "Matriz", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Matriz navegável" })).toBeVisible();
   await expect(page.locator(".matrix-cell").first()).toBeVisible();

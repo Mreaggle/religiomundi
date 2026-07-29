@@ -56,6 +56,8 @@ describe("integração da planilha canônica", () => {
     expect(byName.get("Hermetic Order of the Golden Dawn")?.startYear).toBe(1888);
     expect(byName.get("Romuva")?.startYear).toBe(1967);
     expect(byName.get("Rodnovery")?.startYear).toBe(1980);
+    expect(byName.get("Jainismo Digambara")?.startYear).toBe(1);
+    expect(byName.get("Jainismo Śvetāmbara")?.startYear).toBe(1);
     expect(byName.get("Igreja Católica")?.correlations.A23.originalText).toContain(
       "São Camilo de Lellis",
     );

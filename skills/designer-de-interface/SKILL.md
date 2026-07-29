@@ -26,7 +26,9 @@ Combine planetário histórico, carta celeste, arquivo arqueológico e instrumen
 - Prefira linhas finas, geometrias orbitais e ruído quase imperceptível.
 - Evite cards brancos, gradiente roxo de startup, símbolos sagrados inventados e ocultismo caricatural.
 - Comunique incerteza de forma visível, sem dramatização.
-- Evite colisões com clusters, distribuição em anéis, truncamento somente em controles secundários e lista completa no painel.
+- Evite colisões com clusters, distribuição em anéis e supressão progressiva de rótulos; revele o rótulo oculto em foco ou hover e mantenha a lista completa no painel.
+- Não deixe tipografia e ícones crescerem com o zoom geométrico. O zoom deve abrir espaço entre pontos, preservando tamanho e nitidez dos elementos de interface.
+- Colora fibras pela função arquetípica e preserve simultaneamente padrões de traço para que a semântica não dependa apenas da cor.
 
 ## Revisão
 

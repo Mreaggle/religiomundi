@@ -196,9 +196,14 @@ function parseTemporal(label, status) {
   const points = [];
   let hasCentury = false;
   let hasMillennium = false;
+  const firstCenturiesMatch = original.match(/primeiros?\s+s(?:é|e)culos?\s+d\.?\s*C\.?/i);
+  if (firstCenturiesMatch) {
+    hasCentury = true;
+    points.push(1, 300);
+  }
 
   for (const match of original.matchAll(
-    /s(?:é|e)culos?\.?\s+([IVXLCDM]+)(?:\s*[–-]\s*([IVXLCDM]+))?\s*(a\.?\s*C\.?|d\.?\s*C\.?)?/gi,
+    /s(?:é|e)culos?\.?\s+(?!d\.?\s*C)([IVXLCDM]+)(?:\s*[–-]\s*([IVXLCDM]+))?\s*(a\.?\s*C\.?|d\.?\s*C\.?)?/gi,
   )) {
     hasCentury = true;
     const first = romanToInt(match[1]);
@@ -225,8 +230,9 @@ function parseTemporal(label, status) {
   }
 
   const masked = original
+    .replace(/primeiros?\s+s(?:é|e)culos?\s+d\.?\s*C\.?/gi, "")
     .replace(
-      /s(?:é|e)culos?\.?\s+[IVXLCDM]+(?:\s*[–-]\s*[IVXLCDM]+)?\s*(?:a\.?\s*C\.?|d\.?\s*C\.?)?/gi,
+      /s(?:é|e)culos?\.?\s+(?!d\.?\s*C)[IVXLCDM]+(?:\s*[–-]\s*[IVXLCDM]+)?\s*(?:a\.?\s*C\.?|d\.?\s*C\.?)?/gi,
       "",
     )
     .replace(
