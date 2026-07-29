@@ -71,6 +71,12 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await page.getByRole("button", { name: "Fontes", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Biblioteca de fontes" })).toBeVisible();
   await expect(page.locator(".source-library article")).toHaveCount(44);
+  await expect(page.locator("a[download]")).toHaveCount(0);
+  await expect(page.getByText(/UNO_reformulado\.xlsx/i)).toHaveCount(0);
+  await page.getByRole("button", { name: "Sobre o projeto" }).click();
+  await expect(page.getByRole("heading", { name: "SOBRE O PROJETO" })).toBeVisible();
+  await expect(page.locator("a[download]")).toHaveCount(0);
+  await expect(page.getByText(/UNO_reformulado\.xlsx|SHA-256/i)).toHaveCount(0);
 
   expect(errors, `Erros de console em ${testInfo.project.name}`).toEqual([]);
 });

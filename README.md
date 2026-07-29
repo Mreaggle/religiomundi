@@ -109,7 +109,7 @@ geometria. Um polígono não prova controle uniforme, ocupação exclusiva ou co
 
 ## Fonte canônica e pipeline
 
-`public/data/UNO_reformulado.xlsx` é a autoridade editorial. O pipeline preserva texto integral,
+`data/UNO_reformulado.xlsx` é a autoridade editorial interna. O pipeline preserva texto integral,
 acentos, diacríticos e símbolos:
 
 ```mermaid

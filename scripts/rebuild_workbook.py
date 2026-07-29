@@ -25,7 +25,7 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "UNO.xlsx"
-OUTPUT = ROOT / "public" / "data" / "UNO_reformulado.xlsx"
+OUTPUT = ROOT / "data" / "UNO_reformulado.xlsx"
 CSV_OUTPUT = ROOT / "data" / "UNO_reformulado.csv"
 REVISION_DATE = date(2026, 7, 28)
 

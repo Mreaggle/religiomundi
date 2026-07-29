@@ -1,6 +1,5 @@
-import { ExternalLink, FileDown, Library } from "lucide-react";
+import { ExternalLink, Library } from "lucide-react";
 import { useAtlas } from "../state/AtlasProvider";
-import { assetUrl } from "../utils/assets";
 
 export function SourceLibrary() {
   const { data, filters } = useAtlas();
@@ -20,11 +19,6 @@ export function SourceLibrary() {
         <div>
           <p className="eyebrow">CORPORA E TRILHAS DE VERIFICAÇÃO</p>
           <h2 id="sources-title">Biblioteca de fontes</h2>
-        </div>
-        <div className="source-downloads">
-          <a href={assetUrl("data/UNO_reformulado.xlsx")} download>
-            <FileDown size={15} /> Planilha canônica
-          </a>
         </div>
       </div>
       <p className="source-intro">
