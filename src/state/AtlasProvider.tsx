@@ -30,6 +30,7 @@ interface AtlasContextValue {
   filters: AtlasFilters;
   setFilters: Dispatch<SetStateAction<AtlasFilters>>;
   clearFilters: () => void;
+  filteredTraditions: Tradition[];
   visibleTraditions: Tradition[];
   selectedTradition?: Tradition;
   selectedTraditionId?: string;
@@ -72,14 +73,19 @@ export function AtlasProvider({ data, children }: { data: AtlasData; children: R
   const [traceRecurrences, setTraceRecurrences] = useState(false);
   const searchCache = useRef(new Map<string, string>());
 
+  const filteredTraditions = useMemo(
+    () =>
+      data.traditions.filter((tradition) =>
+        matchesFilters(tradition, filters, data.archetypes, searchCache.current),
+      ),
+    [data, filters],
+  );
   const visibleTraditions = useMemo(
     () =>
-      data.traditions.filter(
-        (tradition) =>
-          traditionIsVisible(tradition, selectedYear, temporalMode) &&
-          matchesFilters(tradition, filters, data.archetypes, searchCache.current),
+      filteredTraditions.filter((tradition) =>
+        traditionIsVisible(tradition, selectedYear, temporalMode),
       ),
-    [data, filters, selectedYear, temporalMode],
+    [filteredTraditions, selectedYear, temporalMode],
   );
   const selectedTradition = data.traditions.find(
     (tradition) => tradition.id === selectedTraditionId,
@@ -107,6 +113,7 @@ export function AtlasProvider({ data, children }: { data: AtlasData; children: R
     filters,
     setFilters,
     clearFilters: () => setFilters(EMPTY_FILTERS),
+    filteredTraditions,
     visibleTraditions,
     selectedTradition,
     selectedTraditionId,

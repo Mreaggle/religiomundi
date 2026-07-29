@@ -1,4 +1,4 @@
-export type LineageRelationKind = "documented" | "hypothesis";
+export type LineageRelationKind = "documented" | "syncretism" | "hypothesis";
 
 export interface LineageGroup {
   id: string;
@@ -171,6 +171,172 @@ export const LINEAGE_GROUPS: LineageGroup[] = [
 
 export const LINEAGE_RELATIONS: LineageRelation[] = [
   {
+    from: "Religião suméria",
+    to: "Religião acádia",
+    kind: "syncretism",
+    sourceCodes: ["A01", "A02"],
+    sourceUrls: [
+      "https://oracc.museum.upenn.edu/amgg/technicalterms/index.html",
+      "https://www.metmuseum.org/essays/mesopotamian-deities",
+    ],
+    note: "A tradição acádia incorporou e traduziu repertórios sumérios; identificações como Nanna/Sîn e Utu/Šamaš documentam fusões de deidades. Isso não reduz os dois sistemas a uma religião idêntica.",
+  },
+  {
+    from: "Religião acádia",
+    to: "Religião babilônica",
+    kind: "syncretism",
+    sourceCodes: ["A01", "A02"],
+    sourceUrls: ["https://www.metmuseum.org/essays/mesopotamian-deities"],
+    note: "A cultura religiosa babilônica preservou, reorganizou e fundiu repertórios sumério-acadianos; a ascensão de Marduk também acompanhou mudanças políticas na hierarquia do panteão.",
+  },
+  {
+    from: "Religião acádia",
+    to: "Religião assíria",
+    kind: "documented",
+    sourceCodes: ["A01", "A02"],
+    sourceUrls: ["https://www.metmuseum.org/essays/mesopotamian-deities"],
+    note: "A Assíria participou da tradição cuneiforme e religiosa mesopotâmica em língua acádia, com desenvolvimento regional próprio e sem descendência exclusiva ou linear.",
+  },
+  {
+    from: "Religião minoica",
+    to: "Religião micênica",
+    kind: "syncretism",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/local-horizon-of-ancient-greek-religion/mycenaean-greek-worship-in-minoan-territory/25D4CDDD1405C82856C72156C5E33A34",
+    ],
+    note: "Registros de Creta indicam apropriação e reformulação micênica de deidades e repertórios minoicos; a mistura foi criativa, não simples substituição.",
+  },
+  {
+    from: "Religião micênica",
+    to: "Religião grega arcaica e clássica",
+    kind: "hypothesis",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/local-horizon-of-ancient-greek-religion/mycenaean-greek-worship-in-minoan-territory/25D4CDDD1405C82856C72156C5E33A34",
+    ],
+    note: "Nomes de deidades posteriores aparecem em Linear B, mas a ruptura documental após o colapso palacial impede tratar toda a religião grega histórica como continuação institucional direta.",
+  },
+  {
+    from: "Religião cananeia/ugarítica",
+    to: "Religião fenícia",
+    kind: "documented",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/handbook-of-ancient-religions/religion-in-ancient-ugarit/D748DF7F68F44FDE8B34BAED0A2DB597",
+    ],
+    note: "Há continuidade regional e vínculos documentáveis entre repertórios religiosos do Levante da Idade do Bronze e culturas levantinas posteriores; as variações locais permanecem essenciais.",
+  },
+  {
+    from: "Religião fenícia",
+    to: "Religião púnica/cartaginesa",
+    kind: "documented",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/cambridge-history-of-religions-in-the-ancient-world/phoenicianpunic-religion/169A23713267F19F8ED4DBF8015CA3D7",
+    ],
+    note: "A religião púnica desenvolveu-se nas comunidades fenícias do Mediterrâneo ocidental; práticas locais divergiram, mas a separação não constitui uma origem religiosa independente.",
+  },
+  {
+    from: "Religião cananeia/ugarítica",
+    to: "Judaísmo bíblico/Israel antigo",
+    kind: "hypothesis",
+    sourceCodes: ["A04", "B01"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/handbook-of-ancient-religions/religion-in-ancient-ugarit/D748DF7F68F44FDE8B34BAED0A2DB597",
+    ],
+    note: "Textos ugaríticos exibem afinidades e conexões relevantes com tradições israelitas posteriores. A aresta marca continuidade cultural debatida, não uma filiação simples entre religiões completas.",
+  },
+  {
+    from: "Religião babilônica",
+    to: "Judaísmo bíblico/Israel antigo",
+    kind: "hypothesis",
+    sourceCodes: ["A02", "B01"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/cambridge-companion-to-the-hebrew-bibleold-testament/ancient-near-eastern-context/1FC1D4297FFE78377FAD0BA790302CAE",
+    ],
+    note: "Paralelos e contatos mesopotâmicos são documentados, especialmente no contexto do exílio, mas a extensão e a direção de cada empréstimo literário ou religioso exigem análise caso a caso.",
+  },
+  {
+    from: "Religião egípcia antiga",
+    to: "Religiões helenísticas",
+    kind: "syncretism",
+    sourceCodes: ["A03", "A04"],
+    sourceUrls: [
+      "https://www.metmuseum.org/essays/egypt-in-the-ptolemaic-period",
+      "https://www.metmuseum.org/essays/mystery-cults-in-the-greek-and-roman-world",
+    ],
+    note: "No Egito ptolomaico, cultos como o de Serápis combinaram elementos egípcios e formas helenísticas; Ísis preservou identidade egípcia mesmo em circulação mediterrânea.",
+  },
+  {
+    from: "Religião grega arcaica e clássica",
+    to: "Religiões helenísticas",
+    kind: "syncretism",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/cambridge-companion-to-the-hellenistic-world/greek-religion-continuity-and-change-in-the-hellenistic-period/C3CED48A1EE35E0ED11A1E77FA113F85",
+    ],
+    note: "As religiões helenísticas conservaram cultos gregos e os transformaram em ambientes multiculturais; não existiu uma única religião helenística uniforme.",
+  },
+  {
+    from: "Religião grega arcaica e clássica",
+    to: "Religião etrusca",
+    kind: "syncretism",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/handbook-of-religions-in-ancient-europe/etruscan-religion/8C098B5D7E32A7E55C5FB212056A4941",
+    ],
+    note: "Contato intenso com colonos e comerciantes gregos contribuiu para tradições etruscas híbridas; isso ocorreu junto a componentes locais e levantinos.",
+  },
+  {
+    from: "Religião grega arcaica e clássica",
+    to: "Religião romana",
+    kind: "syncretism",
+    sourceCodes: ["A04"],
+    sourceUrls: ["https://www.britishmuseum.org/blog/gods-and-goddesses-greek-and-roman-pantheon"],
+    note: "Roma incorporou narrativas, iconografias e identificações gregas, mas deidades e ritos romanos conservaram funções cívicas e histórias próprias.",
+  },
+  {
+    from: "Religião etrusca",
+    to: "Religião romana",
+    kind: "syncretism",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/religion-in-republican-italy/etruscan-religion-at-the-watershed-before-and-after-the-fourth-century-bce/8F029586E7B54B9797343E6EA0EC11BD",
+    ],
+    note: "Fontes romanas e evidência ritual registram incorporação de saberes etruscos, como haruspícia, augúrio e ritos de fundação; a transformação foi histórica e não uma sucessão total.",
+  },
+  {
+    from: "Religião védica",
+    to: "Budismo antigo/Theravāda (perfil doutrinário)",
+    kind: "hypothesis",
+    sourceCodes: ["A06", "A07"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/selfless-persons/origins-of-rebirth/EC735BBC9ED72C9C500A83E50BB77CB4",
+    ],
+    note: "O budismo formou-se no campo religioso indiano que também continha pensamento e prática bramânicos. A aresta marca interlocução e categorias compartilhadas, não descendência védica direta.",
+  },
+  {
+    from: "Religião Shang-Zhou",
+    to: "Confucionismo",
+    kind: "documented",
+    sourceCodes: ["A09"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/books/daily-life-in-ancient-china/stage/4A0598754FF653AA90FDBE1B929FF6F8",
+    ],
+    note: "Confúcio reelaborou princípios e práticas do sistema ritual Zhou, transformando cerimônia cortesã em disciplina ética e política; a relação não faz do confucionismo mera sobrevivência da religião estatal.",
+  },
+  {
+    from: "Religião fenícia",
+    to: "Religião grega arcaica e clássica",
+    kind: "hypothesis",
+    sourceCodes: ["A04"],
+    sourceUrls: [
+      "https://www.cambridge.org/core/journals/iraq/article/abs/mesopotamian-bronzes-from-greek-sites-the-workshops-of-origin1/A8C92758873B7F4B3836EB767776D3D7",
+    ],
+    note: "Contatos e bens orientais chegaram ao Egeu, muitas vezes por portos fenícios. A influência sobre repertórios gregos é plausível e estudada, mas não demonstra filiação religiosa direta.",
+  },
+  {
     from: "Budismo Nichiren",
     to: "Sōka Gakkai",
     kind: "documented",
@@ -211,16 +377,6 @@ export const LINEAGE_RELATIONS: LineageRelation[] = [
     kind: "documented",
     sourceCodes: ["B05"],
     note: "Formação bahá’í historicamente ligada ao movimento bábí.",
-  },
-  {
-    from: "Religião suméria",
-    to: "Judaísmo bíblico/Israel antigo",
-    kind: "hypothesis",
-    sourceCodes: ["A01", "B01"],
-    sourceUrls: [
-      "https://www.cambridge.org/core/books/abs/cambridge-companion-to-the-hebrew-bibleold-testament/ancient-near-eastern-context/1FC1D4297FFE78377FAD0BA790302CAE",
-    ],
-    note: "Paralelos literários mesopotâmicos são documentados, mas empréstimo direto da religião suméria ao judaísmo não está demonstrado; a transmissão pode ter sido indireta e multietápica.",
   },
   {
     from: "Zoroastrismo/Mazdeísmo",
