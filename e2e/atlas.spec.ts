@@ -54,8 +54,19 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   ).toBeVisible();
   await page.getByRole("button", { name: "Árvore", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Árvore das tradições" })).toBeVisible();
-  await expect(page.locator(".lineage-node").first()).toBeVisible();
+  const visibleCount = Number(
+    (await page.locator(".workspace-readout b").textContent())?.split("/")[0] ?? 0,
+  );
+  await expect(page.locator(".lineage-node")).toHaveCount(visibleCount);
   expect(await page.locator(".lineage-documented").count()).toBeGreaterThan(0);
+  expect(await page.locator(".lineage-hypothesis").count()).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "Charts", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "CHARTS — Anatomia comparada do sagrado" }),
+  ).toBeVisible();
+  await expect(page.getByText("Grupos religiosos mundiais — não países")).toBeVisible();
+  await expect(page.locator(".population-ranking li")).toHaveCount(7);
+  await expect(page.locator(".population-ranking")).toContainText("Sem filiação religiosa");
   await page.getByRole("button", { name: "Matriz", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Matriz navegável" })).toBeVisible();
   await expect(page.locator(".matrix-cell").first()).toBeVisible();
@@ -185,6 +196,40 @@ test("mapa oferece zoom focal e acesso explícito às 471 tradições", async ({
   await clusterNodes.nth(counts.indexOf(largest)).click();
   await expect(page.locator(".map-cluster-inspector")).toBeVisible();
   await expect(page.locator(".map-inspector-list > button")).toHaveCount(largest);
+});
+
+test("mapa político acompanha a timeline sem carregar o arquivo histórico inteiro", async ({
+  page,
+}) => {
+  const snapshotsLoaded = new Set<string>();
+  page.on("response", (response) => {
+    if (/\/data\/polities\/snapshot-/.test(response.url())) {
+      snapshotsLoaded.add(new URL(response.url()).pathname);
+    }
+  });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Mapa", exact: true }).click();
+  await expect(page.locator(".historical-polity")).toHaveCount(177);
+  await expect(page.locator('[data-polity-name="Brazil"]')).toBeVisible();
+  await expect(page.locator(".political-map-status")).toContainText("Atual · 2026");
+
+  await page.locator('[data-polity-name="Brazil"]').focus();
+  await expect(page.locator('[data-polity-name="Brazil"]')).toHaveCSS("outline-style", "none");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { name: "Brazil", exact: true })).toBeVisible();
+  await expect(page.locator(".historical-polity.focus-hidden")).toHaveCount(176);
+  await page.getByRole("button", { name: "Fechar território" }).click();
+
+  expect(snapshotsLoaded.size).toBeLessThanOrEqual(3);
+
+  await page.locator("#temporal-range").fill("635");
+  await expect(page.locator('[data-polity-name="Mongol Empire"]')).toBeVisible();
+  await expect(page.locator(".political-map-status")).toContainText("1200");
+
+  await page.locator("#temporal-range").fill("299");
+  await expect(page.locator('[data-polity-name="Babylonia"]')).toBeVisible();
+  await expect(page.locator(".political-map-status")).toContainText("1.500 a.C.");
 });
 
 test("layout móvel mantém navegação, lista alternativa e dossiê em sheet", async ({ page }) => {

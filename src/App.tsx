@@ -4,6 +4,7 @@ import { AccessibleTraditionList } from "./components/AccessibleTraditionList";
 import { AeonOverlay } from "./components/AeonOverlay";
 import { ArchetypeConstellation } from "./components/ArchetypeConstellation";
 import { ArchetypeDossier } from "./components/ArchetypeDossier";
+import { ChartsLab } from "./components/ChartsLab";
 import { ComparisonChamber } from "./components/ComparisonChamber";
 import { EpistemicLegend } from "./components/EpistemicLegend";
 import { FilterCommandPalette } from "./components/FilterCommandPalette";
@@ -72,7 +73,11 @@ function AtlasExperience() {
         {revealPatterns ? (
           <PatternRevelation />
         ) : (
-          <div className={`atlas-workspace ${viewMode === "sources" ? "wide" : ""}`}>
+          <div
+            className={`atlas-workspace ${
+              viewMode === "sources" || viewMode === "charts" ? "wide" : ""
+            }`}
+          >
             <div className={`workspace-visual workspace-${viewMode}`}>
               <div className="workspace-readout">
                 <span>
@@ -90,11 +95,12 @@ function AtlasExperience() {
               {viewMode === "constellation" && <ArchetypeConstellation />}
               {viewMode === "map" && <WorldBeliefMap />}
               {viewMode === "tree" && <LineageTree />}
+              {viewMode === "charts" && <ChartsLab />}
               {viewMode === "matrix" && <VirtualMatrix />}
               {viewMode === "signatures" && <SignatureGallery />}
               {viewMode === "sources" && <SourceLibrary />}
             </div>
-            {viewMode !== "sources" && <PeriodMirror />}
+            {viewMode !== "sources" && viewMode !== "charts" && <PeriodMirror />}
           </div>
         )}
       </main>

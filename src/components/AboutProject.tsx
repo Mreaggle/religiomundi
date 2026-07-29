@@ -48,6 +48,55 @@ export function AboutProject({ onClose }: { onClose: () => void }) {
           suficiente para um mapeamento responsável.
         </p>
       </section>
+      <section>
+        <h3>Cartografia política temporal</h3>
+        <p>
+          O mapa político usa recortes históricos descontínuos e nunca interpola fronteiras. Cada
+          ano mostra o último snapshot disponível que não seja posterior ao período observado.
+          Polígonos antigos podem representar Estados, culturas ou áreas de influência aproximadas;
+          não demonstram soberania uniforme, ocupação exclusiva ou consenso historiográfico.
+        </p>
+        <p>
+          Geometria histórica:{" "}
+          <a
+            href="https://github.com/aourednik/historical-basemaps"
+            target="_blank"
+            rel="noreferrer"
+          >
+            historical-basemaps
+          </a>
+          . Referência contemporânea:{" "}
+          <a
+            href="https://www.naturalearthdata.com/downloads/110m-cultural-vectors/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Natural Earth
+          </a>
+          .
+        </p>
+      </section>
+      <section>
+        <h3>Árvore e rankings</h3>
+        <p>
+          A Árvore mantém todas as tradições do recorte em faixas regionais que não implicam
+          parentesco. Linhas sólidas indicam vínculos históricos documentados; tracejadas indicam
+          hipótese ou debate com fonte explícita.
+        </p>
+        <p>
+          CHARTS calcula rankings internos a partir da matriz. A demografia mundial é uma série
+          externa e agregada do{" "}
+          <a
+            href="https://www.pewresearch.org/religion/2025/06/09/how-the-global-religious-landscape-changed-from-2010-to-2020/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Pew Research Center
+          </a>
+          , com estimativas para 2020. Ranking documental ou populacional não mede verdade nem valor
+          espiritual.
+        </p>
+      </section>
       <section className="integrity-block">
         <ShieldCheck size={22} />
         <div>

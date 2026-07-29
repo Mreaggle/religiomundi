@@ -20,6 +20,7 @@ function overlaps(a: LabelBox, b: LabelBox): boolean {
 export function selectCollisionFreeLabels(
   candidates: LabelCandidate[],
   scale: number,
+  placement: "below" | "center" = "below",
 ): Set<string> {
   const accepted = new Set<string>();
   const boxes: LabelBox[] = [];
@@ -32,11 +33,20 @@ export function selectCollisionFreeLabels(
     const width = Math.min(310, Math.max(54, candidate.label.length * 6.2) * visualGrowth);
     const screenX = candidate.x * scale;
     const screenY = candidate.y * scale;
+    const vertical =
+      placement === "center"
+        ? {
+            top: screenY - 10 * visualGrowth,
+            bottom: screenY + 10 * visualGrowth,
+          }
+        : {
+            top: screenY + 9 * visualGrowth,
+            bottom: screenY + 36 * visualGrowth,
+          };
     const box = {
       left: screenX - width / 2 - 8,
       right: screenX + width / 2 + 8,
-      top: screenY + 9 * visualGrowth,
-      bottom: screenY + 36 * visualGrowth,
+      ...vertical,
     };
     if (boxes.some((existing) => overlaps(existing, box))) continue;
     accepted.add(candidate.key);
