@@ -70,6 +70,8 @@ const expectedStarts = new Map([
   ["Batistas", 1609],
   ["Pentecostalismo", 1901],
   ["Cristianismo etíope/eritreu", 301],
+  ["Jainismo Digambara", 1],
+  ["Jainismo Śvetāmbara", 1],
 ]);
 for (const [name, expected] of expectedStarts) {
   const tradition = data.traditions.find((item) => item.name === name);

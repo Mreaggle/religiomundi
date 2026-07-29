@@ -19,6 +19,7 @@ Trate `UNO_reformulado.xlsx` como fonte canônica. Preserve o texto integral, os
 6. Compare amostras e totais entre a planilha e os dados gerados.
 7. Emita alertas para IDs duplicados, códigos desconhecidos, células vazias inesperadas e URLs inválidas.
 8. Execute `npm run data:audit`; rejeite assinaturas integrais repetidas, regressões para `-3200` sem texto-fonte e contagens codificadas manualmente.
+9. Proteja abreviações de era antes de interpretar algarismos romanos: `d.C.` nunca é o século `DC`. Mantenha sentinelas para expressões como “primeiros séculos d.C.”.
 
 ## Regras de qualidade
 

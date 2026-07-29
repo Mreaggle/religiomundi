@@ -6,12 +6,21 @@ interface SvgZoomOptions {
   height: number;
   minScale?: number;
   maxScale?: number;
+  contentWidth?: number;
+  contentHeight?: number;
 }
 
 export function useSvgZoom(
   svgRef: RefObject<SVGSVGElement>,
   viewportRef: RefObject<SVGGElement>,
-  { width, height, minScale = 0.85, maxScale = 9 }: SvgZoomOptions,
+  {
+    width,
+    height,
+    minScale = 0.85,
+    maxScale = 9,
+    contentWidth = width,
+    contentHeight = height,
+  }: SvgZoomOptions,
 ) {
   const behaviorRef = useRef<ZoomBehavior<SVGSVGElement, unknown>>();
   const scaleRef = useRef(1);
@@ -30,7 +39,10 @@ export function useSvgZoom(
       .scaleExtent([minScale, maxScale])
       .translateExtent([
         [-width * 0.65, -height * 0.65],
-        [width * 1.65, height * 1.65],
+        [
+          Math.max(width * 1.65, contentWidth + width * 0.65),
+          Math.max(height * 1.65, contentHeight + height * 0.65),
+        ],
       ])
       .wheelDelta((event) => {
         const unit = event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002;
@@ -51,7 +63,7 @@ export function useSvgZoom(
       select(svg).on(".zoom", null);
       behaviorRef.current = undefined;
     };
-  }, [height, maxScale, minScale, svgRef, viewportRef, width]);
+  }, [contentHeight, contentWidth, height, maxScale, minScale, svgRef, viewportRef, width]);
 
   const animate = useCallback(
     (

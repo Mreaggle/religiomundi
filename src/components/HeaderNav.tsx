@@ -9,6 +9,7 @@ import {
   Radar,
   Search,
   Sparkles,
+  Trees,
 } from "lucide-react";
 import { useAtlas } from "../state/AtlasProvider";
 import type { ViewMode } from "../types/atlas";
@@ -17,6 +18,7 @@ import { formatCount } from "../utils/text";
 const VIEWS: Array<{ id: ViewMode; label: string; icon: LucideIcon }> = [
   { id: "constellation", label: "Constelação", icon: CircleDotDashed },
   { id: "map", label: "Mapa", icon: MapIcon },
+  { id: "tree", label: "Árvore", icon: Trees },
   { id: "matrix", label: "Matriz", icon: Columns3 },
   { id: "signatures", label: "Assinaturas", icon: Radar },
   { id: "sources", label: "Fontes", icon: Library },

@@ -28,7 +28,9 @@ Entregue um instrumento científico interativo, estável e responsivo. Faça a i
 - Evite dependências e backend sem benefício verificável.
 - Preserve o texto original da célula nos tooltips e dossiês.
 - Não codifique contagens do catálogo na interface; use `data.metadata`.
-- Previna colisões por clustering, limite de rótulos, zoom e painéis listáveis.
+- Previna colisões por clustering, seleção determinística de rótulos e painéis listáveis.
+- Em SVGs com zoom, use escala semântica: mapa e posições ampliam, mas rótulos, ícones e alvos permanecem legíveis em pixels de tela.
+- Na árvore, desenhe arestas somente para relações curadas e rastreáveis; agrupamentos contextuais devem permanecer sem linha genealógica.
 
 ## Critério de conclusão
 

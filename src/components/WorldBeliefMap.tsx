@@ -4,6 +4,7 @@ import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, TraditionCluster as TraditionClusterData } from "../types/atlas";
 import { clusterTraditions } from "../utils/atlas";
+import { selectCollisionFreeLabels } from "../utils/collision";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
 import { TraditionCluster } from "./TraditionCluster";
 
@@ -92,6 +93,23 @@ export function WorldBeliefMap() {
     const angle = (index / Math.max(1, clusters.length)) * Math.PI * 2;
     return [600 + Math.cos(angle) * 455, 350 + Math.sin(angle) * 255];
   }
+
+  const clusterLayout = clusters
+    .map((cluster, index) => {
+      const point = clusterPoint(cluster, index);
+      return point ? { cluster, point } : undefined;
+    })
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const visibleClusterLabels = selectCollisionFreeLabels(
+    clusterLayout.map(({ cluster, point }) => ({
+      key: cluster.key,
+      x: point[0],
+      y: point[1],
+      label: cluster.label,
+      priority: cluster.traditions.length,
+    })),
+    scale,
+  );
 
   function handleMapKey(event: KeyboardEvent) {
     if (event.key === "+" || event.key === "=") {
@@ -196,9 +214,7 @@ export function WorldBeliefMap() {
                 </g>
               )}
               <g className="map-traditions">
-                {clusters.map((cluster, index) => {
-                  const projected = clusterPoint(cluster, index);
-                  if (!projected) return null;
+                {clusterLayout.map(({ cluster, point: projected }) => {
                   const analysis = analyseCluster(cluster, data.archetypes);
                   return (
                     <g key={cluster.key}>
@@ -207,6 +223,8 @@ export function WorldBeliefMap() {
                         x={projected[0]}
                         y={projected[1]}
                         active={expanded === cluster.key}
+                        visualScale={scale}
+                        showLabel={visibleClusterLabels.has(cluster.key)}
                         summary={`Família predominante: ${analysis.family}. Status predominante: ${analysis.status}. Funções mais frequentes: ${analysis.topArchetypes
                           .slice(0, 3)
                           .map(({ archetype }) => archetype?.name)
@@ -234,7 +252,7 @@ export function WorldBeliefMap() {
                               className="expanded-tradition"
                               transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
                                 projected[1] + Math.sin(angle) * radius
-                              })`}
+                              }) scale(${1 / Math.max(1, scale)})`}
                               role="button"
                               tabIndex={0}
                               onClick={() => setSelectedTraditionId(tradition.id)}

@@ -19,6 +19,7 @@ Compare funções sem apagar identidades. Recorrência classificatória não dem
 6. Marque disputa acadêmica, atestação aproximada e limites da periodização.
 7. Separe semelhança funcional de continuidade histórica documentada.
 8. Compare assinaturas completas para detectar fichas copiadas e audite datas-sentinela de movimentos modernos.
+9. Em árvores historiográficas, aceite uma aresta apenas com derivação, institucionalização ou influência sustentada. Proximidade geográfica, família ampla e função semelhante não autorizam genealogia.
 
 ## Linguagem
 
