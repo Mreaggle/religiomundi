@@ -1931,7 +1931,7 @@ select:focus-visible,
 .dossier-backdrop {
   position: fixed;
   z-index: 299;
-  inset: 0;
+  inset: 0 min(520px, 94vw) 0 0;
   padding: 0;
   border: 0;
   background: rgba(2, 4, 4, 0.56);
@@ -4062,6 +4062,10 @@ select:focus-visible,
     border-top: 1px solid var(--line-bright);
     border-left: 0;
     animation-name: sheet-in;
+  }
+
+  .dossier-backdrop {
+    inset: 0 0 min(82vh, 740px);
   }
 
   @keyframes sheet-in {
