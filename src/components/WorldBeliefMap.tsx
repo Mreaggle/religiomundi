@@ -45,13 +45,24 @@ function analyseCluster(cluster: TraditionClusterData, archetypes: Archetype[]) 
 }
 
 export function WorldBeliefMap() {
-  const { data, visibleTraditions, setSelectedTraditionId, temporalMode, setTemporalMode } =
-    useAtlas();
+  const {
+    data,
+    visibleTraditions,
+    selectedTradition,
+    setSelectedTraditionId,
+    clearSelection,
+    temporalMode,
+    setTemporalMode,
+  } = useAtlas();
   const [expanded, setExpanded] = useState<string>();
   const svgRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<SVGGElement>(null);
   const { projection } = useWorldGeometry(EXTENT);
-  const clusters = useMemo(() => clusterTraditions(visibleTraditions), [visibleTraditions]);
+  const focusTraditions = useMemo(
+    () => (selectedTradition ? [selectedTradition] : visibleTraditions),
+    [selectedTradition, visibleTraditions],
+  );
+  const clusters = useMemo(() => clusterTraditions(focusTraditions), [focusTraditions]);
   const { scale, zoomBy, panBy, resetZoom, focusAt } = useSvgZoom(svgRef, viewportRef, {
     width: WIDTH,
     height: HEIGHT,
@@ -162,6 +173,28 @@ export function WorldBeliefMap() {
           >
             <g ref={viewportRef} className="map-viewport">
               <MapGeometry extent={EXTENT} className="map-full-geometry" />
+              {selectedTradition && (
+                <g
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Limpar seleção e mostrar todas as tradições"
+                  onClick={() => {
+                    clearSelection();
+                    setExpanded(undefined);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      clearSelection();
+                      setExpanded(undefined);
+                    }
+                  }}
+                >
+                  <rect className="focus-dismiss-surface" x="0" y="0" width={WIDTH} height={HEIGHT}>
+                    <title>Clique para limpar a seleção</title>
+                  </rect>
+                </g>
+              )}
               <g className="map-traditions">
                 {clusters.map((cluster, index) => {
                   const projected = clusterPoint(cluster, index);
@@ -244,6 +277,13 @@ export function WorldBeliefMap() {
           Roda do mouse: zoom focal · arrastar: mover · duplo clique: aproximar · teclado: + − 0 e
           setas
         </p>
+        {selectedTradition && (
+          <button className="focus-status map-focus-status" type="button" onClick={clearSelection}>
+            <span>FOCO ISOLADO</span>
+            <strong>{selectedTradition.name}</strong>
+            <small>Clique aqui ou fora do marcador para mostrar tudo</small>
+          </button>
+        )}
 
         {expandedCluster && clusterAnalysis && (
           <aside

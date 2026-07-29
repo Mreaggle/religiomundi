@@ -3,18 +3,18 @@ import type { Tradition } from "../types/atlas";
 import { positionToYear, traditionIsVisible, yearToPosition } from "./temporal";
 
 describe("escala temporal híbrida", () => {
-  it.each([-100000, -3200, -1200, -200, 600, 1450, 1800, 1945, 2026])(
+  it.each([-180000, -100000, -3200, -1200, -200, 600, 1450, 1800, 1945, 2026])(
     "preserva o marco %i na ida e volta",
     (year) => {
       expect(positionToYear(yearToPosition(year))).toBe(year);
     },
   );
 
-  it("dá espaço próprio a todas as oito faixas", () => {
-    const positions = [-100000, -3200, -1200, -200, 600, 1450, 1800, 1945, 2026].map(
+  it("dá espaço próprio a todas as nove faixas", () => {
+    const positions = [-180000, -100000, -3200, -1200, -200, 600, 1450, 1800, 1945, 2026].map(
       yearToPosition,
     );
-    expect(positions).toEqual([0, 180, 320, 430, 550, 670, 770, 870, 1000]);
+    expect(positions).toEqual([0, 70, 180, 320, 430, 550, 670, 770, 870, 1000]);
   });
 });
 
@@ -37,5 +37,16 @@ describe("visibilidade temporal", () => {
 
   it("expõe o catálogo integral sem apagar a data documentada", () => {
     expect(traditionIsVisible(tradition, 2026, "catalog")).toBe(true);
+  });
+
+  it("não inventa início antigo para tradição viva com data desconhecida", () => {
+    const unknown = {
+      endYear: 2026,
+      isStillActive: true,
+      temporalPrecision: "unknown",
+    } as Tradition;
+    expect(traditionIsVisible(unknown, -3200, "panorama")).toBe(false);
+    expect(traditionIsVisible(unknown, 2026, "panorama")).toBe(true);
+    expect(traditionIsVisible(unknown, 2026, "emergences")).toBe(false);
   });
 });

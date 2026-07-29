@@ -1,7 +1,8 @@
 import type { ChronologyPeriod, TemporalMode, Tradition } from "../types/atlas";
 
 export const TIMELINE_SEGMENTS = [
-  { start: -100000, end: -3200, from: 0, to: 180 },
+  { start: -180000, end: -100000, from: 0, to: 70 },
+  { start: -100000, end: -3200, from: 70, to: 180 },
   { start: -3200, end: -1200, from: 180, to: 320 },
   { start: -1200, end: -200, from: 320, to: 430 },
   { start: -200, end: 600, from: 430, to: 550 },
@@ -61,7 +62,10 @@ export function traditionIsVisible(
   mode: TemporalMode,
 ): boolean {
   if (mode === "catalog") return true;
-  const start = tradition.startYear ?? 2026;
+  if (tradition.startYear === undefined) {
+    return mode === "panorama" && tradition.isStillActive && year === (tradition.endYear ?? 2026);
+  }
+  const start = tradition.startYear;
   const end = tradition.endYear ?? start;
   if (mode === "panorama") return year >= start && year <= end;
   if (tradition.temporalPrecision === "unknown") return false;

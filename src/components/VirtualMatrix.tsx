@@ -28,7 +28,10 @@ export function VirtualMatrix() {
     <section className="matrix-view instrument-panel" aria-labelledby="matrix-title">
       <div className="instrument-heading">
         <div>
-          <p className="eyebrow">20.240 CÉLULAS COMPARATIVAS</p>
+          <p className="eyebrow">
+            {(data.metadata.traditionCount * data.metadata.archetypeCount).toLocaleString("pt-BR")}{" "}
+            CÉLULAS COMPARATIVAS
+          </p>
           <h2 id="matrix-title">Matriz navegável</h2>
         </div>
         <p>

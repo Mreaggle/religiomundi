@@ -27,6 +27,8 @@ export interface Tradition {
   status: string;
   coverage: string;
   profileBase: string;
+  mappingScope: string;
+  individualizedCells: number;
   sourceCodes: string[];
   scopeNote?: string;
   counts: Record<CorrelationType, number>;

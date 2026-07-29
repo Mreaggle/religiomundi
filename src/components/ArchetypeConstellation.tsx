@@ -52,6 +52,7 @@ export function ArchetypeConstellation() {
     setSelectedTraditionId,
     selectedArchetype,
     setSelectedArchetypeCode,
+    clearSelection,
     selectedYear,
     showAbsences,
     effectsEnabled,
@@ -61,7 +62,17 @@ export function ArchetypeConstellation() {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<SVGGElement>(null);
   const positions = useMemo(() => archetypePositions(data.archetypes), [data.archetypes]);
-  const clusters = useMemo(() => clusterTraditions(visibleTraditions), [visibleTraditions]);
+  const focusActive = Boolean(selectedTradition || selectedArchetype);
+  const focusTraditions = useMemo(() => {
+    if (selectedTradition) return [selectedTradition];
+    if (selectedArchetype) {
+      return visibleTraditions.filter(
+        (tradition) => tradition.correlations[selectedArchetype.code]?.type !== "absent",
+      );
+    }
+    return visibleTraditions;
+  }, [selectedArchetype, selectedTradition, visibleTraditions]);
+  const clusters = useMemo(() => clusterTraditions(focusTraditions), [focusTraditions]);
   const { projection } = useWorldGeometry(EXTENT);
   const { scale, zoomBy, panBy, resetZoom } = useSvgZoom(svgRef, viewportRef, {
     width: WIDTH,
@@ -143,7 +154,8 @@ export function ArchetypeConstellation() {
 
   const connections = useMemo(() => {
     if (selectedTradition) {
-      return data.archetypes
+      const focusedArchetypes = selectedArchetype ? [selectedArchetype] : data.archetypes;
+      return focusedArchetypes
         .map((archetype) => ({
           tradition: selectedTradition,
           archetype,
@@ -251,6 +263,30 @@ export function ArchetypeConstellation() {
             <circle className="orbit-line orbit-outer" cx="600" cy="350" rx="545" ry="300" />
             <circle className="orbit-line orbit-inner" cx="600" cy="350" rx="430" ry="238" />
             <MapGeometry extent={EXTENT} />
+            {focusActive && (
+              <g
+                role="button"
+                tabIndex={0}
+                aria-label="Limpar seleção e mostrar todos os elementos"
+                onClick={() => {
+                  clearSelection();
+                  setExpanded(undefined);
+                  setTooltip(undefined);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    clearSelection();
+                    setExpanded(undefined);
+                    setTooltip(undefined);
+                  }
+                }}
+              >
+                <rect className="focus-dismiss-surface" x="0" y="0" width={WIDTH} height={HEIGHT}>
+                  <title>Clique para limpar a seleção</title>
+                </rect>
+              </g>
+            )}
 
             <g className="correlation-layer">
               {connections.map((item, index) => {
@@ -312,6 +348,7 @@ export function ArchetypeConstellation() {
                       active={expanded === cluster.key}
                       onActivate={() => {
                         if (cluster.traditions.length === 1) {
+                          if (!selectedArchetype) setSelectedArchetypeCode(undefined);
                           setSelectedTraditionId(cluster.traditions[0].id);
                         } else {
                           setExpanded(expanded === cluster.key ? undefined : cluster.key);
@@ -361,12 +398,17 @@ export function ArchetypeConstellation() {
                 const count = stats?.total ?? 0;
                 const intensity = count / maximum;
                 const selected = selectedArchetype?.code === archetype.code;
+                const relevantToTradition =
+                  selectedTradition?.correlations[archetype.code]?.type !== "absent";
+                const hiddenByFocus =
+                  (Boolean(selectedArchetype) && !selected) ||
+                  (Boolean(selectedTradition) && !relevantToTradition);
                 return (
                   <g
                     key={archetype.code}
                     className={`archetype-node ${selected ? "selected" : ""} ${
                       count === 0 ? "inactive" : ""
-                    }`}
+                    } ${hiddenByFocus ? "focus-hidden" : ""}`}
                     data-archetype-code={archetype.code}
                     data-color-family={visual.colorFamily}
                     style={{ "--archetype-color": visual.color } as CSSProperties}
@@ -374,7 +416,14 @@ export function ArchetypeConstellation() {
                     role="button"
                     tabIndex={0}
                     aria-label={`${archetype.code}, ${archetype.name}, ${count} correlações no período`}
-                    onClick={() => setSelectedArchetypeCode(selected ? undefined : archetype.code)}
+                    onClick={() => {
+                      if (selected) {
+                        clearSelection();
+                      } else {
+                        setSelectedTraditionId(undefined);
+                        setSelectedArchetypeCode(archetype.code);
+                      }
+                    }}
                     onPointerMove={(event) => {
                       const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
                       if (!rect || !stats) return;
@@ -388,7 +437,12 @@ export function ArchetypeConstellation() {
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
-                        setSelectedArchetypeCode(selected ? undefined : archetype.code);
+                        if (selected) {
+                          clearSelection();
+                        } else {
+                          setSelectedTraditionId(undefined);
+                          setSelectedArchetypeCode(archetype.code);
+                        }
                       }
                     }}
                   >
@@ -424,6 +478,15 @@ export function ArchetypeConstellation() {
               <span key={line}>{line}</span>
             ))}
           </div>
+        )}
+        {focusActive && (
+          <button className="focus-status" type="button" onClick={clearSelection}>
+            <span>FOCO ISOLADO</span>
+            <strong>
+              {selectedTradition?.name ?? `${selectedArchetype?.code} — ${selectedArchetype?.name}`}
+            </strong>
+            <small>Clique aqui ou fora dos elementos para mostrar tudo</small>
+          </button>
         )}
         <div className="constellation-mantra">
           <span>Os nomes mudam.</span>

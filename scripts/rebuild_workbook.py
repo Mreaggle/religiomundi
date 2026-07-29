@@ -74,6 +74,7 @@ class Tradition:
     coverage: str = "Perfil de família"
     note: str = ""
     overrides: dict[str, str] = field(default_factory=dict)
+    mapping_scope: str = "specific"
     tradition_id: str = ""
 
 
@@ -2784,6 +2785,119 @@ PROFILES["afro_yoruba_diaspora"] = PROFILES["yoruba"] | PROFILES["afro_yoruba_di
 PROFILES["entheogenic_christian"] = PROFILES["christian"] | PROFILES["entheogenic_christian"]
 PROFILES["native_american_church"] = PROFILES["north_american"] | PROFILES["native_american_church"]
 
+# Perfis individualizados acrescentados após a auditoria de 29/07/2026.
+# Células ausentes permanecem ausentes: uma lista curta e rastreável é
+# preferível a completar uma tradição com o perfil de outra.
+PROFILES.update(
+    {
+        "golden_dawn": mapped(
+            A01="◇ Ain Soph e Kether na Cabala hermética; não uma cosmogonia histórica única",
+            A07="≈ Simbolismo solar nos graus, tarot e magia planetária",
+            A08="≈ Simbolismo lunar nos graus, tarot e magia planetária",
+            A09="● Astrologia e correspondências planetárias",
+            A11="≈ Fogo como elemento ritual e alquímico",
+            A12="≈ Ar como elemento ritual",
+            A19="● Cabala hermética, tarot, astrologia e currículo graduado",
+            A20="● Construção de instrumentos e técnica de magia cerimonial",
+            A34="● Cor, imagem, linguagem e performance ritual",
+            A36="● Disciplina e progressão por graus",
+            A38="≈ Textos cifrados e alegada autoridade dos 'Chefes Secretos'; historicidade debatida",
+            A39="● Modelos de alma/corpos sutis em síntese hermética",
+            A40="● Pilares, polaridades e correspondências elementais",
+            A41="● Adeptado e conhecimento/conversação com o Eu Superior na linguagem da ordem",
+            A43="● Iniciações, juramentos e rituais de grau",
+            A44="● Progressão iniciática e transformação do adepto",
+        ),
+        "rosicrucian": mapped(
+            A01="◇ Deus e criação em moldura cristã-esotérica; varia entre ordens",
+            A07="≈ Rosa, luz e Sol como símbolos; não função uniforme",
+            A11="≈ Alquimia espiritual em correntes rosacruzes",
+            A19="● Reforma do saber, filosofia hermética e conhecimento oculto",
+            A23="≈ Cura sem recompensa nos manifestos; interpretações posteriores variam",
+            A32="≈ Regeneração cristã e renovação espiritual",
+            A37="◇ Serviço e cura como ideais em correntes documentadas",
+            A38="● Manifestos de 1614–1616 e corpora posteriores distintos",
+            A40="≈ Rosa/cruz e pares alquímicos como linguagem simbólica",
+            A41="● Regeneração, iluminação ou união com Deus conforme a ordem",
+            A43="≈ Fraternidade, graus e iniciação em organizações posteriores",
+            A44="● Transmutação alquímica como metáfora de transformação espiritual",
+        ),
+        "martinism": mapped(
+            A01="◇ Deus e emanação em cristianismo esotérico",
+            A02="≈ Criação e queda conforme leituras de Martinez de Pasqually e Saint-Martin",
+            A31="≈ Queda e afastamento do divino; não um mal personificado uniforme",
+            A32="● Regeneração e retorno do ser humano",
+            A36="● Via interior, oração e disciplina mística",
+            A37="◇ Reconciliação e caridade cristã",
+            A38="● Escritos de Saint-Martin e linhagens iniciáticas posteriores",
+            A39="● Alma humana e sua origem divina",
+            A41="● Reintegração/reconciliação com o divino",
+            A43="≈ Iniciação e transmissão em ordens martinistas modernas",
+            A44="● Reintegração como transformação espiritual",
+        ),
+        "fraternitas_saturni": mapped(
+            A07="≈ Polaridade Sol–Saturno em sistemas da ordem",
+            A09="● Saturno, astrologia e correspondências planetárias",
+            A29="● Saturno como tempo, limite e destino em sua linguagem ritual",
+            A31="≈ Elementos luciferianos em fases e autores da ordem; não satanismo genérico",
+            A35="≈ Transgressão e magia sexual em materiais de certos graus",
+            A36="● Disciplina iniciática e trabalho por graus",
+            A38="● Textos e instruções internas da ordem",
+            A39="● Desenvolvimento da consciência em cosmologia ocultista",
+            A41="≈ Adeptado/libertação segundo doutrinas próprias",
+            A43="● Juramentos e rituais iniciáticos",
+            A44="● Transformação mágica do iniciado",
+        ),
+        "chaos_magic": mapped(
+            A01="◇ Ausência de cosmologia obrigatória; modelos são adotados pragmaticamente",
+            A19="● Conhecimento técnico e experimentação ritual",
+            A20="● Sigilização e construção deliberada de técnicas",
+            A21="● Mudança de crença e transgressão de sistemas fixos",
+            A29="≈ Probabilidade e sincronicidade em discursos do meio; não doutrina única",
+            A30="≈ 'Caos' como emblema e campo de possibilidades, não caos mítico uniforme",
+            A35="● Gnose/extase como estado operacional em autores formadores",
+            A39="◇ Crença tratada como ferramenta por parte da literatura",
+            A40="◇ Alternância entre paradigmas e modelos",
+            A43="≈ Ritual sem sacerdócio ou liturgia comum",
+            A44="● Alteração de crença, hábito e percepção como prática",
+        ),
+        "nation_of_islam": mapped(
+            A02="● Allah em teologia própria; formulações diferem do Islã sunita",
+            A03="● Allah",
+            A04="◇ Ordem moral, disciplina e justiça racial",
+            A18="≈ Autoridade carismática e organização comunitária",
+            A31="≈ Linguagem racializada sobre adversários em fases históricas; requer contexto",
+            A32="≈ Ressurreição mental/moral em ensinamentos do movimento",
+            A36="● Disciplina alimentar, comportamental e comunitária",
+            A38="● Wallace Fard Muhammad e Elijah Muhammad na história doutrinária",
+            A41="● Libertação negra e reforma moral em chave religiosa",
+            A42="≈ Escatologia própria e julgamento social",
+            A43="≈ Culto e organização ministerial; não herda automaticamente ritos islâmicos",
+            A44="● Transformação pessoal e coletiva",
+        ),
+        "ravidassia": mapped(
+            A01="◇ Deus sem forma em hinos atribuídos a Ravidas",
+            A03="◇ Divino único; linguagem devocional",
+            A04="◇ Igualdade e crítica de hierarquias de casta",
+            A34="● Hinos e canto congregacional",
+            A36="≈ Disciplina devocional",
+            A37="◇ Compaixão, igualdade e serviço",
+            A38="● Guru Ravidas e Amritbani Guru Ravidass Ji",
+            A41="● Libertação e Begumpura como horizonte religioso-social",
+            A43="≈ Culto congregacional e práticas comunitárias",
+            A44="≈ Iniciação/identidade comunitária conforme organização",
+        ),
+        "new_religion_generic": mapped(
+            A01="? Cosmologia requer revisão na fonte própria do movimento",
+            A19="? Doutrina e corpus ainda não individualizados nesta revisão",
+            A38="? Fundador, revelação ou texto requer verificação específica",
+            A41="? Objetivo último requer terminologia interna",
+            A43="? Prática ritual requer documentação específica",
+            A44="? Transformação/iniciação requer documentação específica",
+        ),
+    }
+)
+
 
 SOURCES = [
     ("M01", "Método", "Comparação exige categorias explícitas e não prova origem comum", "Nota editorial desta revisão; consultar também obras de história das religiões", "", "Princípio metodológico"),
@@ -2812,12 +2926,24 @@ SOURCES = [
     ("B03", "Islã", "Corpus Coranicum", "Berlin-Brandenburg Academy of Sciences", "https://corpuscoranicum.de/", "Texto, contexto e documentação do Qurʾān"),
     ("B04", "Siquismo", "Sri Guru Granth Sahib", "Shiromani Gurdwara Parbandhak Committee", "https://old.sgpc.net/CDN/Siri%20Guru%20Granth%20Sahib%2C%20Romanized.pdf", "Texto do Guru Granth Sahib em transliteração"),
     ("B05", "Bahá'í", "Bahá'í Reference Library", "Bahá'í International Community", "https://www.bahai.org/library/", "Fonte oficial de escritos bahá'ís"),
+    ("B06", "Catolicismo", "Directory on Popular Piety and the Liturgy", "Dicastério para o Culto Divino / Santa Sé", "https://www.vatican.va/content/dam/wss/roman_curia/congregations/ccdds/documents/rc_con_ccdds_doc_20020513_vers-direttorio_en.html", "Critérios católicos para veneração, patronato, santos e sua subordinação ao culto trinitário e sacramental"),
     ("C01", "Espiritismo", "Obras básicas e estudo", "Federação Espírita Brasileira", "https://www.febnet.org.br/portal/", "Fonte confessional; confrontar com pesquisa histórica"),
     ("C02", "Tenrikyo", "The Teachings and History of Tenrikyo", "Tenrikyo Church Headquarters", "https://www.tenrikyo.or.jp/eng/teaching/", "Fonte oficial sobre doutrina e história"),
     ("C03", "Santos dos Últimos Dias", "Gospel Library", "The Church of Jesus Christ of Latter-day Saints", "https://www.churchofjesuschrist.org/study?lang=eng", "Fonte oficial; confrontar com pesquisa histórica"),
     ("C04", "Thelema", "Liber AL vel Legis", "Ordo Templi Orientis USA", "https://oto-usa.org/thelema/liber-al/", "Texto primário do movimento"),
     ("C05", "Satanismo LaVeyano", "The Church of Satan", "Church of Satan", "https://www.churchofsatan.com/", "Fonte confessional; distingue Satanás simbólico"),
     ("C06", "Novos movimentos", "World Religions and Spirituality Project", "Virginia Commonwealth University", "https://wrldrels.org/", "Perfis acadêmicos de movimentos religiosos novos"),
+    ("P01", "Pré-história", "Early Neanderthal constructions deep in Bruniquel Cave", "Nature", "https://www.nature.com/articles/nature18291", "Datação das estruturas de Bruniquel; função religiosa permanece indeterminada"),
+    ("P02", "Pré-história", "Qafzeh: Oldest Intentional Burial", "Smithsonian Human Origins Program", "https://humanorigins.si.edu/evidence/behavior/burial/qafzeh-oldest-intentional-burial", "Sepultamentos e ocre em Qafzeh; possível dimensão ritual sem reconstruir religião"),
+    ("P03", "Pré-história", "An abstract drawing from the 73,000-year-old levels at Blombos Cave", "Nature", "https://www.nature.com/articles/s41586-018-0514-3", "Comportamento simbólico em Blombos; simbolismo não equivale automaticamente a religião"),
+    ("P04", "Pré-história", "Göbekli Tepe", "UNESCO World Heritage Centre", "https://whc.unesco.org/en/list/1572", "Cronologia, arquitetura monumental e interpretação ritual cautelosa"),
+    ("E01", "Esoterismo moderno", "The Golden Dawn and the O.T.O.", "Cambridge University Press", "https://www.cambridge.org/core/books/abs/cambridge-handbook-of-western-mysticism-and-esotericism/golden-dawn-and-the-oto/89C65341BF3D3912E35E25A6F3759B07", "História e recorte da Golden Dawn clássica, 1888–1903"),
+    ("E02", "Magia do caos", "Aries — Journal for the Study of Western Esotericism", "Brill", "https://brill.com/view/journals/arie/25/1/article-p25_2.pdf", "Emergência da magia do caos na Grã-Bretanha do fim dos anos 1970"),
+    ("E03", "Paganismos modernos", "Neopaganism", "Cambridge University Press", "https://www.cambridge.org/core/books/abs/cambridge-companion-to-new-religious-movements/neopaganism/A42AADD375DA9BF3448CB957E688F801", "Distingue religiões modernas de suas referências pré-cristãs"),
+    ("E04", "Paganismos bálticos/eslavos", "Contemporary Paganism in Lithuanian Context: Principal Beliefs and Practices of Romuva", "Cambridge University Press", "https://www.cambridge.org/core/books/abs/modern-pagan-and-native-faith-movements-in-central-and-eastern-europe/contemporary-paganism-in-lithuanian-context-principal-beliefs-and-practices-of-romuva/30CF5D905767CA925F83C4774673AEC5", "Romuva e o contexto acadêmico dos movimentos pagãos modernos do centro/leste europeu"),
+    ("L01", "Lista investigativa", "Category:Religion", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/Category:Religion", "Taxonomia navegável para descoberta; não usada isoladamente como evidência histórica"),
+    ("L02", "Lista investigativa", "List of religions and spiritual traditions", "Wikipedia", "https://en.wikipedia.org/wiki/List_of_religions_and_spiritual_traditions", "Checklist de cobertura; cada inclusão exige verificação independente"),
+    ("L03", "Lista investigativa", "All Faiths / Religions", "Open Mind Project", "https://www.openmindproject.com/all-faiths-religions-2", "Checklist secundário de movimentos; não usado isoladamente para datas ou doutrina"),
 ]
 
 
@@ -2837,6 +2963,7 @@ def add(
     coverage: str = "Perfil de família",
     note: str = "",
     overrides: dict[str, str] | None = None,
+    mapping_scope: str = "specific",
 ) -> None:
     TRADITIONS.append(
         Tradition(
@@ -2851,6 +2978,7 @@ def add(
             coverage=coverage,
             note=note,
             overrides=overrides or {},
+            mapping_scope=mapping_scope,
         )
     )
 
@@ -2865,18 +2993,89 @@ def add_many(
     sources: str,
     *,
     status: str = "Viva",
-    coverage: str = "Perfil de família",
-    note: str = "",
+        coverage: str = "Perfil de família",
+        note: str = "",
 ) -> None:
     for name in names:
-        add(name, family, region, period, kind, profile, sources, status=status, coverage=coverage, note=note)
+        add(
+            name,
+            family,
+            region,
+            period,
+            kind,
+            profile,
+            sources,
+            status=status,
+            coverage=coverage,
+            note=note,
+            mapping_scope="family",
+        )
 
 
 # Evidência arqueológica e religiões históricas. Datas indicam atestação,
 # não "nascimento" de povos nem duração total de tradições.
-add("Evidências paleolíticas de comportamento ritual", "Arqueologia da religião", "África/Eurásia", "c. 100.000–10.000 a.C.", "Evidência material, não religião nomeada", "archaeological", "M02; M03", status="Arqueológica", coverage="Crítico", note="Nenhum panteão ou cosmovisão específica pode ser recuperado com segurança.")
+add(
+    "Estruturas profundas da caverna de Bruniquel",
+    "Arqueologia do comportamento simbólico",
+    "Europa ocidental",
+    "c. 176.500 anos AP",
+    "Estruturas arqueológicas; função desconhecida",
+    "archaeological",
+    "P01",
+    status="Arqueológica",
+    coverage="Crítico",
+    note="Estruturas anelares e fogo são bem datados, mas sua função religiosa ou ritual não foi demonstrada. Não classificar como animismo ou xamanismo.",
+)
+add(
+    "Sepultamentos intencionais de Qafzeh",
+    "Arqueologia da morte",
+    "Levante",
+    "c. 100.000 anos AP",
+    "Evidência mortuária, não religião nomeada",
+    "archaeological",
+    "P02",
+    status="Arqueológica",
+    coverage="Crítico",
+    note="Sepultamentos e ocre sugerem comportamento ritual possível; não permitem reconstruir crença pós-morte, panteão ou tradição nomeada.",
+)
+add(
+    "Comportamento simbólico de Blombos",
+    "Arqueologia do comportamento simbólico",
+    "África austral",
+    "c. 100.000–73.000 anos AP",
+    "Pigmentos, ornamentos e grafismo; não religião nomeada",
+    "archaeological",
+    "P03",
+    status="Arqueológica",
+    coverage="Crítico",
+    note="Ocre processado, ornamentos e grafismo sustentam comportamento simbólico. Simbolismo não prova animismo, culto ou religião específica.",
+)
+add(
+    "Conjuntos funerários e arte do Paleolítico Superior",
+    "Arqueologia da religião",
+    "Eurásia",
+    "c. 45.000–10.000 a.C.",
+    "Evidência material agregada, não religião única",
+    "archaeological",
+    "M02; M03",
+    status="Arqueológica",
+    coverage="Crítico",
+    note="Sepultamentos, arte parietal e objetos portáteis têm contextos distintos. Hipóteses animistas ou xamânicas devem permanecer comparações, não identificações.",
+)
+add(
+    "Práticas mortuárias natufienses",
+    "Arqueologia da morte",
+    "Levante",
+    "c. 12.500–9.500 a.C.",
+    "Complexos mortuários e comunitários",
+    "archaeological",
+    "M02",
+    status="Arqueológica",
+    coverage="Crítico",
+    note="Enterros e práticas comunitárias antecedem a agricultura plena; não há panteão recuperável nem consenso para rotular a cosmovisão como animista.",
+)
 add("Complexos neolíticos da Europa e Anatólia", "Arqueologia da religião", "Europa/Anatólia", "c. 10.000–3.000 a.C.", "Evidência material", "archaeological", "M02; M03", status="Arqueológica", coverage="Crítico")
-add("Göbekli Tepe", "Arqueologia da religião", "Anatólia", "c. 9.600–8.200 a.C.", "Sítio/complexo ritual", "archaeological", "M02", status="Arqueológica", coverage="Crítico")
+add("Göbekli Tepe", "Arqueologia da religião", "Anatólia", "c. 9.600–8.200 a.C.", "Sítio/complexo ritual", "archaeological", "P04", status="Arqueológica", coverage="Crítico")
 add("Çatalhöyük", "Arqueologia da religião", "Anatólia", "c. 7.100–5.950 a.C.", "Sítio/complexo ritual", "archaeological", "M02", status="Arqueológica", coverage="Crítico")
 add("Religião suméria", "Mesopotâmica", "Mesopotâmia meridional", "c. 2.600–1.800 a.C. (corpus)", "Politeísta histórica", "sumerian", "A01; A02", status="Histórica", coverage="Detalhado")
 add("Religião acádia", "Mesopotâmica", "Mesopotâmia", "c. 2.300–2.000 a.C.", "Politeísta histórica", "akkadian", "A02", status="Histórica", coverage="Detalhado")
@@ -3110,11 +3309,11 @@ add("Religião Shang-Zhou", "Chinesa antiga", "China", "c. 1.600–256 a.C.", "R
 add("Daoismo religioso (perfil agregado)", "Daoista", "China/diáspora", "século II–presente; raízes anteriores", "Família religiosa viva", "daoist", "A09; A10", coverage="Detalhado")
 add_many(["Daoismo Zhengyi", "Daoismo Quanzhen", "Tradição Shangqing", "Tradição Lingbao"], "Daoista", "China/diáspora", "séculos IV–presente", "Escolas daoistas", "daoist", "A09; A10", coverage="Perfil de família")
 add("Confucionismo", "Confuciana", "Leste Asiático", "século V a.C.–presente", "Tradição ético-ritual", "confucian", "A09", coverage="Detalhado")
-add_many(["Neoconfucionismo", "Religião estatal confuciana", "Caodaísmo confuciano-budista (ver Cao Đài)"], "Confuciana", "Leste/Sudeste Asiático", "século X–presente", "Tradições ético-rituais", "confucian", "A09", coverage="Perfil de família")
+add_many(["Neoconfucionismo", "Religião estatal confuciana"], "Confuciana", "Leste/Sudeste Asiático", "século X–presente", "Tradições ético-rituais", "confucian", "A09", coverage="Perfil de família")
 add_many(["Yiguandao", "Xiantiandao", "Luoísmo", "Religião do Lótus Branco (família histórica)", "Falun Dafa/Falun Gong"], "Salvacionista/chinesa", "China/Taiwan/diáspora", "séculos XV–XXI", "Movimentos religiosos", "chinese", "A09; C06", status="Viva/Histórica", coverage="Perfil de família")
 add("Xintoísmo (perfil agregado)", "Japonesa", "Japão/diáspora", "Antiguidade–presente; termo e instituição históricos", "Família religiosa viva", "shinto", "A11", coverage="Detalhado")
 add_many(["Xintoísmo de santuário", "Xintoísmo sectário", "Shugendō", "Religião Ryūkyū", "Religião Ainu"], "Japonesa/indígena", "Japão", "Antiguidade–presente", "Tradições religiosas vivas", "shinto", "A11", coverage="Perfil de família")
-add_many(["Tenrikyō", "Konkōkyō", "Ōmoto", "Shinnyo-en", "Seichō-no-Ie"], "Novas religiões japonesas", "Japão/diáspora", "séculos XIX–XXI", "Novos movimentos religiosos", "tenrikyo", "C02; C06", coverage="Perfil de família")
+add_many(["Konkōkyō", "Ōmoto", "Shinnyo-en", "Seichō-no-Ie"], "Novas religiões japonesas", "Japão/diáspora", "séculos XIX–XXI", "Novos movimentos religiosos", "tenrikyo", "C02; C06", coverage="Perfil de família")
 add("Tenrikyō (perfil específico)", "Nova religião japonesa", "Japão/diáspora", "1838–presente", "Religião viva", "tenrikyo", "C02", coverage="Detalhado")
 add("Muismo/Xamanismo coreano", "Coreana", "Coreia/diáspora", "tradição oral viva", "Religião indígena viva", "korean", "C06", coverage="Detalhado")
 add_many(["Cheondoísmo", "Daejongismo", "Jeungsanismo", "Daesun Jinrihoe"], "Novas religiões coreanas", "Coreia", "séculos XIX–XXI", "Novos movimentos religiosos", "korean", "C06", coverage="Perfil de família")
@@ -3143,11 +3342,15 @@ add("Islamismo sunita (perfil agregado)", "Islâmica", "Global", "século VII–
 add_many(["Sunismo Hanafi", "Sunismo Maliki", "Sunismo Shafi'i", "Sunismo Hanbali"], "Islâmica sunita", "Global", "século VIII–presente", "Escolas jurídicas", "islam", "B03", coverage="Perfil de família")
 add("Xiismo duodecimano", "Islâmica xiita", "Irã/Iraque/Global", "século VII–presente", "Religião viva", "islam", "B03", coverage="Perfil de família", overrides={"A26": "● Ahl al-Bayt e mártires, especialmente Husayn; veneração não divinização", "A38": "● Muḥammad e imames como guias; profecia encerra em Muḥammad"})
 add_many(["Ismailismo", "Zaidismo", "Ibadismo"], "Islâmica", "Oriente Médio/África/Ásia", "séculos VIII–presente", "Tradições islâmicas", "islam", "B03", coverage="Perfil de família")
+add("Ahmadiyya", "Islâmica ahmadi", "Sul da Ásia/África/Europa/Global", "1889–presente", "Movimento religioso islâmico", "islam", "C06; L02", coverage="Parcial", note="A autodefinição é islâmica; muitos muçulmanos não reconhecem os ahmadis como muçulmanos. Registrar a disputa sem decidir validade religiosa.", overrides={"A38": "● Muḥammad como selo dos profetas; estatuto de Mirza Ghulam Ahmad é interpretado de modo próprio e controverso", "A42": "≈ Messianismo/Mahdismo na interpretação ahmadi"})
 add("Sufismo/Taṣawwuf (perfil agregado)", "Mística islâmica", "Global", "século VIII–presente", "Família mística", "sufi", "B03", coverage="Detalhado")
 add_many(["Qadiriyya", "Naqshbandiyya", "Chishtiyya", "Mevleviyya", "Tijaniyya", "Bektashiyya"], "Ordens sufis", "Global", "séculos XII–presente", "Ordens místicas", "sufi", "B03", coverage="Perfil de família")
 add_many(["Alevismo", "Druzismo", "Alauísmo", "Yarsan/Ahl-e Haqq"], "Religiões relacionadas ao Islã/iranianas", "Oriente Médio/diáspora", "medieval–presente", "Religiões esotéricas/comunitárias", "islam", "B03; C06", coverage="Perfil de família", note="Não reduzir estas tradições a 'seitas islâmicas'; autodefinição varia.")
+add("Shabakismo", "Etnorreligiosa shabak", "Iraque/diáspora", "atestação moderna; tradições e textos anteriores debatidos–presente", "Religião etnocomunitária viva", "new_religion_generic", "C06; L02", coverage="Fragmentário", note="A classificação e as relações com tradições islâmicas e yazdânicas são debatidas; não preencher por analogia.", overrides={"A38": "≈ Buyruk e especialistas religiosos em descrições disponíveis", "A43": "≈ Ritos e peregrinações comunitárias; documentação pública limitada"})
+add("Nation of Islam", "Afro-americana/islâmica heterodoxa", "Estados Unidos", "1930–presente", "Novo movimento religioso", "nation_of_islam", "C06; L02", coverage="Detalhado com ressalvas", note="Não usar o perfil sunita: a teologia e a história institucional próprias mudaram em diferentes lideranças.")
 add("Fé Bahá'í", "Bahá'í", "Global", "1844/1863–presente", "Religião mundial", "bahai", "B05", coverage="Detalhado")
 add("Babismo", "Bábí", "Irã", "1844–presente em pequenos grupos", "Religião histórica/viva", "bahai", "B05", status="Histórica/Viva", coverage="Perfil de família")
+add("Ravidassia", "Sul-asiática/devocional", "Punjab/diáspora", "identidade religiosa autônoma afirmada em 2009; raízes devocionais anteriores", "Religião/comunidade religiosa viva", "ravidassia", "C06; L02", coverage="Parcial", note="A relação com o siquismo e a identidade autônoma variam entre comunidades; 2009 marca uma afirmação institucional, não o início da devoção a Ravidas.")
 
 # Espiritualismos, esoterismos, neopaganismos e novos movimentos.
 add("Espiritualismo moderno", "Espiritualista", "Europa/Américas", "1848–presente", "Movimento religioso", "spiritism", "C01; C06", coverage="Perfil de família", note="Não é idêntico ao Espiritismo kardecista.")
@@ -3162,9 +3365,74 @@ add("Wicca (perfil agregado)", "Wicca", "Global", "década de 1950–presente", 
 add_many(["Bruxaria Tradicional moderna", "Movimento da Deusa", "Feri Tradition", "Reclaiming Tradition"], "Neopagã/bruxaria moderna", "Global", "séculos XX–XXI", "Neopaganismos", "wicca", "C06", coverage="Perfil de família")
 add("Thelema", "Esotérica moderna", "Global", "1904–presente", "Religião/filosofia esotérica", "thelema", "C04", coverage="Detalhado")
 add_many(["Ordo Templi Orientis", "A∴A∴ e linhagens thelêmicas", "Typhonian Order"], "Thelêmica", "Global", "séculos XX–XXI", "Ordens esotéricas", "thelema", "C04", coverage="Perfil de família")
-add_many(["Hermetic Order of the Golden Dawn", "Rosacrucianismos modernos", "Martinismo", "Fraternitas Saturni", "Magia do Caos"], "Esotérica/ocultista", "Europa/Américas/Global", "séculos XVII–XXI", "Ordens e correntes esotéricas", "esoteric_order", "C06", status="Viva/Histórica", coverage="Perfil de família")
+add(
+    "Hermetic Order of the Golden Dawn",
+    "Esotérica/ocultista",
+    "Grã-Bretanha/Europa/linhagens globais",
+    "1888–1903 (ordem clássica); linhagens posteriores",
+    "Ordem iniciática de magia cerimonial",
+    "golden_dawn",
+    "E01; C06",
+    status="Histórica/Revival",
+    coverage="Detalhado",
+    note="A ordem clássica foi curta; grupos posteriores não constituem automaticamente continuidade institucional.",
+)
+add(
+    "Rosacrucianismos modernos",
+    "Cristã-esotérica/ocultista",
+    "Europa/Américas/Global",
+    "manifestos de 1614–1616; organizações posteriores–presente",
+    "Família de textos, ordens e correntes; não religião única",
+    "rosicrucian",
+    "C06; L03",
+    status="Viva/Histórica",
+    coverage="Detalhado com ressalvas",
+    note="O plural é deliberado: manifestos, fraternidades maçônicas e ordens modernas não formam uma instituição ou doutrina única.",
+)
+add(
+    "Martinismo",
+    "Cristã-esotérica",
+    "França/Europa/Global",
+    "fim do século XVIII–presente; ordens modernas desde 1891",
+    "Corrente mística e ordens iniciáticas",
+    "martinism",
+    "C06",
+    status="Viva/Histórica",
+    coverage="Parcial",
+)
+add(
+    "Fraternitas Saturni",
+    "Esotérica/ocultista",
+    "Alemanha/Europa",
+    "1926–presente, com interrupções históricas",
+    "Ordem iniciática",
+    "fraternitas_saturni",
+    "C06",
+    status="Viva/Histórica",
+    coverage="Parcial",
+)
+add(
+    "Magia do Caos",
+    "Ocultista pós-moderna",
+    "Grã-Bretanha/Europa/Global",
+    "fim da década de 1970–presente",
+    "Corrente mágica descentralizada, não religião única",
+    "chaos_magic",
+    "E02; C06",
+    coverage="Detalhado com ressalvas",
+    note="Não possui panteão, organização ou crença obrigatória comuns; autores e grupos divergem.",
+)
 add("Maçonaria (dimensão ritual/esotérica)", "Fraternal/esotérica", "Global", "1717–presente; antecedentes", "Fraternidade iniciática, não religião única", "esoteric_order", "C06", coverage="Parcial", note="Não classificar automaticamente como religião; membros podem pertencer a religiões distintas.")
-add_many(["Druidismo moderno", "Heathenry/Ásatrú", "Forn Siðr", "Rodnovery", "Romuva", "Dievturība", "Helenismo reconstrucionista", "Religio Romana moderna", "Kemetismo moderno", "Neopaganismo celta"], "Neopagã/reconstrucionista", "Europa/Américas/Global", "séculos XIX–XXI", "Religiões de revitalização", "esoteric_order", "C06", coverage="Perfil de família", note="Reconstruções modernas não são continuidade documental simples da Antiguidade.")
+add("Druidismo moderno", "Paganismo moderno", "Grã-Bretanha/Europa/Global", "século XVIII–presente; organizações posteriores", "Família religiosa moderna", "celtic", "E03; C06", coverage="Perfil de família", note="Revival moderno; não é continuidade institucional dos druidas antigos.", mapping_scope="family", overrides={"A13": "● Natureza, bosques e ciclos sazonais em grande parte do druidismo moderno", "A19": "● Aprendizado bárdico/druídico conforme a ordem", "A34": "● Poesia, música e identidade bárdica", "A43": "≈ Cerimônias públicas e privadas; variam por ordem", "A44": "● Graus e formação iniciática em várias ordens"})
+add("Heathenry/Ásatrú", "Paganismo germânico moderno", "Europa/Américas/Global", "décadas de 1960–1970–presente", "Família religiosa moderna", "norse", "E03; C06", coverage="Perfil de família", note="Reconstrução e revitalização modernas; correntes universalistas, étnicas e políticas divergem.", mapping_scope="family", overrides={"A03": "● Odin, Thor ou outros deuses conforme comunidade; não há autoridade única", "A26": "● Ancestrais e memória de linhagem/comunidade", "A28": "● Juramentos e assembleia/thing em reconstruções modernas", "A43": "● Blót e sumbel em muitas comunidades modernas"})
+add("Forn Siðr", "Paganismo germânico moderno", "Escandinávia", "organizações contemporâneas desde 1997; termo histórico reutilizado", "Organizações religiosas modernas", "norse", "E03; C06", coverage="Perfil de família", note="O nome é usado por organizações distintas; a data refere-se ao movimento organizado contemporâneo, não ao politeísmo medieval.", mapping_scope="family", overrides={"A26": "● Ancestrais e memória comunitária", "A43": "● Blót e festivais sazonais em organizações contemporâneas"})
+add("Rodnovery", "Paganismo eslavo moderno", "Europa oriental/diáspora", "c. 1980–presente; consolidação pós-soviética", "Família religiosa moderna diversa", "slavic", "E04; C06", coverage="Perfil de família", note="Movimento moderno heterogêneo; não representa um panteão eslavo antigo uniforme nem continuidade simples. Há antecedentes intelectuais anteriores, mas a data adotada descreve a formação do movimento contemporâneo.", mapping_scope="family", overrides={"A03": "≈ Perun, Rod ou outros polos conforme corrente", "A05": "≈ Mãe Terra/Mokosh em reconstruções modernas", "A26": "● Ancestralidade e identidade nativa são centrais em muitas correntes", "A43": "● Oferendas e festivais reconstruídos; prática varia"})
+add("Romuva", "Paganismo báltico moderno", "Lituânia/diáspora", "movimento organizado desde 1967–presente; fontes folclóricas anteriores", "Religião de revitalização moderna", "baltic", "E04; C06", coverage="Perfil de família", note="Revitalização lituana moderna baseada em folclore, dainos e fontes históricas; não continuidade institucional ininterrupta.", mapping_scope="family", overrides={"A05": "● Žemyna: terra em liturgia e reconstrução moderna", "A11": "● Gabija: fogo doméstico", "A26": "● Ancestrais e memória familiar", "A34": "● Dainos/cantos e festivais", "A43": "● Aukuras, fogo e oferendas em ritos modernos"})
+add("Dievturība", "Paganismo báltico moderno", "Letônia/diáspora", "1925–presente; supressão soviética e reorganização", "Religião de revitalização moderna", "baltic", "E04; C06", coverage="Perfil de família", note="Movimento letão fundado no século XX; usa dainas e material folclórico sem alegar continuidade institucional simples.", mapping_scope="family", overrides={"A03": "● Dievs como polo celeste na teologia do movimento", "A05": "● Māra e a dimensão material/terrestre em formulações dievturi", "A07": "● Saule", "A34": "● Dainas e canto ritual", "A43": "● Ritos sazonais e oferendas reconstruídas"})
+add("Helenismo reconstrucionista", "Paganismo helênico moderno", "Grécia/diáspora", "fim do século XX–presente", "Religião reconstrucionista moderna", "greek", "E03; C06", coverage="Perfil de família", note="Usa fontes da religião grega antiga em contextos modernos; não equivale à continuidade de um culto antigo específico.", mapping_scope="family", overrides={"A43": "● Oferendas, libações e festivais reconstruídos", "A44": "≈ Iniciações modernas variam; não presumir continuidade dos mistérios antigos"})
+add("Religio Romana moderna", "Paganismo romano moderno", "Europa/Américas/Global", "fim do século XX–presente", "Religião reconstrucionista moderna", "roman", "E03; C06", coverage="Perfil de família", note="Reconstrução moderna do culto romano; prática doméstica e cívica varia entre organizações.", mapping_scope="family", overrides={"A18": "≈ Virtudes cívicas e ordem ritual em releituras modernas", "A43": "● Sacra, libações e oferendas reconstruídas"})
+add("Kemetismo moderno", "Paganismo egípcio moderno", "América do Norte/Europa/Global", "década de 1970–presente", "Família reconstrucionista moderna", "egyptian", "E03; C06", coverage="Perfil de família", note="Família moderna diversa; reconstrução histórica, inovação ritual e organizações como Kemetic Orthodoxy não são idênticas.", mapping_scope="family", overrides={"A04": "● Ma'at como princípio ético-cósmico em muitas correntes", "A43": "● Oferendas e culto doméstico/templo reconstruídos"})
+add("Neopaganismo celta", "Paganismo celta moderno", "Europa/Américas/Global", "décadas de 1970–presente", "Família religiosa moderna", "celtic", "E03; C06", coverage="Perfil de família", note="Rótulo guarda-chuva moderno; tradições irlandesas, galesas, gaélicas e continentais não formam um panteão único.", mapping_scope="family", overrides={"A13": "≈ Ciclos sazonais e paisagem em muitas correntes", "A26": "≈ Ancestralidade e memória cultural", "A34": "● Poesia, música e narrativa", "A43": "≈ Oferendas e festivais reconstruídos"})
 add("Satanismo LaVeyano", "Satanista nontheísta", "Global", "1966–presente", "Nova religião", "satanism_nontheist", "C05", coverage="Detalhado")
 add("The Satanic Temple", "Satanista nontheísta", "EUA/Global", "2013–presente", "Movimento religioso/ativista", "satanism_nontheist", "C06", coverage="Perfil de família")
 add("Temple of Set", "Setiana/esotérica", "Global", "1975–presente", "Nova religião esotérica", "esoteric_order", "C06", coverage="Perfil de família")
@@ -3175,14 +3443,328 @@ add("Nova Era/New Age (campo agregado)", "Esotérica descentralizada", "Global",
 add_many(["Neoshamanismo", "Movimento do Potencial Humano", "Canalização de Mestres Ascensos", "Espiritualidade de cristais", "Astrologia psicológica moderna", "Perennialismo esotérico"], "Nova Era/esotérica", "Global", "séculos XX–XXI", "Campos espirituais", "new_age", "C06", coverage="Perfil de família")
 add("Cientologia", "Nova religião", "Global", "1954–presente", "Nova religião", "scientology", "C06", coverage="Detalhado")
 add_many(["Eckankar", "Movimento Rajneesh/Osho", "Sahaja Yoga", "Ananda Marga", "Meditação Transcendental", "Subud"], "Novos movimentos espirituais", "Global", "séculos XX–XXI", "Novos movimentos religiosos", "new_age", "C06", coverage="Perfil de família")
+add("Self-Realization Fellowship", "Yoga/Vedanta moderno", "Índia/Estados Unidos/Global", "1920–presente", "Movimento religioso transnacional", "new_religion_generic", "C06; L03", coverage="Parcial", overrides={"A36": "● Kriyā Yoga e disciplina meditativa conforme a organização", "A38": "● Paramahansa Yogananda e linhagem de gurus apresentada pela organização", "A41": "● Realização do Self/união com Deus em linguagem vedântica moderna", "A43": "≈ Iniciação e transmissão de técnicas", "A44": "● Transformação por prática de yoga e meditação"})
+add("Movimento de Meher Baba", "Espiritual transnacional", "Índia/Global", "década de 1920–presente", "Movimento devocional", "new_religion_generic", "C06; L03", coverage="Parcial", overrides={"A03": "≈ Deus único em linguagem do movimento", "A36": "● Silêncio, disciplina e serviço associados a Meher Baba", "A37": "◇ Amor e serviço", "A38": "● Meher Baba, reconhecido por seguidores como Avatar", "A41": "● Realização de Deus", "A44": "≈ Transformação por devoção, serviço e disciplina"})
+add("Movimento do Livro de Urântia", "Nova religião/textual", "Estados Unidos/Global", "1955–presente; grupos de leitores anteriores", "Movimento religioso descentralizado", "new_religion_generic", "C06; L03", coverage="Parcial", overrides={"A01": "● Cosmologia extensa apresentada no Livro de Urântia", "A02": "● Criadores e administradores celestes em hierarquia própria", "A03": "● Pai Universal", "A19": "● Cosmologia e história universal reveladas segundo o livro", "A38": "● O Livro de Urântia como texto revelatório; autoria reivindicada é matéria de crença", "A39": "● Ajustador do Pensamento e sobrevivência da personalidade", "A41": "● Ascensão espiritual ao Pai Universal", "A42": "≈ Destino progressivo do universo, não escatologia cristã simples"})
+add("Happy Science", "Nova religião japonesa", "Japão/Global", "1986–presente", "Novo movimento religioso", "new_religion_generic", "C06; L03", coverage="Parcial", overrides={"A03": "● El Cantare na teologia do movimento", "A19": "● Ensinamentos publicados por Ryūhō Ōkawa", "A38": "● Ryūhō Ōkawa como fundador e revelador segundo o movimento", "A39": "● Alma e mundos espirituais", "A41": "● Felicidade e iluminação na doutrina própria", "A42": "≈ Profecias e visão histórica próprias", "A43": "≈ Culto, estudo e práticas organizacionais"})
+add("Igreja da Messiânica Mundial", "Nova religião japonesa", "Japão/Global", "1935–presente", "Novo movimento religioso", "new_religion_generic", "C06; L03", coverage="Parcial", overrides={"A05": "≈ Agricultura natural e relação com a terra", "A23": "● Johrei como prática espiritual de purificação/cura", "A34": "● Belo e arte como pilares da proposta religiosa", "A38": "● Mokichi Okada/Meishu-sama", "A41": "● Construção do Paraíso na Terra", "A43": "● Johrei e culto comunitário", "A44": "● Purificação espiritual"})
+add("Sūkyō Mahikari", "Nova religião japonesa", "Japão/Global", "1978–presente; movimento Mahikari desde 1959", "Novo movimento religioso", "new_religion_generic", "C06; L03", coverage="Parcial", overrides={"A07": "≈ Luz divina na prática de okiyome", "A23": "● Okiyome: transmissão de luz para purificação; não equiparar a medicina", "A31": "≈ Espíritos e impureza em explicações do movimento", "A38": "● Yoshikazu Okada e revelações reivindicadas", "A39": "● Espírito e purificação", "A43": "● Iniciação e prática de okiyome", "A44": "● Purificação e transformação espiritual"})
+add("PL Kyodan", "Nova religião japonesa", "Japão/Global", "1946–presente; antecedentes desde 1924", "Novo movimento religioso", "new_religion_generic", "C06; L03", coverage="Fragmentário", overrides={"A04": "◇ Vida como arte e ética cotidiana na formulação do movimento", "A18": "≈ Autoridade do Oshieoya na organização", "A34": "● 'Vida é arte' como princípio central", "A38": "● Tokuchika Miki e linhagem fundadora", "A41": "≈ Paz mundial e vida plena", "A43": "≈ Culto e orientação religiosa comunitária", "A44": "≈ Autoexpressão e aperfeiçoamento"})
 add_many(["Igreja da Unificação", "World Mission Society Church of God", "Shincheonji", "The Family International"], "Novos movimentos cristãos", "Global", "séculos XX–XXI", "Novos movimentos religiosos", "christian", "C06", coverage="Perfil de família")
-add_many(["Raëlismo", "Aetherius Society", "Unarius Academy of Science", "Chen Tao", "Heaven's Gate", "Nation of Yahweh extraterrestre (categoria)"], "Religiões OVNI", "Global", "séculos XX–XXI", "Novos movimentos religiosos", "ufo_religion", "C06", status="Viva/Histórica", coverage="Perfil de família")
+add_many(["Raëlismo", "Aetherius Society", "Unarius Academy of Science", "Chen Tao", "Heaven's Gate"], "Religiões OVNI", "Global", "séculos XX–XXI", "Novos movimentos religiosos", "ufo_religion", "C06", status="Viva/Histórica", coverage="Perfil de família")
 add("Santo Daime", "Cristã-enteogênica amazônica", "Brasil/Global", "década de 1930–presente", "Religião enteogênica", "entheogenic_christian", "M03; B02", coverage="Detalhado")
 add("União do Vegetal", "Cristã-enteogênica amazônica", "Brasil/Global", "1961–presente", "Religião enteogênica", "entheogenic_christian", "M03; B02", coverage="Detalhado")
 add("Barquinha", "Cristã-enteogênica amazônica", "Brasil", "1945–presente", "Religião enteogênica", "entheogenic_christian", "M03; B02", coverage="Detalhado")
-add_many(["Igreja Nativa Americana (ver Peyotismo)", "Movimentos modernos de cogumelos sacramentais", "Igrejas de cannabis (categoria descentralizada)"], "Enteogênica moderna", "Américas/Global", "séculos XIX–XXI", "Movimentos religiosos", "native_american_church", "M03", coverage="Perfil de família", note="Legalidade, doutrina e continuidade indígena variam; não agrupar substâncias como tradição única.")
+add_many(["Movimentos modernos de cogumelos sacramentais", "Igrejas de cannabis (categoria descentralizada)"], "Enteogênica moderna", "Américas/Global", "séculos XX–XXI", "Movimentos religiosos", "native_american_church", "M03", coverage="Perfil de família", note="Legalidade, doutrina e continuidade indígena variam; não agrupar substâncias como tradição única.")
 add("Humanismo secular", "Não teísta", "Global", "séculos XIX–XXI", "Cosmovisão ética não religiosa", "modern_nontheist", "C06", coverage="Detalhado", note="Incluído por comparação de cosmovisões, não como panteão.")
 add_many(["Naturalismo religioso", "Religião da Humanidade/Positivismo religioso", "Ethical Culture", "Ateísmo religioso organizado"], "Não teísta/humanista", "Global", "séculos XIX–XXI", "Cosmovisões/movimentos éticos", "modern_nontheist", "C06", coverage="Perfil de família")
+
+
+# Rótulos individualizados impedem que expressões agregadas como
+# "Antiguidade–presente" sejam convertidas no início arbitrário de 3.200 a.C.
+# A data continua sendo atestação/formação defensável, não "nascimento" absoluto.
+PERIOD_REVISIONS = {
+    "Religião germânica continental/anglo-saxã": "c. séculos I–XI d.C.; fontes desiguais",
+    "Religião armênia pré-cristã": "I milênio a.C.–c. 301 d.C.; sobrevivências posteriores",
+    "Religião georgiana pré-cristã": "I milênio a.C.–século IV d.C.; sobrevivências posteriores",
+    "Religião vainakh": "atestação etnográfica moderna; tradições orais anteriores–presente/avivamento",
+    "Religião circassiana": "atestação medieval e etnográfica moderna–presente/avivamento",
+    "Religião osseta tradicional": "atestação medieval e etnográfica moderna–presente/avivamento",
+    "Mandaísmo": "c. séculos II–III d.C.–presente; origens debatidas",
+    "Vaiṣṇavismo": "c. século V a.C.–presente; formações plurais",
+    "Śaivismo": "c. século II a.C.–presente; formações plurais",
+    "Śāktismo": "c. séculos V–VI d.C.–presente; raízes anteriores debatidas",
+    "Smārta/Advaita devocional": "c. século VIII d.C.–presente",
+    "Tradições tântricas hindus": "c. séculos V–VI d.C.–presente; corpora e linhagens plurais",
+    "Tradições de bhakti": "c. século VI d.C.–presente; movimentos regionais diversos",
+    "Jainismo Digambara": "primeiros séculos d.C.–presente; separação gradual",
+    "Jainismo Śvetāmbara": "primeiros séculos d.C.–presente; separação gradual",
+    "Sthānakavāsī/Terāpanth jaina": "século XV–presente; Terāpanth desde 1760",
+    "Theravāda do Sri Lanka": "c. século III a.C.–presente",
+    "Budismo tailandês": "c. séculos XI–XIII d.C.–presente; antecedentes regionais",
+    "Budismo birmanês": "c. século XI d.C.–presente; antecedentes regionais",
+    "Budismo cambojano": "c. século XIII d.C.–presente; antecedentes budistas",
+    "Budismo lao": "c. século XIV d.C.–presente",
+    "Religião popular chinesa": "atestada desde a Idade do Bronze; configurações mutáveis–presente",
+    "Xintoísmo (perfil agregado)": "fontes escritas do século VIII d.C.–presente; práticas anteriores",
+    "Xintoísmo de santuário": "fontes escritas do século VIII d.C.–presente; instituição transformada",
+    "Xintoísmo sectário": "1868–presente; movimentos antecedentes no século XIX",
+    "Shugendō": "c. século VII d.C.–presente; formações graduais",
+    "Religião Ryūkyū": "atestação escrita desde os séculos XV–XVI–presente; tradição oral anterior",
+    "Religião Ainu": "atestação escrita moderna; tradição oral viva e transformada",
+    "Religião popular vietnamita": "atestação antiga e medieval–presente; complexo mutável",
+    "Judaísmo caraíta": "século VIII d.C.–presente",
+    "Samaritanismo": "atestado no período helenístico–presente; raízes israelitas",
+    "Judaísmo Beta Israel": "atestação medieval–presente; origens debatidas",
+    "Cabala judaica": "séculos XII–XIII d.C.–presente; antecedentes místicos",
+    "Hassidismo": "c. 1740–presente",
+    "Misticismo Merkavah/Hekhalot": "c. séculos I–VII d.C.",
+    "Cristianismo etíope/eritreu": "século IV d.C.–presente; tradições regionais",
+    "Cristianismo siríaco": "séculos I–II d.C.–presente; igrejas distintas",
+    "Cristianismo copta": "séculos I–III d.C.–presente; identidade institucional gradual",
+    "Cristianismo armênio": "c. 301 d.C.–presente; formação histórica gradual",
+    "Igreja Católica": "século I d.C.–presente; formação institucional gradual",
+    "Ortodoxia Oriental": "primeiro milênio d.C.–presente; separação gradual entre Oriente e Ocidente",
+    "Igrejas Ortodoxas Orientais": "desde o século V d.C.–presente; igrejas distintas",
+    "Igreja Assíria do Oriente": "desde o século V d.C.–presente; antecedentes anteriores",
+    "Anglicanismo": "século XVI d.C.–presente",
+    "Luteranismo": "desde 1517–presente; igrejas organizadas posteriormente",
+    "Tradições Reformadas/Presbiterianas": "década de 1520–presente",
+    "Batistas": "desde 1609–presente",
+    "Metodismo/Wesleyanismo": "década de 1730–presente",
+    "Pentecostalismo": "desde 1901/1906–presente; múltiplos focos formativos",
+    "Movimento Carismático": "década de 1960–presente",
+    "Adventismo do Sétimo Dia": "1863–presente; movimento milerita anterior",
+    "Quakers/Sociedade dos Amigos": "década de 1650–presente",
+    "Igrejas Menonitas/Anabatistas": "desde 1525–presente; famílias distintas",
+    "Konkōkyō": "1859–presente; organização posterior",
+    "Ōmoto": "1892–presente",
+    "Shinnyo-en": "1936–presente",
+    "Seichō-no-Ie": "1930–presente",
+    "Cheondoísmo": "1905–presente; movimento Donghak desde 1860",
+    "Daejongismo": "1909–presente",
+    "Jeungsanismo": "início do século XX–presente; múltiplas organizações",
+    "Daesun Jinrihoe": "1969–presente; linhagens anteriores",
+    "Judaísmo Ortodoxo": "século XIX–presente; práticas e instituições anteriores",
+    "Judaísmo Conservador/Masorti": "século XIX–presente",
+    "Judaísmo Reformista/Progressista": "início do século XIX–presente",
+    "Judaísmo Reconstrucionista": "década de 1920–presente; denominação posterior",
+    "Judaísmo Humanista": "1963–presente",
+    "Testemunhas de Jeová": "década de 1870–presente; nome adotado em 1931",
+    "Cristadelfianos": "década de 1840–presente; nome adotado em 1864",
+    "Iglesia ni Cristo": "1914–presente",
+}
+
+MAPPING_REVISIONS = {
+    "Estruturas profundas da caverna de Bruniquel": {
+        "A11": "≈ Vestígios de fogo no interior profundo; função desconhecida",
+        "A20": "≈ Construções anelares de espeleotemas demonstram ação técnica planejada",
+        "A43": "? Uso ritual é hipótese; a arqueologia disponível não demonstra culto ou oferenda",
+    },
+    "Sepultamentos intencionais de Qafzeh": {
+        "A25": "≈ Sepultamento intencional de Homo sapiens",
+        "A34": "≈ Uso de ocre no contexto mortuário; significado não recuperável",
+        "A39": "? Sepultamento pode sugerir concepções de pessoa além da morte, mas não as revela",
+        "A43": "? Dimensão ritual sugerida pelo contexto; não há liturgia ou crença recuperável",
+    },
+    "Comportamento simbólico de Blombos": {
+        "A19": "≈ Produção e transmissão de símbolos são demonstradas; conteúdo desconhecido",
+        "A20": "● Processamento planejado de ocre e técnicas gráficas",
+        "A34": "≈ Grafismo abstrato e ornamentos; não presumir arte religiosa",
+        "A39": "? Capacidade simbólica não demonstra conceito de alma",
+        "A43": "? Uso ritual do ocre é possível, mas não estabelecido para todos os achados",
+    },
+    "Conjuntos funerários e arte do Paleolítico Superior": {
+        "A14": "≈ Animais na arte parietal e portátil; significados variam e são debatidos",
+        "A25": "● Sepultamentos e tratamento dos mortos em contextos documentados",
+        "A34": "● Arte parietal e objetos portáteis; função religiosa não é uniforme",
+        "A35": "? Hipóteses xamânicas não possuem consenso geral",
+        "A43": "≈ Depósitos e bens funerários em sítios específicos",
+    },
+    "Práticas mortuárias natufienses": {
+        "A25": "● Sepultamentos em contextos comunitários natufienses",
+        "A26": "≈ Memória dos mortos sugerida pela recorrência de espaços funerários",
+        "A43": "≈ Práticas mortuárias e deposições; crenças específicas não recuperáveis",
+    },
+    "Igreja Católica": {
+        "A13": "≈ Santo Isidoro Lavrador: patronato devocional amplamente associado a agricultores; não divindade da vegetação",
+        "A14": "≈ São Francisco de Assis: referência católica difundida para criação e ecologia; não deus dos animais ou da caça",
+        "A16": "≈ São José e Santa Ana: patronatos familiares difundidos; Santa Gianna Beretta Molla em devoções ligadas à maternidade",
+        "A17": "≈ São Jorge e Santa Joana d’Arc: santos militares amplamente difundidos; veneração não sacraliza a guerra",
+        "A18": "● Papado, episcopado e magistério em estrutura institucional própria",
+        "A19": "≈ São Tomás de Aquino: patronato católico difundido de estudantes e escolas; sabedoria pertence a Deus, não ao santo",
+        "A20": "≈ São José Operário: patronato oficial e difundido do trabalho; não divindade do artesanato",
+        "A21": "≈ São Gabriel Arcanjo: mensageiro bíblico e patronato ligado às comunicações; não trickster",
+        "A23": "≈ São Camilo de Lellis: patrono dos enfermos e hospitais; São Cosme e São Damião em devoção médica popular",
+        "A24": "≈ São Roque: invocado historicamente contra pestes e epidemias; associação devocional, não personificação da doença",
+        "A25": "≈ São José: patrono tradicional da boa morte; a doutrina da morte e ressurreição permanece cristocêntrica",
+        "A26": "● Comunhão dos santos e veneração; São Pedro e São Paulo são referências centrais da memória romana, sem divinização",
+        "A27": "≈ São Miguel Arcanjo: associado em tradição e iconografia à proteção e condução das almas; não título doutrinal universal",
+        "A33": "≈ São Miguel Arcanjo e São Bento: devoções protetoras muito difundidas; proteção última é atribuída a Deus",
+        "A34": "≈ Santa Cecília, virgem e mártir: patrona popular da música e dos músicos",
+        "A36": "● Santo Antão do Deserto e São Bento de Núrsia: referências centrais do ascetismo e monasticismo católicos",
+        "A37": "◇ São Vicente de Paulo: referência difundida de caridade organizada; misericórdia é virtude e ação, não entidade",
+        "A41": "● Salvação em Cristo; formulações sacramentais e doutrinais católicas",
+        "A43": "● Eucaristia, sacramentos e sacerdócio",
+        "A44": "● Batismo, confirmação e vida sacramental",
+    },
+    "Ortodoxia Oriental": {
+        "A18": "● Episcopado e concílios; igrejas autocéfalas sem papado universal",
+        "A26": "● Santos, ícones e memória litúrgica; veneração não divinização",
+        "A34": "● Liturgia, canto e iconografia",
+        "A36": "● Monasticismo, jejum e hesicasmo",
+        "A41": "● Salvação e theosis/deificação pela graça",
+        "A43": "● Divina Liturgia e mistérios/sacramentos",
+        "A44": "● Batismo, crisma e transformação ascética-sacramental",
+    },
+    "Igrejas Ortodoxas Orientais": {
+        "A18": "● Igrejas apostólicas próprias e episcopados; não uma administração única",
+        "A26": "● Santos e memória litúrgica nas tradições copta, armênia, siríaca e etíope",
+        "A34": "● Liturgias, cantos e artes próprias",
+        "A36": "● Monasticismos e jejuns intensivos",
+        "A41": "● Salvação em Cristo em cristologias miafisitas próprias",
+        "A43": "● Eucaristia e sacramentos em ritos distintos",
+    },
+    "Igreja Assíria do Oriente": {
+        "A18": "● Episcopado e patriarcado em tradição eclesial própria",
+        "A26": "● Santos e mártires na tradição siríaca oriental",
+        "A34": "● Liturgia siríaca oriental",
+        "A38": "● Escritura e tradição apostólica; cristologia da Igreja do Oriente",
+        "A41": "● Salvação em Cristo",
+        "A43": "● Qurbana e sacramentos",
+    },
+    "Anglicanismo": {
+        "A18": "● Episcopado e sínodos; autoridade varia na Comunhão Anglicana",
+        "A34": "● Livro de Oração Comum, canto e diversidade litúrgica",
+        "A38": "● Escritura, tradição e razão em formulações anglicanas",
+        "A41": "● Salvação em Cristo; correntes evangélicas, católicas e liberais divergem",
+        "A43": "● Batismo e Eucaristia; teologia sacramental varia",
+    },
+    "Luteranismo": {
+        "A04": "◇ Justificação pela fé e centralidade da graça",
+        "A18": "≈ Autoridade eclesial sinodal/episcopal conforme a igreja",
+        "A34": "● Hinos e liturgia luterana",
+        "A38": "● Escritura e Confissões Luteranas",
+        "A41": "● Justificação pela graça mediante a fé",
+        "A43": "● Palavra e sacramentos; Batismo e Ceia",
+    },
+    "Tradições Reformadas/Presbiterianas": {
+        "A03": "● Soberania de Deus em ênfase reformada",
+        "A18": "● Governo presbiteriano/sinodal ou reformado conforme a igreja",
+        "A29": "≈ Predestinação em tradições confessionais específicas; não uniforme",
+        "A38": "● Escritura e confissões reformadas",
+        "A41": "● Salvação pela graça; formulações pactuais e confessionais",
+        "A43": "● Batismo e Ceia; interpretação reformada",
+    },
+    "Batistas": {
+        "A18": "● Autonomia congregacional em muitas convenções",
+        "A38": "● Autoridade bíblica e pregação",
+        "A41": "● Conversão e fé pessoal em Cristo",
+        "A43": "● Batismo de professantes e Ceia como ordenanças",
+        "A44": "● Batismo após profissão de fé",
+    },
+    "Metodismo/Wesleyanismo": {
+        "A04": "◇ Santidade pessoal e social",
+        "A36": "● Disciplinas metódicas, pequenos grupos e prática devocional",
+        "A37": "◇ Graça, misericórdia e serviço social",
+        "A41": "● Graça preveniente, justificação e santificação",
+        "A43": "● Batismo e Ceia",
+        "A44": "● Santificação como transformação contínua",
+    },
+    "Pentecostalismo": {
+        "A23": "● Cura divina em muitas correntes; não substitui automaticamente medicina",
+        "A34": "● Música e culto expressivo",
+        "A35": "● Glossolalia, êxtase e manifestações carismáticas em muitas igrejas",
+        "A38": "● Bíblia, profecia e dons do Espírito",
+        "A39": "● Espírito Santo e transformação da pessoa",
+        "A42": "● Expectativa da volta de Cristo; cronologias variam",
+        "A43": "≈ Batismo e Ceia; teologia varia",
+        "A44": "● Conversão e batismo no Espírito em formulações pentecostais",
+    },
+    "Movimento Carismático": {
+        "A23": "● Oração por cura em muitos grupos",
+        "A34": "● Louvor e música contemporânea",
+        "A35": "● Dons carismáticos e experiências do Espírito",
+        "A38": "● Profecia e renovação dentro de igrejas existentes",
+        "A39": "● Espírito Santo",
+        "A44": "● Renovação espiritual; não uma denominação única",
+    },
+    "Adventismo do Sétimo Dia": {
+        "A04": "◇ Sábado, lei e estilo de vida",
+        "A23": "◇ Saúde e temperança; distinguir prática religiosa de medicina",
+        "A28": "● Juízo investigativo na doutrina adventista",
+        "A36": "● Sábado, temperança e disciplina comunitária",
+        "A38": "● Bíblia e papel profético atribuído a Ellen G. White",
+        "A41": "● Salvação em Cristo",
+        "A42": "● Segundo Advento e escatologia",
+    },
+    "Quakers/Sociedade dos Amigos": {
+        "A03": "◇ Deus/Luz Interior em linguagem quaker diversa",
+        "A18": "◇ Discernimento e decisão comunitária sem clero ordenado",
+        "A36": "● Silêncio, simplicidade e testemunhos",
+        "A37": "◇ Paz, igualdade e serviço",
+        "A38": "◇ Luz Interior e ministério vocal; Bíblia permanece importante de modos diversos",
+        "A43": "— Sem sacramentos externos obrigatórios na tradição quaker histórica",
+    },
+    "Igrejas Menonitas/Anabatistas": {
+        "A04": "◇ Discipulado, não violência e comunidade",
+        "A18": "◇ Autoridade comunitária e separação histórica entre igreja e coerção estatal",
+        "A36": "● Simplicidade e disciplina comunitária em correntes específicas",
+        "A37": "◇ Paz, serviço e reconciliação",
+        "A41": "● Salvação e discipulado em Cristo",
+        "A43": "● Batismo de professantes e Ceia",
+        "A44": "● Batismo ligado à profissão consciente de fé",
+    },
+    "Cristianismo etíope/eritreu": {
+        "A26": "● Santos, mártires e memória dos mortos em tradições próprias",
+        "A34": "● Liturgia Geʽez, canto, tambores e arte",
+        "A36": "● Jejuns extensos e monasticismo",
+        "A41": "● Salvação em Cristo em tradição miafisita",
+        "A43": "● Eucaristia, sacramentos e culto centrado no tabot",
+    },
+    "Cristianismo siríaco": {
+        "A19": "● Literatura e teologia em siríaco; corpora orientais e ocidentais distintos",
+        "A26": "● Santos e memória litúrgica",
+        "A34": "● Liturgias e hinos siríacos",
+        "A36": "● Ascetismo e monasticismo siríacos",
+        "A41": "● Salvação em Cristo; cristologias e igrejas distintas",
+        "A43": "● Qurbana e sacramentos conforme a igreja",
+    },
+    "Cristianismo copta": {
+        "A26": "● Santos, mártires e memória litúrgica copta",
+        "A34": "● Liturgia copta, canto e iconografia",
+        "A36": "● Tradição monástica do deserto e jejuns",
+        "A41": "● Salvação em Cristo em tradição miafisita copta",
+        "A43": "● Eucaristia e sacramentos no rito copta",
+    },
+    "Cristianismo armênio": {
+        "A18": "● Igreja Apostólica Armênia e catholicoi em tradição própria",
+        "A26": "● Santos, mártires e memória do genocídio em contextos litúrgicos modernos",
+        "A34": "● Liturgia armênia, canto e arte do khachkar",
+        "A36": "● Jejum e monasticismo",
+        "A41": "● Salvação em Cristo em tradição miafisita armênia",
+        "A43": "● Eucaristia e sacramentos no rito armênio",
+    },
+}
+
+
+def apply_period_revisions() -> None:
+    by_name = {tradition.name: tradition for tradition in TRADITIONS}
+    missing = sorted(set(PERIOD_REVISIONS) - set(by_name))
+    if missing:
+        raise ValueError(f"Revisões temporais sem tradição correspondente: {missing}")
+    for name, period in PERIOD_REVISIONS.items():
+        by_name[name].period = period
+
+
+def apply_mapping_revisions() -> None:
+    by_name = {tradition.name: tradition for tradition in TRADITIONS}
+    missing = sorted(set(MAPPING_REVISIONS) - set(by_name))
+    if missing:
+        raise ValueError(f"Revisões de mapeamento sem tradição correspondente: {missing}")
+    for name, overrides in MAPPING_REVISIONS.items():
+        by_name[name].overrides.update(overrides)
+    by_name["Igreja Católica"].sources = "B02; B06"
+
+
+def mark_shared_profiles_for_review() -> None:
+    """Prevent an inherited profile from masquerading as an individual audit."""
+    profile_counts: dict[str, int] = {}
+    for tradition in TRADITIONS:
+        if not tradition.overrides:
+            profile_counts[tradition.profile] = profile_counts.get(tradition.profile, 0) + 1
+    for tradition in TRADITIONS:
+        if (
+            not tradition.overrides
+            and profile_counts.get(tradition.profile, 0) > 1
+            and tradition.mapping_scope == "specific"
+        ):
+            tradition.mapping_scope = "family"
+            warning = (
+                "Perfil-base compartilhado: células ainda não verificadas no corpus específico "
+                "desta tradição aparecem como incertas."
+            )
+            tradition.note = f"{tradition.note} {warning}".strip()
 
 
 def finalize_tradition_ids() -> None:
@@ -3190,12 +3772,32 @@ def finalize_tradition_ids() -> None:
         tradition.tradition_id = f"T{index:03d}"
 
 
+apply_period_revisions()
+apply_mapping_revisions()
+mark_shared_profiles_for_review()
 finalize_tradition_ids()
 
 
 def resolve_mapping(tradition: Tradition) -> dict[str, str]:
-    mapping = PROFILES[tradition.profile] | tradition.overrides
-    return {archetype.code: mapping.get(archetype.code, "— Sem correlato suficientemente documentado") for archetype in ARCHETYPES}
+    profile_mapping = PROFILES[tradition.profile]
+    mapping: dict[str, str] = {}
+    for archetype in ARCHETYPES:
+        if archetype.code in tradition.overrides:
+            mapping[archetype.code] = tradition.overrides[archetype.code]
+            continue
+        inherited = profile_mapping.get(
+            archetype.code,
+            "— Sem correlato suficientemente documentado",
+        )
+        if tradition.mapping_scope == "family" and not inherited.startswith("—"):
+            inherited_text = inherited[2:] if len(inherited) > 1 and inherited[1] == " " else inherited[1:]
+            mapping[archetype.code] = (
+                f"? Perfil de família ainda não individualizado para {tradition.name}. "
+                f"Referência comparativa provisória: {inherited_text}"
+            )
+        else:
+            mapping[archetype.code] = inherited
+    return mapping
 
 
 def mapping_counts(mapping: dict[str, str]) -> dict[str, int]:
@@ -3204,6 +3806,20 @@ def mapping_counts(mapping: dict[str, str]) -> dict[str, int]:
         marker = value[:1] if value else "—"
         counts[marker if marker in counts else "?"] += 1
     return counts
+
+
+def mapping_scope_label(tradition: Tradition) -> str:
+    return "Perfil de família auditável" if tradition.mapping_scope == "family" else "Individualizado"
+
+
+def individualized_cell_count(tradition: Tradition) -> int:
+    if tradition.mapping_scope == "family":
+        return len(tradition.overrides)
+    return sum(
+        1
+        for value in PROFILES[tradition.profile].values()
+        if value and not value.startswith("—")
+    )
 
 
 def apply_title(ws, title: str, subtitle: str, last_col: int) -> None:
@@ -3335,6 +3951,7 @@ def build_readme(wb: Workbook) -> None:
         "“Arquétipo” significa aqui função comparativa de indexação. Não afirma identidade entre deuses, origem comum, psicologia universal ou equivalência teológica.",
         "A data registra a atestação ou o recorte usado, não o nascimento de um povo. Tradições orais antigas não recebem datas paleolíticas sem evidência.",
         "Religiões vivas são internamente diversas. Um perfil de família é ponto de partida e deve ser revisado com especialistas e praticantes da tradição.",
+        "Células herdadas de um perfil de família são marcadas como incertas e nomeiam a tradição pendente; somente overrides ou perfis individualizados podem aparecer como correlação direta.",
         "Ciência, neurotransmissores e disciplinas acadêmicas foram retirados do panteão. Cosmovisões não teístas aparecem apenas quando a comparação funcional é útil.",
         "O catálogo é amplo, mas não literalmente exaustivo: existem milhares de religiões locais, linhagens, denominações e variantes sem corpus público ou nomenclatura estável.",
     ]
@@ -3351,7 +3968,7 @@ def build_readme(wb: Workbook) -> None:
     ws["A23"].font = Font(size=12, bold=True, color=COLORS["white"])
     ws["A23"].fill = PatternFill("solid", fgColor=COLORS["gold"])
     navigation = [
-        ("Matriz global", "Matriz global", "Compare 460 tradições × 44 funções e filtre por família, região ou cobertura."),
+        ("Matriz global", "Matriz global", f"Compare {len(TRADITIONS)} tradições × 44 funções e filtre por família, região ou cobertura."),
         ("Catálogo", "Catálogo", "Consulte metadados, notas de escopo e contagem de confiança."),
         ("Arquétipos", "Arquétipos", "Leia definição e exclusões de cada categoria."),
         ("Cronologia", "Cronologia", "Use uma periodização global com ressalvas regionais."),
@@ -3465,6 +4082,8 @@ def build_catalog(wb: Workbook) -> None:
         "Status",
         "Cobertura",
         "Perfil-base",
+        "Escopo do mapeamento",
+        "Células individualizadas",
         "Fontes",
         "Nota de escopo",
         "●",
@@ -3496,6 +4115,8 @@ def build_catalog(wb: Workbook) -> None:
             tradition.status,
             tradition.coverage,
             tradition.profile,
+            mapping_scope_label(tradition),
+            individualized_cell_count(tradition),
             tradition.sources,
             tradition.note,
             counts["●"],
@@ -3513,12 +4134,13 @@ def build_catalog(wb: Workbook) -> None:
         ws.row_dimensions[row].height = 48
 
     end_row = header_row + len(TRADITIONS)
-    add_table(ws, "CatalogoGlobal", f"A{header_row}:P{end_row}")
-    widths = [11, 36, 25, 23, 25, 27, 16, 20, 22, 16, 50, 7, 7, 7, 7, 7]
+    last_col = get_column_letter(len(headers))
+    add_table(ws, "CatalogoGlobal", f"A{header_row}:{last_col}{end_row}")
+    widths = [11, 36, 25, 23, 25, 27, 16, 20, 22, 24, 16, 16, 50, 7, 7, 7, 7, 7]
     for col, width in enumerate(widths, start=1):
         ws.column_dimensions[get_column_letter(col)].width = width
     ws.freeze_panes = "B6"
-    ws.auto_filter.ref = f"A{header_row}:P{end_row}"
+    ws.auto_filter.ref = f"A{header_row}:{last_col}{end_row}"
     ws.print_title_rows = f"1:{header_row}"
 
 
@@ -3658,6 +4280,9 @@ def build_revisions(wb: Workbook) -> None:
         ("“Livro-base” único para tradições orais.", "Substituído por fontes/corpora e notas de transmissão.", "Muitas tradições não têm cânone único e protegem conhecimento não público.", "Fontes; Catálogo"),
         ("Toda célula precisava de um nome.", "Introduzidos ●, ≈, ◇, ? e —.", "Ausência documentada é mais rigorosa que preenchimento especulativo.", "LEIA-ME; Matriz global"),
         ("Aeons astrológicos e thelêmicos misturados à cronologia histórica.", "Preservados em aba própria com rótulo de hipótese esotérica.", "São esquemas interpretativos modernos, não consenso historiográfico.", "Aeons — autoral"),
+        ("Perfis familiares repetidos eram exibidos como dados específicos de centenas de tradições.", "Células herdadas foram rebaixadas para “?” e rotuladas com o nome da tradição; exemplos prioritários receberam perfis próprios.", "Semelhança de família é hipótese de trabalho, não documentação individual.", "Catálogo: Escopo do mapeamento; Matriz global"),
+        ("Rótulos amplos como “Antiguidade–presente” iniciavam tradições no marco arbitrário de 3.200 a.C.", "Datas de tradições nomeadas foram individualizadas e o parser deixou de converter rótulos ambíguos em datas precisas.", "Macroperíodo não é data de fundação; tradições orais sem atestação convertível permanecem temporalmente desconhecidas.", "Catálogo; Cronologia"),
+        ("Listas enciclopédicas eram confundidas com fontes probatórias.", "Wikimedia Commons, Wikipedia e Open Mind Project foram registradas apenas como listas investigativas.", "Listas ajudam a localizar omissões, mas datas, doutrina e correlações exigem fontes independentes.", "Fontes L01–L03"),
     ]
     header_row = 5
     for col, header in enumerate(headers, start=1):
@@ -3795,6 +4420,8 @@ def write_structured_csv(workbook: Workbook) -> None:
         "status",
         "coverage",
         "profile",
+        "mapping_scope",
+        "individualized_cells",
         "source_codes",
         "note",
         "archetype_code",
@@ -3859,6 +4486,8 @@ def write_structured_csv(workbook: Workbook) -> None:
                 status=tradition.status,
                 coverage=tradition.coverage,
                 profile=tradition.profile,
+                mapping_scope=mapping_scope_label(tradition),
+                individualized_cells=individualized_cell_count(tradition),
                 source_codes=tradition.sources,
                 note=tradition.note,
                 value=tradition.name,
@@ -3882,6 +4511,8 @@ def write_structured_csv(workbook: Workbook) -> None:
                     status=tradition.status,
                     coverage=tradition.coverage,
                     profile=tradition.profile,
+                    mapping_scope=mapping_scope_label(tradition),
+                    individualized_cells=individualized_cell_count(tradition),
                     source_codes=tradition.sources,
                     note=tradition.note,
                     archetype_code=archetype.code,

@@ -121,7 +121,11 @@ export function FilterCommandPalette({ onClose }: { onClose: () => void }) {
             ))
           ) : (
             <p className="empty-state">
-              Nenhum termo foi encontrado no catálogo ou nas 20.240 células.
+              Nenhum termo foi encontrado no catálogo ou nas{" "}
+              {(data.metadata.traditionCount * data.metadata.archetypeCount).toLocaleString(
+                "pt-BR",
+              )}{" "}
+              células.
             </p>
           )}
         </div>

@@ -20,17 +20,25 @@ export function DrawerShell({
   }, [onClose]);
 
   return (
-    <aside ref={ref} className="dossier-drawer" aria-labelledby="dossier-title">
-      <div className="dossier-heading">
-        <div>
-          <p className="eyebrow">{eyebrow}</p>
-          <h2 id="dossier-title">{title}</h2>
+    <>
+      <button
+        type="button"
+        className="dossier-backdrop"
+        aria-label="Fechar dossiê e limpar seleção"
+        onClick={onClose}
+      />
+      <aside ref={ref} className="dossier-drawer" aria-labelledby="dossier-title">
+        <div className="dossier-heading">
+          <div>
+            <p className="eyebrow">{eyebrow}</p>
+            <h2 id="dossier-title">{title}</h2>
+          </div>
+          <button className="icon-button" onClick={onClose} aria-label={`Fechar ${title}`}>
+            <X size={19} />
+          </button>
         </div>
-        <button className="icon-button" onClick={onClose} aria-label={`Fechar ${title}`}>
-          <X size={19} />
-        </button>
-      </div>
-      <div className="dossier-scroll">{children}</div>
-    </aside>
+        <div className="dossier-scroll">{children}</div>
+      </aside>
+    </>
   );
 }
