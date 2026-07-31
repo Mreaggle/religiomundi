@@ -16,6 +16,7 @@ import { PatternRevelation } from "./components/PatternRevelation";
 import { PeriodMirror } from "./components/PeriodMirror";
 import { SignatureGallery } from "./components/SignatureGallery";
 import { SourceLibrary } from "./components/SourceLibrary";
+import { SupportModal } from "./components/SupportModal";
 import { TemporalGlide } from "./components/TemporalGlide";
 import { TraditionDossier } from "./components/TraditionDossier";
 import { VirtualMatrix } from "./components/VirtualMatrix";
@@ -58,6 +59,7 @@ function AtlasExperience() {
   } = useAtlas();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const activeFilters = Object.values(filters).filter(Boolean).length;
 
   return (
@@ -66,6 +68,8 @@ function AtlasExperience() {
       <HeaderNav
         onOpenFilters={() => setFiltersOpen(true)}
         onOpenAbout={() => setAboutOpen(true)}
+        onOpenSupport={() => setSupportOpen(true)}
+        supportOpen={supportOpen}
       />
       <TemporalGlide />
       <AeonOverlay />
@@ -115,6 +119,7 @@ function AtlasExperience() {
       <ComparisonChamber />
       {filtersOpen && <FilterCommandPalette onClose={() => setFiltersOpen(false)} />}
       {aboutOpen && <AboutProject onClose={() => setAboutOpen(false)} />}
+      {supportOpen && <SupportModal onClose={() => setSupportOpen(false)} />}
     </div>
   );
 }

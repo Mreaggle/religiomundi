@@ -5,6 +5,7 @@ import {
   CircleDotDashed,
   Columns3,
   GitCompareArrows,
+  HeartHandshake,
   Library,
   Map as MapIcon,
   Radar,
@@ -29,9 +30,13 @@ const VIEWS: Array<{ id: ViewMode; label: string; icon: LucideIcon }> = [
 export function HeaderNav({
   onOpenFilters,
   onOpenAbout,
+  onOpenSupport,
+  supportOpen,
 }: {
   onOpenFilters: () => void;
   onOpenAbout: () => void;
+  onOpenSupport: () => void;
+  supportOpen: boolean;
 }) {
   const {
     data,
@@ -73,6 +78,15 @@ export function HeaderNav({
             <span>{label}</span>
           </button>
         ))}
+        <button
+          className="support-nav-button"
+          onClick={onOpenSupport}
+          aria-haspopup="dialog"
+          aria-expanded={supportOpen}
+        >
+          <HeartHandshake size={15} />
+          <span>Apoiar</span>
+        </button>
       </nav>
 
       <div className="header-actions">

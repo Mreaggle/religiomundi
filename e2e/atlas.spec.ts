@@ -6,6 +6,44 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test("APOIAR abre sobre a visualização atual e oferece Pix e link direto", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  const constellation = page.getByRole("heading", {
+    name: "Constelação Arquetípica Temporal",
+  });
+  await expect(constellation).toBeVisible();
+
+  await page.getByRole("button", { name: "Apoiar", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "APOIAR O RELIGIO MUNDI" })).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: "QR Code para apoiar o RELIGIO MUNDI via Pix" }),
+  ).toBeVisible();
+  await expect(page.getByText("Kauan Crema Dias", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Continuar pelo Nubank/ })).toHaveAttribute(
+    "href",
+    "https://nubank.com.br/cobrar/18cvy/6a6cf6ad-6522-42b5-aa7d-32bbb73f1efa",
+  );
+
+  await page.getByRole("button", { name: "Copiar código Pix" }).click();
+  await expect(page.locator(".support-copy-status")).toContainText("Agora é só colar");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog", { name: "APOIAR O RELIGIO MUNDI" })).toHaveCount(0);
+  await expect(constellation).toBeVisible();
+
+  if (testInfo.project.name.includes("mobile")) {
+    await page.setViewportSize({ width: 844, height: 390 });
+    await page.getByRole("button", { name: "Apoiar", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "APOIAR O RELIGIO MUNDI" })).toBeVisible();
+    const horizontalOverflow = await page.evaluate(
+      () => document.body.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(horizontalOverflow).toBeLessThanOrEqual(1);
+    await expect(page.getByRole("button", { name: "Fechar APOIAR O RELIGIO MUNDI" })).toBeVisible();
+  }
+});
+
 test("integra dados, busca, tempo e modos sem erros de console", async ({ page }, testInfo) => {
   const errors: string[] = [];
   page.on("console", (message) => {
