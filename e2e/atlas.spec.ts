@@ -264,8 +264,9 @@ test("metadados de descoberta descrevem o atlas e seus índices públicos", asyn
     "src",
     "https://www.googletagmanager.com/gtag/js?id=G-930BMPYP28",
   );
-  const analyticsConfig =
-    (await page.locator("head > script:not([src])").allTextContents()).join("\n");
+  const analyticsConfig = (await page.locator("head > script:not([src])").allTextContents()).join(
+    "\n",
+  );
   expect(analyticsConfig).toContain('gtag("config", "G-930BMPYP28")');
   const structuredData = JSON.parse(
     (await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}",
