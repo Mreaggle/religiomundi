@@ -20,6 +20,9 @@ Trate `UNO_reformulado.xlsx` como fonte canônica. Preserve o texto integral, os
 7. Emita alertas para IDs duplicados, códigos desconhecidos, células vazias inesperadas e URLs inválidas.
 8. Execute `npm run data:audit`; rejeite assinaturas integrais repetidas, regressões para `-3200` sem texto-fonte e contagens codificadas manualmente.
 9. Proteja abreviações de era antes de interpretar algarismos romanos: `d.C.` nunca é o século `DC`. Mantenha sentinelas para expressões como “primeiros séculos d.C.”.
+10. Separe `startYear` de `visibilityStartYear`: o primeiro sustenta emergência/atestação; o segundo
+    pode ser apenas um piso conservador do PANORAMA para tradição oral viva. Nunca copie o piso para
+    EMERGÊNCIAS.
 
 ## Regras de qualidade
 
@@ -28,6 +31,8 @@ Trate `UNO_reformulado.xlsx` como fonte canônica. Preserve o texto integral, os
 - Não infira coordenadas arqueológicas; aceite somente marcadores regionais.
 - Mantenha transformações determinísticas e reproduzíveis por comando.
 - Documente qualquer fallback temporal ou geográfico.
+- Rejeite tradições vivas que apareçam somente no ano atual por falta de início convertível.
+- Não transforme `Histórica/Revival` em continuidade ininterrupta até o presente.
 - Perfis herdados de família devem aparecer como `?` até uma célula ser individualmente verificada.
 - As listas L01–L03 são somente instrumentos de descoberta; nunca fornecem, sozinhas, data ou doutrina.
 

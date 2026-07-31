@@ -55,6 +55,13 @@ reproduzível e impedir que correções locais quebrem outras visualizações, �
   clique fora. Marcadores religiosos continuam semanticamente independentes dos polígonos.
 - O catálogo deve conservar 482 tradições, 44 arquétipos, textos originais e datas-sentinela, salvo
   revisão documental explícita.
+- Tradições orais marcadas como vivas e sem `startYear` usam um `visibilityStartYear` auditável no
+  PANORAMA, continuam ausentes de EMERGÊNCIAS e não podem surgir em massa apenas em 2026. Em 1900,
+  verificar no mínimo Yorùbá/Ifá, Akan, Vodun Fon-Ewe, Odinani, Dinka, San, tradição malgaxe, Mami
+  Wata, Bwiti, Bori e Zar. Guanche e Kush/Núbia históricos não podem aparecer como continuidade
+  viva em 1900 ou 2026.
+- `Histórica/Revival` sem status vivo não prolonga o intervalo antigo ao presente; validar religião
+  nórdica antiga, eslava pré-cristã, bálticas históricas, gnosticismos, Mexica e Golden Dawn.
 - Ao selecionar cluster no MAPA ou na CONSTELAÇÃO, os demais clusters deixam a cena ou ficam
   totalmente inertes; todos os membros do cluster selecionado continuam acessíveis e um clique no
   fundo restaura o recorte completo.

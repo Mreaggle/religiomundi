@@ -85,6 +85,15 @@ status de cada célula:
 Datas ambíguas continuam aproximadas. Coordenadas representam regiões modernas de interface, não
 precisão arqueológica. O catálogo é amplo, mas não exaustivo.
 
+### Continuidade não é data de origem
+
+Tradições orais vivas sem ano inicial convertível usam, somente no modo **Panorama**, um piso
+documental conservador. Em geral, 1800 impede que elas desapareçam dos séculos XIX e XX e reapareçam
+apenas no presente; rótulos explicitamente pré-coloniais usam 1450. Esses marcos não são fundação,
+primeira atestação ou emergência e não alteram o texto original. O modo **Emergências** ignora esse
+piso. Registros históricos e revivalismos modernos também permanecem separados para não simular
+continuidade ininterrupta.
+
 ### Origem não é alcance
 
 O atlas separa a região ampla de **origem/formação** da distribuição posterior. “Global” e
@@ -130,13 +139,16 @@ flowchart LR
 - **482** tradições, cosmovisões e registros;
 - **44** arquétipos funcionais, de `A01` a `A44`;
 - **21.208** células comparativas;
-- **55** registros de fontes;
+- **59** registros de fontes;
 - texto original de período e correlação sempre preservado.
 
 As listas da Wikimedia Commons, Wikipedia e Open Mind Project são checklists investigativos de
 cobertura, nunca evidência suficiente para doutrina ou datação.
 Consulte a [auditoria de lacunas de 31/07/2026](docs/auditoria-lacunas-2026-07-31.md) para ver
 inclusões, adiamentos e critérios.
+Consulte também a
+[auditoria de continuidade temporal](docs/auditoria-continuidade-temporal-2026-07-31.md), que
+documenta o problema dos registros vivos antes exibidos somente em 2026.
 
 ## Arquitetura
 

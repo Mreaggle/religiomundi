@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { AtlasData } from "../types/atlas";
+import { traditionIsVisible } from "../utils/temporal";
 
 const data = JSON.parse(
   readFileSync(resolve("public/data/atlas.generated.json"), "utf8"),
@@ -87,7 +88,88 @@ describe("integração da planilha canônica", () => {
       expect(tradition?.region, name).not.toBe("Global");
       expect(tradition?.location, name).toBeDefined();
     }
-    expect(data.sources).toHaveLength(55);
+    expect(data.sources).toHaveLength(59);
+  });
+
+  it("preserva no panorama tradições orais vivas sem inventar data de emergência", () => {
+    const byName = new Map(data.traditions.map((tradition) => [tradition.name, tradition]));
+    for (const name of [
+      "Religião Yorùbá e Ifá",
+      "Religião Akan",
+      "Vodun Fon-Ewe",
+      "Odinani (Igbo)",
+      "Religião Dinka",
+      "Religiões San",
+      "Religião tradicional malgaxe",
+      "Cultos Mami Wata",
+      "Bwiti",
+      "Bori Hausa",
+      "Culto Zar",
+    ]) {
+      const tradition = byName.get(name);
+      expect(tradition, name).toBeDefined();
+      expect(traditionIsVisible(tradition as NonNullable<typeof tradition>, 1900, "panorama")).toBe(
+        true,
+      );
+      if (tradition?.visibilityBasis === "living-documentary-floor") {
+        expect(tradition.startYear, name).toBeUndefined();
+        expect(tradition.visibilityStartYear, name).toBe(1800);
+        expect(traditionIsVisible(tradition, 1800, "emergences"), name).toBe(false);
+      }
+    }
+    for (const name of ["Religião Guanche", "Religião núbia/kushita"]) {
+      const tradition = byName.get(name);
+      expect(tradition, name).toBeDefined();
+      expect(traditionIsVisible(tradition as NonNullable<typeof tradition>, 1900, "panorama")).toBe(
+        false,
+      );
+      expect(traditionIsVisible(tradition as NonNullable<typeof tradition>, 2026, "panorama")).toBe(
+        false,
+      );
+    }
+  });
+
+  it("não despeja no presente tradições vivas com início documental desconhecido", () => {
+    const livingUnknownStarts = data.traditions.filter(
+      (tradition) =>
+        tradition.status
+          .toLocaleLowerCase("pt-BR")
+          .split(/[/;,]/)
+          .map((token) => token.trim())
+          .includes("viva") && tradition.startYear === undefined,
+    );
+    expect(livingUnknownStarts.length).toBeGreaterThan(100);
+    expect(
+      livingUnknownStarts.every(
+        (tradition) =>
+          tradition.visibilityStartYear !== undefined && tradition.visibilityStartYear <= 1900,
+      ),
+    ).toBe(true);
+  });
+
+  it("não transforma revival moderno em continuidade ininterrupta do culto histórico", () => {
+    const byName = new Map(data.traditions.map((tradition) => [tradition.name, tradition]));
+    for (const name of [
+      "Religião nórdica antiga",
+      "Religião eslava pré-cristã",
+      "Religiões bálticas históricas",
+      "Gnosticismos da Antiguidade tardia",
+      "Religião mexica",
+      "Hermetic Order of the Golden Dawn",
+    ]) {
+      const tradition = byName.get(name);
+      expect(tradition, name).toBeDefined();
+      expect(traditionIsVisible(tradition as NonNullable<typeof tradition>, 2026, "panorama")).toBe(
+        false,
+      );
+    }
+    for (const name of ["Heathenry/Ásatrú", "Rodnovery", "Romuva"]) {
+      const tradition = byName.get(name);
+      expect(tradition, name).toBeDefined();
+      expect(traditionIsVisible(tradition as NonNullable<typeof tradition>, 2026, "panorama")).toBe(
+        true,
+      );
+    }
   });
 
   it("separa origem regional de alcance global ou diaspórico", () => {

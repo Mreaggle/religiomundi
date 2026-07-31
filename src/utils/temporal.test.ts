@@ -49,4 +49,18 @@ describe("visibilidade temporal", () => {
     expect(traditionIsVisible(unknown, 2026, "panorama")).toBe(true);
     expect(traditionIsVisible(unknown, 2026, "emergences")).toBe(false);
   });
+
+  it("mantém tradição oral viva no panorama sem convertê-la em emergência de 1800", () => {
+    const livingOral = {
+      endYear: 2026,
+      visibilityStartYear: 1800,
+      visibilityBasis: "living-documentary-floor",
+      isStillActive: true,
+      temporalPrecision: "unknown",
+    } as Tradition;
+    expect(traditionIsVisible(livingOral, 1799, "panorama")).toBe(false);
+    expect(traditionIsVisible(livingOral, 1900, "panorama")).toBe(true);
+    expect(traditionIsVisible(livingOral, 2026, "panorama")).toBe(true);
+    expect(traditionIsVisible(livingOral, 1800, "emergences")).toBe(false);
+  });
 });

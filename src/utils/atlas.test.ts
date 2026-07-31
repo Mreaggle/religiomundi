@@ -29,6 +29,7 @@ function tradition(id: string, direct: boolean): Tradition {
     temporalLabel: "c. 100 a.C.",
     isApproximate: true,
     isStillActive: false,
+    visibilityBasis: "parsed-attestation",
     parsingNotes: "",
     macroPeriodId: "iron",
     location: { latitude: 33, longitude: 44, precision: "regional", label: "Mesopotâmia" },

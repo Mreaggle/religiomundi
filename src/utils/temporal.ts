@@ -62,12 +62,15 @@ export function traditionIsVisible(
   mode: TemporalMode,
 ): boolean {
   if (mode === "catalog") return true;
-  if (tradition.startYear === undefined) {
-    return mode === "panorama" && tradition.isStillActive && year === (tradition.endYear ?? 2026);
+  const panoramaStart = tradition.visibilityStartYear ?? tradition.startYear;
+  if (mode === "panorama") {
+    if (panoramaStart === undefined) {
+      return tradition.isStillActive && year === (tradition.endYear ?? 2026);
+    }
+    return year >= panoramaStart && year <= (tradition.endYear ?? panoramaStart);
   }
+  if (tradition.startYear === undefined) return false;
   const start = tradition.startYear;
-  const end = tradition.endYear ?? start;
-  if (mode === "panorama") return year >= start && year <= end;
   if (tradition.temporalPrecision === "unknown") return false;
   return Math.abs(start - year) <= emergenceWindow(year);
 }

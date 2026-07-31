@@ -8,6 +8,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORKBOOK_PATH = path.join(ROOT, "data", "UNO_reformulado.xlsx");
 const OUTPUT_PATH = path.join(ROOT, "public", "data", "atlas.generated.json");
 const CURRENT_YEAR = 2026;
+const LIVING_DOCUMENTARY_FLOOR = 1800;
+const PRECOLONIAL_VISIBILITY_FLOOR = 1450;
 
 const MACRO_PERIODS = [
   { id: "prehistory", start: -180000, end: -3201 },
@@ -93,6 +95,7 @@ const REGION_ANCHORS = [
   ["áfrica oriental", 1, 37],
   ["áfrica austral", -24, 24],
   ["madagascar", -19, 47],
+  ["ilhas canárias", 28, -16],
   ["norte da áfrica", 29, 10],
   ["áfrica", 5, 20],
   ["nordeste do brasil", -8, -38],
@@ -267,11 +270,20 @@ function inferMacroPeriod(label, startYear) {
 function parseTemporal(label, status) {
   const original = text(label);
   const normalized = fold(original).replaceAll("–", "-").replaceAll("—", "-");
+  const foldedStatus = fold(status);
+  const statusTokens = foldedStatus
+    .split(/[/;,]/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+  const statusMarksLiving = statusTokens.includes("viva");
+  const statusMarksRevival = statusTokens.includes("revival");
+  const presentOnlyAsRevival =
+    normalized.includes("presente/avivamento") || normalized.includes("presente/revival");
+  const labelMarksLiving = /(?:^|\W)vivas?(?:\W|$)/.test(normalized);
   const isStillActive =
-    normalized.includes("presente") ||
-    normalized.includes("viva") ||
-    fold(status).includes("viva") ||
-    fold(status).includes("revival");
+    (normalized.includes("presente") && !presentOnlyAsRevival) ||
+    labelMarksLiving ||
+    statusMarksLiving;
   const points = [];
   let hasCentury = false;
   let hasMillennium = false;
@@ -389,9 +401,56 @@ function parseTemporal(label, status) {
     notes.push("Conversão aproximada; o texto original prevalece.");
   }
 
+  let visibilityStartYear = startYear;
+  let visibilityBasis = startYear !== undefined ? "parsed-attestation" : "present-only";
+  const revivalWithoutLivingStatus = statusMarksRevival && !statusMarksLiving;
+  const livingContinuityClaim =
+    !revivalWithoutLivingStatus &&
+    (statusMarksLiving ||
+      normalized.includes("presente") ||
+      normalized.includes("tradicao viva") ||
+      normalized.includes("tradicoes vivas") ||
+      normalized.includes("historicas e vivas"));
+
+  if (visibilityStartYear === undefined && livingContinuityClaim) {
+    if (normalized.includes("idade do bronze")) {
+      visibilityStartYear = -3200;
+      visibilityBasis = "macroperiod-bound";
+      notes.push(
+        "No Panorama, a tradição é mantida desde o limite amplo da Idade do Bronze informado pelo catálogo; isso não data sua origem.",
+      );
+    } else if (normalized.includes("periodo helenistico")) {
+      visibilityStartYear = -323;
+      visibilityBasis = "macroperiod-bound";
+      notes.push(
+        "No Panorama, a tradição é mantida desde o limite amplo do período helenístico informado pelo catálogo; isso não data sua origem.",
+      );
+    } else if (normalized.includes("primeiro milenio d.c")) {
+      visibilityStartYear = 1;
+      visibilityBasis = "macroperiod-bound";
+      notes.push(
+        "No Panorama, a tradição é mantida desde o limite amplo do primeiro milênio d.C.; isso não cria uma data de fundação.",
+      );
+    } else if (normalized.includes("pre-colonial")) {
+      visibilityStartYear = PRECOLONIAL_VISIBILITY_FLOOR;
+      visibilityBasis = "macroperiod-bound";
+      notes.push(
+        "No Panorama, 1450 funciona apenas como limite conservador para uma presença explicitamente pré-colonial; não é data de origem nem de primeira atestação.",
+      );
+    } else {
+      visibilityStartYear = LIVING_DOCUMENTARY_FLOOR;
+      visibilityBasis = "living-documentary-floor";
+      notes.push(
+        "No Panorama, 1800 é um piso documental conservador para impedir que uma tradição viva com início não convertível apareça somente no presente; não é data de origem, fundação ou primeira atestação.",
+      );
+    }
+  }
+
   return {
     startYear,
     endYear,
+    visibilityStartYear,
+    visibilityBasis,
     temporalPrecision,
     temporalLabel: original,
     isApproximate,

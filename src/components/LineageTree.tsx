@@ -68,7 +68,7 @@ function regionForTradition(tradition: Tradition): (typeof REGION_ORDER)[number]
 }
 
 function temporalX(tradition: Tradition, selectedYear: number): number {
-  const year = tradition.startYear ?? selectedYear;
+  const year = tradition.startYear ?? tradition.visibilityStartYear ?? selectedYear;
   const jitter = (stableNumber(tradition.id) % 17) - 8;
   return 180 + yearToPosition(year) * 2.25 + jitter;
 }
@@ -118,7 +118,8 @@ export function LineageTree() {
     () =>
       filteredTraditions.filter((tradition) => {
         if (temporalMode === "catalog") return true;
-        if (tradition.startYear !== undefined) return tradition.startYear <= selectedYear;
+        const visibleFrom = tradition.startYear ?? tradition.visibilityStartYear;
+        if (visibleFrom !== undefined) return visibleFrom <= selectedYear;
         return selectedYear >= data.metadata.currentYear;
       }),
     [data.metadata.currentYear, filteredTraditions, selectedYear, temporalMode],

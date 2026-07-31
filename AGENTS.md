@@ -73,6 +73,12 @@ Ambiguous dates remain approximate or unknown. The ÁRVORE must contain exactly 
 visible-tradition count and draws sourced lineage/influence only. CHARTS must retain seven ordered
 Pew groups totaling 100%, keep “sem filiação” nonreligious, and avoid country rankings.
 All traditions must have a non-global origin region and a cartographic anchor.
+For living oral traditions without a defensible `startYear`, keep historical emergence unknown and
+use only the audited `visibilityStartYear` in PANORAMA. The documentary floor must never enter
+EMERGÊNCIAS or be described as origin, foundation, first attestation, or uninterrupted survival.
+Reject any living tradition that appears only in the current year because its start is unknown.
+Likewise, `Histórica/Revival` must not stretch an ancient interval to the present; model the modern
+revival separately or leave it outside the historical record.
 For map changes, verify present-day Brazil, Mongol Empire at 1200, Babylonia at 1500 BCE, no
 political coverage before the earliest snapshot, snapshot request count, and data-license notices.
 

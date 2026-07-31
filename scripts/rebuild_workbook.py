@@ -2955,6 +2955,10 @@ SOURCES = [
     ("G09", "Igreja Morávia", "Moravian Church History", "Moravian Church, British Province", "https://moravian.org.uk/about/moravian-church-history", "Fonte confessional para 1457, renovação de 1722 e continuidade institucional"),
     ("G10", "Exército de Salvação", "History of The Salvation Army", "The Salvation Army", "https://www.salvationarmy.org/history", "Fonte confessional para origem londrina em 1865 e identidade eclesial cristã"),
     ("G11", "Deísmo", "Enlightenment", "Stanford Encyclopedia of Philosophy", "https://plato.stanford.edu/entries/enlightenment/", "Deísmo moderno, religião natural, razão e crítica da revelação especial"),
+    ("G12", "Religiões africanas", "Some Notes on African Religious Traditions from the Fourteenth Century Onward", "Cambridge University Press", "https://www.cambridge.org/core/books/abs/cambridge-history-of-religions-in-america/some-notes-on-african-religious-traditions-from-the-fourteenth-century-onward/EE33B6B6E81597AB8A74A821EDF65FBB", "Limites da reconstrução pré-colonial; documentação missionária sobretudo oitocentista e tradições anteriores ao contato"),
+    ("G13", "Religiões africanas modernas", "Traditional Religions in Modern Africa", "Cambridge University Press / Boydell & Brewer", "https://www.cambridge.org/core/books/abs/power-of-african-cultures/traditional-religions-in-modern-africa/3BFE4BEA700A9B4E28150700C4234FA9", "Sobrevivência, adaptação, transformação e declínio desigual das religiões tradicionais na modernidade"),
+    ("G14", "Religião Guanche", "The Burning Temple: Religion and Conquest in Mesoamerica and the Iberian Atlantic, circa 1500", "Cambridge University Press", "https://www.cambridge.org/core/books/mexican-mission/burning-temple/5CE4C37549BE2C059BBD465ABA8AB2F9", "Conquista e evangelização das Canárias; impede apresentar a religião Guanche histórica como continuidade ininterrupta"),
+    ("G15", "Kush/Meroé", "The Meroitic Language and Writing System", "Cambridge University Press", "https://assets.cambridge.org/97811070/08663/excerpt/9781107008663_excerpt.htm", "Religião kushita/meroítica, fim do reino no século IV e cristianização regional no século VI"),
 ]
 
 
@@ -3130,9 +3134,9 @@ add("Yazidismo", "Curda/Mesopotâmica", "Iraque/Síria/Armênia/diáspora", "for
 
 # Tradições africanas e afro-diaspóricas. Entradas de família permanecem
 # separadas para evitar o rótulo homogeneizante "subsaariano".
-add("Religião Yorùbá e Ifá", "Yorùbá", "Nigéria/Benim/diáspora", "oral e documentação moderna; tradição viva", "Religião tradicional viva", "yoruba", "I03; I04", coverage="Detalhado")
-add("Religião Akan", "Akan", "Gana/Costa do Marfim", "oral e documentação moderna", "Religião tradicional viva", "akan", "I04", coverage="Detalhado")
-add("Vodun Fon-Ewe", "Fon/Ewe", "Benim/Togo/Gana", "oral e documentação moderna", "Religião tradicional viva", "vodun", "I04", coverage="Detalhado")
+add("Religião Yorùbá e Ifá", "Yorùbá", "Nigéria/Benim/diáspora", "oral e documentação moderna; tradição viva", "Religião tradicional viva", "yoruba", "I03; I04; G12; G13", coverage="Detalhado")
+add("Religião Akan", "Akan", "Gana/Costa do Marfim", "oral e documentação moderna", "Religião tradicional viva", "akan", "I04; G12; G13", coverage="Detalhado")
+add("Vodun Fon-Ewe", "Fon/Ewe", "Benim/Togo/Gana", "oral e documentação moderna", "Religião tradicional viva", "vodun", "I04; G12; G13", coverage="Detalhado")
 add_many(
     ["Odinani (Igbo)", "Religião Kongo", "Religião Serer", "Religião Dogon", "Religião Bambara/Bamana", "Religião Mossi", "Religião Dagara", "Religião Edo/Benin", "Religião Nupe", "Religião Tiv"],
     "África Ocidental/Central",
@@ -3140,7 +3144,7 @@ add_many(
     "tradições orais vivas",
     "Religiões tradicionais vivas",
     "african_local",
-    "I04",
+    "I04; G12; G13",
     coverage="Perfil de família",
     note="Necessita revisão por corpus, povo e linhagem; nomes locais não são intercambiáveis.",
 )
@@ -3151,7 +3155,7 @@ add_many(
     "tradições orais vivas",
     "Religiões tradicionais vivas",
     "african_local",
-    "I04",
+    "I04; G12; G13",
     coverage="Perfil de família",
 )
 add_many(
@@ -3161,19 +3165,112 @@ add_many(
     "tradições orais vivas",
     "Religiões tradicionais vivas",
     "african_local",
-    "I04",
+    "I04; G12; G13",
     coverage="Perfil de família",
 )
-add_many(
-    ["Religião tradicional malgaxe", "Religião Amazigh/Berbere tradicional", "Religião Guanche", "Religião núbia/kushita", "Cultos Mami Wata", "Bwiti", "Bori Hausa", "Culto Zar"],
-    "África/Índico",
-    "África e Madagascar",
-    "históricas e vivas",
-    "Tradições locais e cultos transregionais",
+add(
+    "Religião tradicional malgaxe",
+    "Malgaxe",
+    "Madagascar",
+    "histórica e viva; atestação escrita/etnográfica moderna",
+    "Religião tradicional viva",
     "african_local",
-    "I04",
+    "I04; G12; G13",
     status="Viva/Histórica",
     coverage="Perfil de família",
+    note="O piso moderno de visibilidade não data a origem das linhagens malgaxes nem presume imutabilidade.",
+    mapping_scope="family",
+)
+add(
+    "Religião Amazigh/Berbere tradicional",
+    "Amazigh",
+    "Norte da África",
+    "histórica e viva; práticas locais transformadas",
+    "Tradições religiosas locais",
+    "african_local",
+    "I04; G12; G13",
+    status="Viva/Histórica",
+    coverage="Perfil de família",
+    note="Não constitui uma religião amazigh uniforme; práticas locais coexistem e se transformam em contextos islâmicos, judaicos e modernos.",
+    mapping_scope="family",
+)
+add(
+    "Religião Guanche",
+    "Canária indígena histórica",
+    "Ilhas Canárias",
+    "atestação pré-conquista–fim do século XV; reconstruções modernas separadas",
+    "Religião histórica fragmentária",
+    "fragmentary",
+    "G14",
+    status="Histórica",
+    coverage="Fragmentário",
+    note="O registro descreve religiões indígenas canárias anteriores e contemporâneas à conquista. Movimentos modernos inspirados nos Guanches não são tratados como continuidade institucional.",
+    mapping_scope="family",
+)
+add(
+    "Religião núbia/kushita",
+    "Kushita/meroítica histórica",
+    "Vale do Nilo/Núbia",
+    "c. 750 a.C.–século VI d.C.; transição regional gradual",
+    "Religião histórica",
+    "african_local",
+    "A03; G15",
+    status="Histórica",
+    coverage="Parcial",
+    note="O registro cobre religiões kushitas e meroíticas antigas. Não representa automaticamente as religiões de comunidades núbias contemporâneas.",
+    mapping_scope="family",
+)
+add(
+    "Cultos Mami Wata",
+    "Cultos aquáticos africanos transregionais",
+    "África Ocidental/África Central/diáspora",
+    "atestação histórica e etnográfica moderna; práticas vivas e mutáveis",
+    "Complexos de culto vivos",
+    "african_local",
+    "I04; G12; G13",
+    status="Viva/Histórica",
+    coverage="Perfil de família",
+    note="Mami Wata reúne formações locais e transregionais; não é uma igreja, panteão ou linhagem única.",
+    mapping_scope="family",
+)
+add(
+    "Bwiti",
+    "Religiões Bwiti",
+    "Gabão/África Central",
+    "atestação histórica e etnográfica moderna; linhagens vivas",
+    "Família religiosa iniciática viva",
+    "african_local",
+    "I04; G12; G13",
+    status="Viva/Histórica",
+    coverage="Perfil de família",
+    note="Linhagens Mitsogo, Fang e outras não devem ser reduzidas a um perfil institucional único.",
+    mapping_scope="family",
+)
+add(
+    "Bori Hausa",
+    "Hausa/Bori",
+    "Nigéria/Níger/África Ocidental",
+    "atestação histórica e etnográfica moderna; práticas vivas",
+    "Complexo de possessão e culto vivo",
+    "african_local",
+    "I04; G12; G13",
+    status="Viva/Histórica",
+    coverage="Perfil de família",
+    note="Bori apresenta variações locais e longa interação com contextos islâmicos; não é uma tradição isolada e imutável.",
+    mapping_scope="family",
+)
+add(
+    "Culto Zar",
+    "Zar transregional",
+    "África Oriental/Sudão/Etiópia",
+    "atestação histórica e etnográfica moderna; práticas vivas",
+    "Complexos rituais de possessão",
+    "african_local",
+    "I04; G12; G13",
+    status="Viva/Histórica",
+    coverage="Perfil de família",
+    note="Zar designa complexos rituais regionais diversos; difusão e origem permanecem debatidas.",
+    mapping_scope="family",
 )
 add("Candomblé Ketu/Nagô", "Afro-brasileira Yorùbá", "Brasil", "século XIX–presente", "Religião afro-diaspórica", "afro_yoruba_diaspora", "I03; I04", coverage="Detalhado")
 add("Candomblé Jeje", "Afro-brasileira Fon-Ewe", "Brasil", "século XIX–presente", "Religião afro-diaspórica", "vodun", "I03; I04", coverage="Perfil de família")
@@ -4527,7 +4624,8 @@ def build_revisions(wb: Workbook) -> None:
         ("Toda célula precisava de um nome.", "Introduzidos ●, ≈, ◇, ? e —.", "Ausência documentada é mais rigorosa que preenchimento especulativo.", "LEIA-ME; Matriz global"),
         ("Aeons astrológicos e thelêmicos misturados à cronologia histórica.", "Preservados em aba própria com rótulo de hipótese esotérica.", "São esquemas interpretativos modernos, não consenso historiográfico.", "Aeons — autoral"),
         ("Perfis familiares repetidos eram exibidos como dados específicos de centenas de tradições.", "Células herdadas foram rebaixadas para “?” e rotuladas com o nome da tradição; exemplos prioritários receberam perfis próprios.", "Semelhança de família é hipótese de trabalho, não documentação individual.", "Catálogo: Escopo do mapeamento; Matriz global"),
-        ("Rótulos amplos como “Antiguidade–presente” iniciavam tradições no marco arbitrário de 3.200 a.C.", "Datas de tradições nomeadas foram individualizadas e o parser deixou de converter rótulos ambíguos em datas precisas.", "Macroperíodo não é data de fundação; tradições orais sem atestação convertível permanecem temporalmente desconhecidas.", "Catálogo; Cronologia"),
+        ("Rótulos amplos como “Antiguidade–presente” iniciavam tradições no marco arbitrário de 3.200 a.C.", "Datas de tradições nomeadas foram individualizadas e o parser deixou de converter rótulos ambíguos em datas precisas.", "Macroperíodo não é data de fundação; tradições orais sem atestação convertível preservam início desconhecido.", "Catálogo; Cronologia"),
+        ("Tradições orais vivas sem ano convertível desapareciam de todo o Panorama e reapareciam juntas apenas em 2026.", "Separado o início histórico desconhecido de um piso documental de visibilidade: 1800 para tradições vivas sem data e 1450 para rótulos explicitamente pré-coloniais.", "Os pisos impedem falsa extinção na interface sem transformar 1800/1450 em origem, fundação, emergência ou primeira atestação. Revivals sem continuidade viva não recebem o mesmo tratamento.", "Catálogo; Matriz global; Fontes G12–G15"),
         ("Listas enciclopédicas eram confundidas com fontes probatórias.", "Wikimedia Commons, Wikipedia e Open Mind Project foram registradas apenas como listas investigativas.", "Listas ajudam a localizar omissões, mas datas, doutrina e correlações exigem fontes independentes.", "Fontes L01–L03"),
         ("A auditoria de cobertura encontrou tradições históricas e modernas documentadas que ainda não possuíam linha própria.", "Incluídos 11 registros com origem, atestação, nota de escopo e fonte individual: Ājīvika, Brahmo Samaj, Arya Samaj, Navayāna, Won Buddhism, Mahima Dharma, Radhasoami, Moorish Science Temple, Igreja Morávia, Exército de Salvação e deísmo.", "Cobertura ampla exige distinguir lacuna resolvível de subdivisão arbitrária; células não sustentadas permanecem incertas ou ausentes.", "Catálogo T472–T482; Fontes G01–G11"),
     ]
