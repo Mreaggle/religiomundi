@@ -17,7 +17,7 @@ const signatures = new Map();
 const sourceCodes = new Set(data.sources.map((source) => source.code));
 
 assert(data.archetypes.length === 44, `Esperados 44 arquétipos; obtidos ${data.archetypes.length}`);
-assert(data.traditions.length >= 470, `Catálogo regrediu para ${data.traditions.length} tradições`);
+assert(data.traditions.length >= 482, `Catálogo regrediu para ${data.traditions.length} tradições`);
 
 for (const tradition of data.traditions) {
   assert(!ids.has(tradition.id), `ID duplicado: ${tradition.id}`);
@@ -79,6 +79,15 @@ const expectedStarts = new Map([
   ["Cristianismo etíope/eritreu", 301],
   ["Jainismo Digambara", 1],
   ["Jainismo Śvetāmbara", 1],
+  ["Brahmo Samaj", 1828],
+  ["Arya Samaj", 1875],
+  ["Navayāna/Budismo ambedkarista", 1956],
+  ["Won Buddhism", 1916],
+  ["Radhasoami/Sant Mat moderno", 1861],
+  ["Moorish Science Temple of America", 1920],
+  ["Igreja Morávia/Unitas Fratrum", 1457],
+  ["Exército de Salvação", 1865],
+  ["Deísmo moderno", 1690],
 ]);
 for (const [name, expected] of expectedStarts) {
   const tradition = data.traditions.find((item) => item.name === name);
@@ -89,7 +98,26 @@ for (const [name, expected] of expectedStarts) {
   );
 }
 
-for (const code of ["L01", "L02", "L03", "P01", "P02", "P03", "P04"]) {
+for (const code of [
+  "L01",
+  "L02",
+  "L03",
+  "P01",
+  "P02",
+  "P03",
+  "P04",
+  "G01",
+  "G02",
+  "G03",
+  "G04",
+  "G05",
+  "G06",
+  "G07",
+  "G08",
+  "G09",
+  "G10",
+  "G11",
+]) {
   assert(sourceCodes.has(code), `Referência investigativa/arqueológica ausente: ${code}`);
 }
 

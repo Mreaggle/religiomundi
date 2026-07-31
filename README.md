@@ -8,7 +8,7 @@
 
 ### Linha do tempo, evolução histórica, mapas, árvores e arquétipos da humanidade
 
-**471 tradições · 44 funções comparativas · 20.724 relações examináveis**
+**482 tradições · 44 funções comparativas · 21.208 relações examináveis**
 
 [![Produção](https://img.shields.io/badge/EXPLORAR_O_ATLAS-GitHub_Pages-d59a4a?style=for-the-badge&logo=github)](https://mreaggle.github.io/religiomundi/)
 [![Validate atlas](https://github.com/Mreaggle/religiomundi/actions/workflows/ci.yml/badge.svg)](https://github.com/Mreaggle/religiomundi/actions/workflows/ci.yml)
@@ -51,8 +51,8 @@ O projeto permite investigar perguntas como:
 | **Constelação** | 44 arquétipos fixos ligados às tradições do recorte temporal |
 | **Mapa** | 54 recortes políticos temporais, distribuição religiosa, clustering e zoom |
 | **Árvore** | história acumulada até o recorte em ramos regionais; vínculos documentados, sincretismos e hipóteses diferenciados |
-| **Charts** | rankings de religiões, famílias e arquétipos, além da demografia religiosa mundial |
-| **Matriz** | heatmap virtualizado das 20.724 células comparativas |
+| **Charts** | rankings provocativos de religiões, famílias, arquétipos, lacunas editoriais e semelhanças funcionais, além da demografia mundial |
+| **Matriz** | heatmap virtualizado das 21.208 células comparativas |
 | **Assinaturas** | impressões funcionais de 44 segmentos para comparação |
 | **Fontes** | biblioteca navegável das referências usadas na revisão |
 
@@ -61,10 +61,12 @@ Comparação, reprodução automática da história, lista acessível e a camada
 desativada e epistemicamente separada por padrão.
 
 Os charts internos são recalculados com a timeline e nunca ranqueiam “verdade” ou valor espiritual.
+Ausências, incertezas, pares funcionalmente próximos e tamanho de famílias recebem ressalvas
+próprias: nenhum ranking demonstra equivalência teológica, transmissão histórica ou importância.
 O ranking de população compara **grupos religiosos globais, não países**, usando a estimativa de
 2020 publicada pelo [Pew Research Center em 2025](https://www.pewresearch.org/religion/2025/06/09/how-the-global-religious-landscape-changed-from-2010-to-2020/).
 “Sem filiação religiosa” permanece identificado como categoria demográfica, e “outras religiões”
-como agrupamento que não representa a granularidade das 471 tradições do atlas.
+como agrupamento que não representa a granularidade das 482 tradições do atlas.
 
 ## Metodologia e limites
 
@@ -86,7 +88,7 @@ precisão arqueológica. O catálogo é amplo, mas não exaustivo.
 ### Origem não é alcance
 
 O atlas separa a região ampla de **origem/formação** da distribuição posterior. “Global” e
-“diáspora” descrevem alcance: nunca funcionam como uma localização substituta. Cada uma das 471
+“diáspora” descrevem alcance: nunca funcionam como uma localização substituta. Cada uma das 482
 tradições possui uma âncora regional aproximada; tradições hoje mundiais continuam ligadas ao seu
 contexto formativo, enquanto o alcance permanece visível no dossiê. Em formações policêntricas, o
 rótulo conserva mais de uma região e não inventa um ponto de nascimento único.
@@ -125,14 +127,16 @@ flowchart LR
   APP --> PAGES["GitHub Pages"]
 ```
 
-- **471** tradições, cosmovisões e registros;
+- **482** tradições, cosmovisões e registros;
 - **44** arquétipos funcionais, de `A01` a `A44`;
-- **20.724** células comparativas;
-- **44** registros de fontes;
+- **21.208** células comparativas;
+- **55** registros de fontes;
 - texto original de período e correlação sempre preservado.
 
 As listas da Wikimedia Commons, Wikipedia e Open Mind Project são checklists investigativos de
 cobertura, nunca evidência suficiente para doutrina ou datação.
+Consulte a [auditoria de lacunas de 31/07/2026](docs/auditoria-lacunas-2026-07-31.md) para ver
+inclusões, adiamentos e critérios.
 
 ## Arquitetura
 

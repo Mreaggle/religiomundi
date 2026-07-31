@@ -1750,6 +1750,10 @@ svg [tabindex] {
   z-index: 14;
 }
 
+.constellation-view.has-scene-focus .constellation-tools {
+  top: 148px;
+}
+
 .constellation-gesture-hint {
   position: absolute;
   bottom: 43px;
@@ -4692,6 +4696,11 @@ svg [tabindex] {
   overflow: visible;
 }
 
+.workspace-charts > .workspace-readout,
+.workspace-sources > .workspace-readout {
+  display: none;
+}
+
 .charts-heading {
   min-height: 88px;
 }
@@ -4733,6 +4742,10 @@ svg [tabindex] {
     linear-gradient(135deg, rgba(87, 200, 212, 0.025), transparent 48%), rgba(8, 13, 12, 0.88);
 }
 
+.ranking-card {
+  grid-column: span 4;
+}
+
 .charts-card > header {
   margin-bottom: 16px;
 }
@@ -4770,10 +4783,32 @@ svg [tabindex] {
   font: 0.62rem var(--mono);
 }
 
-.charts-card li > div > span {
+.charts-card li > div > span,
+.chart-rank-target > span {
   display: flex;
   gap: 10px;
   justify-content: space-between;
+}
+
+.chart-rank-target {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+
+.chart-rank-target:hover strong,
+.chart-rank-target:focus-visible strong {
+  color: var(--cyan);
+}
+
+.chart-rank-target:focus-visible {
+  border-radius: 2px;
+  outline: 1px solid rgba(87, 200, 212, 0.65);
+  outline-offset: 3px;
 }
 
 .charts-card li strong {
@@ -4813,6 +4848,21 @@ svg [tabindex] {
   font: 0.53rem / 1.4 var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ranking-caveat {
+  padding-top: 11px;
+  margin-top: 13px;
+  border-top: 1px solid rgba(226, 211, 180, 0.09);
+  color: #777f7a;
+  font: 0.53rem / 1.5 var(--mono);
+}
+
+.chart-empty {
+  min-height: 110px;
+  margin: 0;
+  color: var(--muted);
+  font: 0.62rem / 1.5 var(--mono);
 }
 
 .population-ranking {
@@ -4885,6 +4935,7 @@ svg [tabindex] {
 }
 
 .chart-manifesto {
+  grid-column: span 8;
   display: flex;
   min-height: 240px;
   flex-direction: column;
@@ -4921,6 +4972,11 @@ svg [tabindex] {
 
 /* Responsive */
 @media (max-width: 1260px) {
+  .ranking-card,
+  .chart-manifesto {
+    grid-column: span 6;
+  }
+
   .atlas-header {
     grid-template-columns: auto 1fr auto;
     gap: 10px;
@@ -5095,7 +5151,9 @@ svg [tabindex] {
 
   .charts-card,
   .population-ranking,
-  .archetype-ranking {
+  .archetype-ranking,
+  .ranking-card,
+  .chart-manifesto {
     grid-column: span 12;
   }
 
@@ -5250,6 +5308,10 @@ svg [tabindex] {
   .constellation-tools {
     top: 76px;
     left: 9px;
+  }
+
+  .constellation-view.has-scene-focus .constellation-tools {
+    top: 148px;
   }
 
   .constellation-gesture-hint {

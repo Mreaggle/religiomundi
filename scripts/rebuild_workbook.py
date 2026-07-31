@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "UNO.xlsx"
 OUTPUT = ROOT / "data" / "UNO_reformulado.xlsx"
 CSV_OUTPUT = ROOT / "data" / "UNO_reformulado.csv"
-REVISION_DATE = date(2026, 7, 28)
+REVISION_DATE = date(2026, 7, 31)
 
 
 COLORS = {
@@ -2944,6 +2944,17 @@ SOURCES = [
     ("L01", "Lista investigativa", "Category:Religion", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/Category:Religion", "Taxonomia navegável para descoberta; não usada isoladamente como evidência histórica"),
     ("L02", "Lista investigativa", "List of religions and spiritual traditions", "Wikipedia", "https://en.wikipedia.org/wiki/List_of_religions_and_spiritual_traditions", "Checklist de cobertura; cada inclusão exige verificação independente"),
     ("L03", "Lista investigativa", "All Faiths / Religions", "Open Mind Project", "https://www.openmindproject.com/all-faiths-religions-2", "Checklist secundário de movimentos; não usado isoladamente para datas ou doutrina"),
+    ("G01", "Ājīvika", "Ājīvikas, Maṇibhadra and Early History of Eastern Bengal", "Journal of the Royal Asiatic Society / Cambridge University Press", "https://www.cambridge.org/core/journals/journal-of-the-royal-asiatic-society/article/ajivikas-manibhadra-and-early-history-of-eastern-bengal-a-new-copperplate-inscription-of-vainyagupta-and-its-implications/402546E37F41B6A9C70414693E17413D", "Inscrição rara, história tardia e limites documentais da tradição Ājīvika"),
+    ("G02", "Brahmo Samaj", "Brahmo Samaj", "Encyclopaedia Britannica", "https://www.britannica.com/topic/Brahmo-Samaj", "Fundação em Calcutá, reforma religiosa e monoteísmo"),
+    ("G03", "Arya Samaj", "Arya Samaj", "Encyclopaedia Britannica", "https://www.britannica.com/topic/Arya-Samaj", "Fundação, autoridade védica e programa reformista"),
+    ("G04", "Navayāna", "Ambedkar Buddhism", "Oxford Research Encyclopedia of Religion", "https://academic.oup.com/reference/62340/reference-article-abstract/554139264", "Conversão de 1956, formação do Navayāna e releitura ambedkarista"),
+    ("G05", "Won Buddhism", "About Won Buddhism", "Won Buddhism", "https://wonbuddhism.org/about/", "Autodescrição confessional, fundação em 1916 e Il Won; confrontar com pesquisa acadêmica"),
+    ("G06", "Mahima Dharma", "Deconstructing Divine Diktat from Orthodoxy to Altruism: Mahima Cult", "Critical South Asian Studies", "https://journals.tplondon.com/csas/article/view/3394", "Movimento religioso de Odisha, contexto social e Bhima Bhoi"),
+    ("G07", "Radhasoami", "Radhasoami Tradition", "Oxford Bibliographies / Oxford University Press", "https://academic.oup.com/reference/62357/reference-article-abstract/554516588", "Formação em 1861, surat śabd yoga e proliferação de linhagens"),
+    ("G08", "Moorish Science Temple", "African American Muslim Congregations, 1913–2013", "Oxford Handbook Topics in Religion", "https://academic.oup.com/edited-volume/41330/chapter/496996646", "História congregacional, cronologia debatida e teologia própria"),
+    ("G09", "Igreja Morávia", "Moravian Church History", "Moravian Church, British Province", "https://moravian.org.uk/about/moravian-church-history", "Fonte confessional para 1457, renovação de 1722 e continuidade institucional"),
+    ("G10", "Exército de Salvação", "History of The Salvation Army", "The Salvation Army", "https://www.salvationarmy.org/history", "Fonte confessional para origem londrina em 1865 e identidade eclesial cristã"),
+    ("G11", "Deísmo", "Enlightenment", "Stanford Encyclopedia of Philosophy", "https://plato.stanford.edu/entries/enlightenment/", "Deísmo moderno, religião natural, razão e crítica da revelação especial"),
 ]
 
 
@@ -3458,6 +3469,240 @@ add("Barquinha", "Cristã-enteogênica amazônica", "Brasil", "1945–presente",
 add_many(["Movimentos modernos de cogumelos sacramentais", "Igrejas de cannabis (categoria descentralizada)"], "Enteogênica moderna", "Américas/Global", "séculos XX–XXI", "Movimentos religiosos", "native_american_church", "M03", coverage="Perfil de família", note="Legalidade, doutrina e continuidade indígena variam; não agrupar substâncias como tradição única.")
 add("Humanismo secular", "Não teísta", "Global", "séculos XIX–XXI", "Cosmovisão ética não religiosa", "modern_nontheist", "C06", coverage="Detalhado", note="Incluído por comparação de cosmovisões, não como panteão.")
 add_many(["Naturalismo religioso", "Religião da Humanidade/Positivismo religioso", "Ethical Culture", "Ateísmo religioso organizado"], "Não teísta/humanista", "Global", "séculos XIX–XXI", "Cosmovisões/movimentos éticos", "modern_nontheist", "C06", coverage="Perfil de família")
+
+# Lacunas confirmadas na auditoria comparativa de 31/07/2026. Listas abertas
+# serviram apenas como descoberta; cada inclusão abaixo possui referência
+# histórica, acadêmica ou confessional identificada e nota de escopo própria.
+add(
+    "Ājīvika",
+    "Śramaṇa histórica",
+    "Índia setentrional/oriental",
+    "c. século V a.C.–c. século XIV d.C.; sobrevivência tardia fragmentária",
+    "Religião ascética histórica",
+    "fragmentary",
+    "G01; A06",
+    status="Histórica/fragmentária",
+    coverage="Fragmentário",
+    note="A tradição desapareceu e não deixou um cânone preservado. Grande parte da doutrina é reconstruída por fontes budistas e jainas potencialmente hostis; epigrafia tardia acrescenta evidência localizada.",
+    overrides={
+        "A26": "≈ Maṇibhadra aparece em rara inscrição ligada a Ājīvikas tardios; não generalizar para toda a tradição",
+        "A29": "? Niyati/destino é atribuído aos Ājīvikas por fontes rivais; formulação interna não foi preservada",
+        "A36": "≈ Ascetismo severo é consistentemente associado à tradição, mas suas justificações internas são fragmentárias",
+        "A38": "? Makkhali Gosāla é apresentado como mestre formador em fontes externas; a voz ājīvika direta está perdida",
+        "A43": "? Culto/oferta a Maṇibhadra é documentado localmente em inscrição tardia; alcance doutrinário incerto",
+    },
+)
+add(
+    "Brahmo Samaj",
+    "Reforma hindu/monoteísta",
+    "Bengala/Índia/diáspora",
+    "1828–presente",
+    "Movimento religioso reformista",
+    "new_religion_generic",
+    "G02; A06",
+    coverage="Parcial",
+    note="Movimento plural, com cisões históricas. Não projetar sobre todas as vertentes uma teologia única nem tratá-lo como simples denominação cristã.",
+    overrides={
+        "A01": "◇ Criador único e ordem divina em linguagem racional e reformista",
+        "A03": "◇ Deus único, transcendente e não representado por imagens",
+        "A04": "◇ Reforma moral e social, com crítica histórica a casta e práticas consideradas supersticiosas",
+        "A34": "● Oração, hinos e culto congregacional sem iconolatria",
+        "A37": "◇ Reforma social e educação em vertentes históricas do movimento",
+        "A38": "● Rammohun Roy e os textos de reforma; autoridade e ênfases variam entre ramos",
+        "A43": "≈ Culto congregacional e ritos reformulados; não há uniformidade entre cisões",
+        "A44": "≈ Adesão a uma comunidade religiosa reformista e disciplina ética",
+    },
+)
+add(
+    "Arya Samaj",
+    "Reforma védica",
+    "Índia ocidental/setentrional/diáspora",
+    "1875–presente",
+    "Movimento religioso reformista",
+    "new_religion_generic",
+    "G03; A06",
+    coverage="Parcial",
+    note="Movimento reformista védico com organizações e contextos nacionais distintos; sua leitura dos Vedas não representa todo o hinduísmo.",
+    overrides={
+        "A01": "◇ Criação e ordem cósmica interpretadas pela autoridade védica",
+        "A03": "◇ Um Deus sem forma na leitura de Dayananda Saraswati",
+        "A04": "◇ Dharma e programa de reforma moral/social",
+        "A11": "● Homa/havan: fogo e oferenda em prática ritual central",
+        "A36": "● Disciplina védica, educação e reforma de costumes",
+        "A38": "● Vedas como autoridade e Dayananda Saraswati como fundador do movimento",
+        "A43": "● Homa/havan e ritos védicos reformulados",
+        "A44": "≈ Śuddhi/reintegração religiosa em contextos históricos; prática e política exigem contextualização",
+    },
+)
+add(
+    "Navayāna/Budismo ambedkarista",
+    "Budista moderna/dalit",
+    "Nagpur/Índia/diáspora",
+    "1956–presente",
+    "Movimento budista moderno",
+    "buddhist",
+    "G04; A07",
+    coverage="Parcial",
+    note="A conversão coletiva de 14 de outubro de 1956 é um marco institucional, não uma data precisa para toda recepção do pensamento de Ambedkar. Continuidade e ruptura com outros budismos devem permanecer visíveis.",
+    mapping_scope="family",
+    overrides={
+        "A04": "◇ Igualdade, dignidade e rejeição de casta ocupam papel central na formulação ambedkarista",
+        "A36": "● Vinte e dois votos e disciplina ética ligados à conversão",
+        "A38": "● B. R. Ambedkar, The Buddha and His Dhamma e os vinte e dois votos",
+        "A41": "● Libertação budista articulada também como emancipação social; não reduzir a uma agenda apenas política",
+        "A44": "● Conversão coletiva/dīkṣā de 1956 e adesões posteriores",
+    },
+)
+add(
+    "Won Buddhism",
+    "Budista moderna coreana",
+    "Coreia/diáspora",
+    "1916–presente",
+    "Nova religião budista",
+    "mahayana",
+    "G05",
+    coverage="Parcial",
+    note="A fonte principal deste perfil é confessional. O movimento reforma elementos budistas para a vida moderna e deve ser distinguido de escolas coreanas mais antigas.",
+    mapping_scope="family",
+    overrides={
+        "A01": "◇ Il Won/Um Círculo como verdade última e origem de todos os seres na autodescrição do movimento",
+        "A03": "◇ Il Won e Dharmakāya Buddha não são uma soberania celeste personificada simples",
+        "A04": "◇ Igualdade entre clero e leigos, mulheres e homens, conforme o ideal fundador declarado",
+        "A36": "● Cultivo espiritual e prática aplicada à vida cotidiana",
+        "A38": "● Sotaesan/Park Joongbin e os textos canônicos do movimento",
+        "A41": "● Despertar e realização da verdade de Il Won",
+        "A43": "≈ Práticas e culto reformulados para a vida moderna",
+        "A44": "● Abertura do espírito diante da abertura material, segundo o lema fundador",
+    },
+)
+add(
+    "Mahima Dharma",
+    "Reforma religiosa de Odisha",
+    "Odisha/Índia",
+    "século XIX–presente; formação gradual",
+    "Religião ascética e devocional",
+    "new_religion_generic",
+    "G06",
+    coverage="Parcial",
+    note="Datas fundacionais e genealogias variam nas fontes. A classificação como reforma hindu, tradição autônoma ou movimento popular deve ser apresentada como questão histórica, não resolvida pelo atlas.",
+    overrides={
+        "A01": "◇ Alekha/Absoluto sem forma em formulações do movimento",
+        "A03": "◇ Divino único e sem forma; evitar convertê-lo em personagem de panteão",
+        "A04": "◇ Igualdade e crítica a hierarquias de casta em discursos associados a Bhima Bhoi",
+        "A36": "● Ascetismo e disciplina monástica em linhagens Mahima",
+        "A37": "◇ Compaixão e libertação do mundo na poesia de Bhima Bhoi",
+        "A38": "● Mahima Gosain e Bhima Bhoi; fundador, poeta e linhagens não são funções idênticas",
+        "A41": "≈ Libertação e realização do Absoluto sem forma",
+        "A43": "● Culto, fogo e práticas ascéticas conforme a linhagem; variações internas exigem cautela",
+    },
+)
+add(
+    "Radhasoami/Sant Mat moderno",
+    "Sant Mat moderna",
+    "Agra/Punjab/Índia/Global",
+    "1861–presente",
+    "Tradição espiritual com múltiplas linhagens",
+    "new_religion_generic",
+    "G07",
+    coverage="Parcial",
+    note="Após Shiv Dayal Singh formaram-se diversas linhagens e satsangs. O registro é agregado e não atribui a todas as organizações a mesma sucessão, administração ou vocabulário.",
+    overrides={
+        "A01": "◇ Realidade suprema não antropomórfica em formulações Radhasoami",
+        "A03": "◇ Radhasoami como realidade/energia espiritual suprema; não equiparar automaticamente a uma divindade personificada",
+        "A34": "● Surat śabd yoga: som/corrente interior na prática contemplativa",
+        "A36": "● Disciplina moral, meditação e vegetarianismo em linhagens documentadas",
+        "A38": "● Shiv Dayal Singh e sucessões de gurus disputadas entre múltiplos satsangs",
+        "A39": "● Surat/alma em relação com śabd/som espiritual",
+        "A41": "● União/libertação pela corrente sonora e devoção ao mestre, conforme a linhagem",
+        "A43": "● Satsang, iniciação e transmissão de prática",
+        "A44": "● Iniciação e transformação por meditação e disciplina",
+    },
+)
+add(
+    "Moorish Science Temple of America",
+    "Afro-americana/islâmica heterodoxa",
+    "Estados Unidos",
+    "década de 1920–presente; antecedente institucional anterior permanece debatido",
+    "Novo movimento religioso",
+    "new_religion_generic",
+    "G08",
+    coverage="Parcial",
+    note="A narrativa de origem em 1913 é registrada em história oral e permanece debatida. A autodefinição islâmica deve ser preservada sem assimilação automática ao sunismo.",
+    overrides={
+        "A03": "● Allah como Pai do Universo na oração e teologia próprias do movimento",
+        "A04": "◇ Amor, Verdade, Paz, Liberdade e Justiça como princípios declarados",
+        "A18": "● Templos e organização congregacional estabelecidos sob Noble Drew Ali",
+        "A36": "● Disciplina corporal, moral e comunitária",
+        "A38": "● Noble Drew Ali e o Holy Koran of the Moorish Science Temple",
+        "A41": "● Salvação, recuperação de identidade e elevação moral na linguagem do movimento",
+        "A43": "● Oração, culto congregacional e leitura do texto próprio",
+        "A44": "● Reidentificação religiosa e nacional como 'Moorish American'",
+    },
+)
+add(
+    "Igreja Morávia/Unitas Fratrum",
+    "Cristã protestante",
+    "Boêmia/Europa Central/Global",
+    "1457–presente; renovação em 1722",
+    "Igreja cristã",
+    "christian",
+    "G09",
+    coverage="Parcial",
+    note="A continuidade entre a Unitas Fratrum boêmia e a igreja renovada em Herrnhut deve ser descrita historicamente, sem apagar períodos de perseguição, dispersão e reorganização.",
+    mapping_scope="family",
+    overrides={
+        "A34": "● Hinologia, música congregacional e tradições litúrgicas morávias",
+        "A36": "● Vida comunitária, oração e disciplina em diferentes períodos",
+        "A37": "◇ Missão, educação e serviço comunitário em sua história institucional",
+        "A38": "● Bíblia, legado da Unitas Fratrum e liderança da igreja renovada",
+        "A43": "● Batismo, Ceia e liturgias próprias da comunhão morávia",
+        "A44": "≈ Adesão e vida comunitária cristã; práticas variam historicamente",
+    },
+)
+add(
+    "Exército de Salvação",
+    "Cristã protestante/wesleyana",
+    "Londres/Grã-Bretanha/Global",
+    "1865–presente; nome adotado em 1878",
+    "Igreja cristã e movimento social",
+    "christian",
+    "G10",
+    coverage="Parcial",
+    note="É simultaneamente igreja cristã e organização de serviço social. A matriz não deve reduzir sua identidade religiosa à assistência nem usar o alcance internacional como origem geográfica.",
+    mapping_scope="family",
+    overrides={
+        "A18": "● Organização em corpos, oficiais e estrutura internacional de inspiração militar",
+        "A34": "● Música, bandas e culto público na história do movimento",
+        "A36": "● Discipulado, compromisso e disciplina comunitária",
+        "A37": "◇ Serviço social e resposta a necessidades humanas como missão declarada",
+        "A38": "● Bíblia e legado fundador de William e Catherine Booth",
+        "A41": "● Salvação em Cristo em teologia evangélica-wesleyana",
+        "A43": "◇ Culto e mediação ministerial sem prática sacramental obrigatória; não interpretar como ausência de vida ritual",
+        "A44": "● Conversão, santificação e compromisso público",
+    },
+)
+add(
+    "Deísmo moderno",
+    "Religião natural/filosofia religiosa",
+    "Grã-Bretanha/Europa Ocidental/Américas",
+    "c. 1690–presente; auge iluminista posterior",
+    "Corrente filosófico-religiosa",
+    "new_religion_generic",
+    "G11",
+    coverage="Parcial",
+    note="Deísmo não é uma igreja única nem possui cânone, ritual ou organização comuns. O registro compara um campo histórico de posições sobre criador, natureza, razão e revelação.",
+    overrides={
+        "A01": "◇ Universo ordenado por uma inteligência/criador segundo formulações deístas modernas",
+        "A02": "◇ Criador inferido pela razão e pela natureza, não por narrativa revelada comum",
+        "A03": "◇ Ser supremo/inteligência ordenadora; geralmente não intervencionista em versões clássicas",
+        "A04": "◇ Religião natural e moral acessíveis à razão humana",
+        "A19": "● Razão, natureza e argumento do desígnio em autores deístas; posições internas variam",
+        "A38": "◇ Rejeição típica da revelação especial como autoridade necessária; não há profeta fundador comum",
+        "A41": "? Destino último e vida futura variam entre autores; não há soteriologia deísta única",
+        "A43": "— Sem ritual, sacerdócio ou liturgia comuns ao campo deísta",
+        "A44": "≈ Conversão intelectual à religião natural em autores e círculos específicos; não há iniciação comum",
+    },
+)
 
 
 # Rótulos individualizados impedem que expressões agregadas como
@@ -4284,6 +4529,7 @@ def build_revisions(wb: Workbook) -> None:
         ("Perfis familiares repetidos eram exibidos como dados específicos de centenas de tradições.", "Células herdadas foram rebaixadas para “?” e rotuladas com o nome da tradição; exemplos prioritários receberam perfis próprios.", "Semelhança de família é hipótese de trabalho, não documentação individual.", "Catálogo: Escopo do mapeamento; Matriz global"),
         ("Rótulos amplos como “Antiguidade–presente” iniciavam tradições no marco arbitrário de 3.200 a.C.", "Datas de tradições nomeadas foram individualizadas e o parser deixou de converter rótulos ambíguos em datas precisas.", "Macroperíodo não é data de fundação; tradições orais sem atestação convertível permanecem temporalmente desconhecidas.", "Catálogo; Cronologia"),
         ("Listas enciclopédicas eram confundidas com fontes probatórias.", "Wikimedia Commons, Wikipedia e Open Mind Project foram registradas apenas como listas investigativas.", "Listas ajudam a localizar omissões, mas datas, doutrina e correlações exigem fontes independentes.", "Fontes L01–L03"),
+        ("A auditoria de cobertura encontrou tradições históricas e modernas documentadas que ainda não possuíam linha própria.", "Incluídos 11 registros com origem, atestação, nota de escopo e fonte individual: Ājīvika, Brahmo Samaj, Arya Samaj, Navayāna, Won Buddhism, Mahima Dharma, Radhasoami, Moorish Science Temple, Igreja Morávia, Exército de Salvação e deísmo.", "Cobertura ampla exige distinguir lacuna resolvível de subdivisão arbitrária; células não sustentadas permanecem incertas ou ausentes.", "Catálogo T472–T482; Fontes G01–G11"),
     ]
     header_row = 5
     for col, header in enumerate(headers, start=1):

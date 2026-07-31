@@ -6,7 +6,11 @@ import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, TraditionCluster as TraditionClusterData } from "../types/atlas";
 import type { PolityFeature } from "../types/polities";
 import { clusterTraditions } from "../utils/atlas";
-import { selectCollisionFreeLabels, semanticZoomScale } from "../utils/collision";
+import {
+  expandedTraditionPosition,
+  selectCollisionFreeLabels,
+  semanticZoomScale,
+} from "../utils/collision";
 import { formatYear } from "../utils/temporal";
 import { HistoricalPolityLayer } from "./HistoricalPolityLayer";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
@@ -76,25 +80,29 @@ export function WorldBeliefMap() {
     () => (selectedTradition ? [selectedTradition] : visibleTraditions),
     [selectedTradition, visibleTraditions],
   );
-  const clusters = useMemo(() => clusterTraditions(focusTraditions), [focusTraditions]);
+  const baseClusters = useMemo(() => clusterTraditions(focusTraditions), [focusTraditions]);
+  const expandedCluster = useMemo(
+    () => baseClusters.find((cluster) => cluster.key === expanded),
+    [baseClusters, expanded],
+  );
+  const clusters = expandedCluster ? [expandedCluster] : baseClusters;
+  const sceneFocusActive = Boolean(selectedTradition || expandedCluster);
   const { scale, zoomBy, panBy, resetZoom, focusAt } = useSvgZoom(svgRef, viewportRef, {
     width: WIDTH,
     height: HEIGHT,
     minScale: 0.85,
     maxScale: 9,
   });
-  const expandedCluster = useMemo(
-    () => clusters.find((cluster) => cluster.key === expanded),
-    [clusters, expanded],
-  );
   const clusterAnalysis = useMemo(
     () => (expandedCluster ? analyseCluster(expandedCluster, data.archetypes) : undefined),
     [data.archetypes, expandedCluster],
   );
 
   useEffect(() => {
-    if (expanded && !clusters.some((cluster) => cluster.key === expanded)) setExpanded(undefined);
-  }, [clusters, expanded]);
+    if (expanded && !baseClusters.some((cluster) => cluster.key === expanded)) {
+      setExpanded(undefined);
+    }
+  }, [baseClusters, expanded]);
 
   function clusterPoint(
     cluster: TraditionClusterData,
@@ -161,8 +169,8 @@ export function WorldBeliefMap() {
         <div className="map-heading-meta">
           <p className="map-summary" aria-live="polite">
             <strong>{visibleTraditions.length}</strong> tradições em{" "}
-            <strong>{clusters.length}</strong> agrupamentos. Cada número no mapa é a quantidade de
-            tradições naquele agrupamento, não uma única religião.
+            <strong>{baseClusters.length}</strong> agrupamentos. Cada número no mapa é a quantidade
+            de tradições naquele agrupamento, não uma única religião.
           </p>
           <button
             className="map-summary-toggle"
@@ -268,7 +276,7 @@ export function WorldBeliefMap() {
                   }}
                 />
               )}
-              {selectedTradition && (
+              {sceneFocusActive && (
                 <g
                   role="button"
                   tabIndex={0}
@@ -324,17 +332,19 @@ export function WorldBeliefMap() {
                       />
                       {expanded === cluster.key &&
                         cluster.traditions.slice(0, 36).map((tradition, itemIndex) => {
-                          const visibleCount = Math.min(36, cluster.traditions.length);
-                          const angle = (itemIndex / visibleCount) * Math.PI * 2;
-                          const ring = Math.floor(itemIndex / 12);
-                          const radius = 42 + ring * 31;
+                          const memberPosition = expandedTraditionPosition(
+                            projected,
+                            itemIndex,
+                            cluster.traditions.length,
+                            WIDTH,
+                            HEIGHT,
+                            36,
+                          );
                           return (
                             <g
                               key={tradition.id}
                               className="expanded-tradition"
-                              transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
-                                projected[1] + Math.sin(angle) * radius
-                              }) scale(${semanticZoomScale(scale)})`}
+                              transform={`translate(${memberPosition[0]} ${memberPosition[1]}) scale(${semanticZoomScale(scale)})`}
                               role="button"
                               tabIndex={0}
                               onClick={() => setSelectedTraditionId(tradition.id)}
@@ -413,10 +423,22 @@ export function WorldBeliefMap() {
             </div>
           </details>
         )}
-        {selectedTradition && (
-          <button className="focus-status map-focus-status" type="button" onClick={clearSelection}>
+        {sceneFocusActive && (
+          <button
+            className="focus-status map-focus-status"
+            type="button"
+            onClick={() => {
+              clearSelection();
+              setExpanded(undefined);
+            }}
+          >
             <span>FOCO ISOLADO</span>
-            <strong>{selectedTradition.name}</strong>
+            <strong>
+              {selectedTradition?.name ??
+                (expandedCluster
+                  ? `${expandedCluster.label} · ${expandedCluster.traditions.length} tradições`
+                  : "")}
+            </strong>
             <small>Clique aqui ou fora do marcador para mostrar tudo</small>
           </button>
         )}

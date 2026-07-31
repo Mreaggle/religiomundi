@@ -9,7 +9,7 @@ const data = JSON.parse(
 
 describe("integração da planilha canônica", () => {
   it("mantém as dimensões declaradas", () => {
-    expect(data.traditions.length).toBeGreaterThanOrEqual(470);
+    expect(data.traditions.length).toBeGreaterThanOrEqual(482);
     expect(data.archetypes).toHaveLength(44);
     expect(data.sources.length).toBeGreaterThanOrEqual(44);
     expect(data.metadata.traditionCount).toBe(data.traditions.length);
@@ -62,6 +62,32 @@ describe("integração da planilha canônica", () => {
       "São Camilo de Lellis",
     );
     expect(byName.get("Igreja Católica")?.correlations.A34.originalText).toContain("Santa Cecília");
+  });
+
+  it("mantém as lacunas resolvidas com fonte, data e origem explícitas", () => {
+    const expected = new Map([
+      ["Ājīvika", -500],
+      ["Brahmo Samaj", 1828],
+      ["Arya Samaj", 1875],
+      ["Navayāna/Budismo ambedkarista", 1956],
+      ["Won Buddhism", 1916],
+      ["Mahima Dharma", 1801],
+      ["Radhasoami/Sant Mat moderno", 1861],
+      ["Moorish Science Temple of America", 1920],
+      ["Igreja Morávia/Unitas Fratrum", 1457],
+      ["Exército de Salvação", 1865],
+      ["Deísmo moderno", 1690],
+    ]);
+    const byName = new Map(data.traditions.map((tradition) => [tradition.name, tradition]));
+    for (const [name, startYear] of expected) {
+      const tradition = byName.get(name);
+      expect(tradition, name).toBeDefined();
+      expect(tradition?.startYear, name).toBe(startYear);
+      expect(tradition?.sourceCodes.length, name).toBeGreaterThan(0);
+      expect(tradition?.region, name).not.toBe("Global");
+      expect(tradition?.location, name).toBeDefined();
+    }
+    expect(data.sources).toHaveLength(55);
   });
 
   it("separa origem regional de alcance global ou diaspórico", () => {

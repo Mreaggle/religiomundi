@@ -58,3 +58,34 @@ export function selectCollisionFreeLabels(
 export function semanticZoomScale(scale: number): number {
   return 1 / Math.sqrt(Math.max(1, scale));
 }
+
+export function expandedTraditionPosition(
+  center: [number, number],
+  index: number,
+  total: number,
+  width = 1200,
+  height = 700,
+  limit = 48,
+): [number, number] {
+  const visible = Math.max(1, Math.min(limit, total));
+  const columns = Math.ceil(visible / 10);
+  const rows = Math.ceil(visible / columns);
+  const column = Math.floor(index / rows);
+  const row = index % rows;
+  const columnGap = 190;
+  const rowGap = 24;
+  const horizontalSpan = (columns - 1) * columnGap;
+  const verticalSpan = (rows - 1) * rowGap;
+  const layoutCenterX = Math.min(
+    width - 180 - horizontalSpan / 2,
+    Math.max(100 + horizontalSpan / 2, center[0]),
+  );
+  const layoutCenterY = Math.min(
+    height - 80 - verticalSpan / 2,
+    Math.max(110 + verticalSpan / 2, center[1]),
+  );
+  return [
+    layoutCenterX + (column - (columns - 1) / 2) * columnGap,
+    layoutCenterY + (row - (rows - 1) / 2) * rowGap,
+  ];
+}
