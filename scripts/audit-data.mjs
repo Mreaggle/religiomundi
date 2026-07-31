@@ -11,10 +11,30 @@ function assert(condition, message) {
   if (!condition) errors.push(message);
 }
 
+function statusTokens(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .split(/[/;,]/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
+function statusMarksLiving(value) {
+  return statusTokens(value).includes("viva");
+}
+
 const ids = new Set();
 const names = new Set();
 const signatures = new Map();
 const sourceCodes = new Set(data.sources.map((source) => source.code));
+const visibilityBases = new Set([
+  "parsed-attestation",
+  "macroperiod-bound",
+  "living-documentary-floor",
+  "present-only",
+]);
 
 assert(data.archetypes.length === 44, `Esperados 44 arquétipos; obtidos ${data.archetypes.length}`);
 assert(data.traditions.length >= 482, `Catálogo regrediu para ${data.traditions.length} tradições`);
@@ -63,6 +83,27 @@ for (const tradition of data.traditions) {
     ["regional", "multi-regional", "diasporic", "global"].includes(tradition.geographicReach),
     `${tradition.name}: alcance geográfico inválido`,
   );
+  assert(
+    visibilityBases.has(tradition.visibilityBasis),
+    `${tradition.name}: base de visibilidade temporal inválida`,
+  );
+  if (tradition.visibilityBasis === "living-documentary-floor") {
+    assert(
+      tradition.startYear === undefined && tradition.visibilityStartYear === 1800,
+      `${tradition.name}: piso documental não pode substituir a data histórica de início`,
+    );
+    assert(
+      tradition.parsingNotes.includes("não é data de origem"),
+      `${tradition.name}: piso documental sem ressalva explícita`,
+    );
+  }
+  const tokens = statusTokens(tradition.status);
+  if (tokens.includes("revival") && !tokens.includes("viva")) {
+    assert(
+      !tradition.isStillActive,
+      `${tradition.name}: revival sem continuidade viva tratado como intervalo ininterrupto`,
+    );
+  }
 }
 
 for (const peers of signatures.values()) {
@@ -117,8 +158,58 @@ for (const code of [
   "G09",
   "G10",
   "G11",
+  "G12",
+  "G13",
+  "G14",
+  "G15",
 ]) {
   assert(sourceCodes.has(code), `Referência investigativa/arqueológica ausente: ${code}`);
+}
+
+function panoramaVisible(tradition, year) {
+  const start = tradition.visibilityStartYear ?? tradition.startYear;
+  if (start === undefined) {
+    return tradition.isStillActive && year === (tradition.endYear ?? data.metadata.currentYear);
+  }
+  return year >= start && year <= (tradition.endYear ?? start);
+}
+
+for (const name of [
+  "Religião Yorùbá e Ifá",
+  "Religião Akan",
+  "Vodun Fon-Ewe",
+  "Odinani (Igbo)",
+  "Religião Dinka",
+  "Religiões San",
+  "Religião tradicional malgaxe",
+  "Cultos Mami Wata",
+  "Bwiti",
+  "Bori Hausa",
+  "Culto Zar",
+]) {
+  const tradition = data.traditions.find((item) => item.name === name);
+  assert(Boolean(tradition), `Tradição africana auditada ausente: ${name}`);
+  assert(
+    tradition && panoramaVisible(tradition, 1900),
+    `${name}: tradição viva desaparece do panorama de 1900`,
+  );
+}
+for (const name of ["Religião Guanche", "Religião núbia/kushita"]) {
+  const tradition = data.traditions.find((item) => item.name === name);
+  assert(
+    tradition && !panoramaVisible(tradition, 1900) && !panoramaVisible(tradition, 2026),
+    `${name}: religião histórica apresentada como continuidade moderna`,
+  );
+}
+
+const livingUnknownStarts = data.traditions.filter(
+  (tradition) => statusMarksLiving(tradition.status) && tradition.startYear === undefined,
+);
+for (const tradition of livingUnknownStarts) {
+  assert(
+    Number.isFinite(tradition.visibilityStartYear) && tradition.visibilityStartYear <= 1900,
+    `${tradition.name}: tradição viva com início desconhecido reaparece apenas no presente`,
+  );
 }
 
 const bruniquel = data.traditions.find((item) => item.name.includes("Bruniquel"));
@@ -146,6 +237,15 @@ console.log(
     uniqueSignatures: signatures.size,
     unknownTemporalStarts: data.traditions.filter(
       (tradition) => tradition.temporalPrecision === "unknown",
+    ).length,
+    livingDocumentaryFloors: data.traditions.filter(
+      (tradition) => tradition.visibilityBasis === "living-documentary-floor",
+    ).length,
+    activePresentOnly: data.traditions.filter(
+      (tradition) =>
+        tradition.isStillActive &&
+        tradition.startYear === undefined &&
+        tradition.visibilityStartYear === undefined,
     ).length,
     earliestStartYear: Math.min(
       ...data.traditions

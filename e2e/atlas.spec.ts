@@ -133,7 +133,7 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await expect(page.locator(".matrix-cell").first()).toBeVisible();
   await page.getByRole("button", { name: "Fontes", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Biblioteca de fontes" })).toBeVisible();
-  await expect(page.locator(".source-library article")).toHaveCount(55);
+  await expect(page.locator(".source-library article")).toHaveCount(59);
   await expect(page.locator("a[download]")).toHaveCount(0);
   await expect(page.getByText(/UNO_reformulado\.xlsx/i)).toHaveCount(0);
   await page.getByRole("button", { name: "Sobre o projeto" }).click();
@@ -142,6 +142,55 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await expect(page.getByText(/UNO_reformulado\.xlsx|SHA-256/i)).toHaveCount(0);
 
   expect(errors, `Erros de console em ${testInfo.project.name}`).toEqual([]);
+});
+
+test("panorama preserva cultos africanos vivos em 1900 sem criar falsas emergências", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const range = page.getByLabel("Ano ou período selecionado");
+  await range.evaluate((element) => {
+    const input = element as HTMLInputElement;
+    const valueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    valueSetter?.call(input, "839");
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect(range).toHaveAttribute("aria-valuetext", /1\.900 d\.C\./);
+  await page.getByRole("button", { name: "Visualização em lista" }).click();
+  const list = page.locator(".accessible-list.open");
+  for (const name of [
+    "Religião Yorùbá e Ifá",
+    "Religião Akan",
+    "Vodun Fon-Ewe",
+    "Odinani (Igbo)",
+    "Religião Dinka",
+    "Religiões San",
+    "Cultos Mami Wata",
+    "Bwiti",
+    "Bori Hausa",
+    "Culto Zar",
+  ]) {
+    await expect(list, name).toContainText(name);
+  }
+  await expect(list).not.toContainText("Religião Guanche");
+  await expect(list).not.toContainText("Religião núbia/kushita");
+  await expect(page.getByText(/piso documental conservador/i)).toBeAttached();
+
+  await page.getByRole("button", { name: "Fechar lista" }).click();
+  await page.getByRole("button", { name: "Emergências", exact: true }).click();
+  await page.getByRole("button", { name: "Visualização em lista" }).click();
+  await expect(list).not.toContainText("Religião Yorùbá e Ifá");
+  await expect(list).not.toContainText("Vodun Fon-Ewe");
+  await page.getByRole("button", { name: "Fechar lista" }).click();
+  await page.getByRole("button", { name: "Panorama", exact: true }).click();
+  await page.getByRole("button", { name: "Visualização em lista" }).click();
+  await expect(list).toContainText("Religião Yorùbá e Ifá");
+
+  await page.getByRole("button", { name: "Fechar lista" }).click();
+  await page.getByRole("button", { name: "Hoje" }).click();
+  await page.getByRole("button", { name: "Visualização em lista" }).click();
+  await expect(list).not.toContainText("Religião nórdica antiga");
+  await expect(list).toContainText("Heathenry/Ásatrú");
 });
 
 test("camada Aeons exige confirmação e permanece epistemicamente separada", async ({ page }) => {
@@ -163,7 +212,7 @@ test("árvore antiga acumula antecessores e separa três classes de evidência",
   await expect(page.locator("#temporal-range")).toHaveAttribute("aria-valuetext", /7 a\.C\./);
   await page.getByRole("button", { name: "Árvore", exact: true }).click();
 
-  await expect(page.locator(".lineage-node")).toHaveCount(57);
+  await expect(page.locator(".lineage-node")).toHaveCount(60);
   expect(await page.locator(".lineage-documented").count()).toBeGreaterThanOrEqual(3);
   expect(await page.locator(".lineage-syncretism").count()).toBeGreaterThanOrEqual(8);
   expect(await page.locator(".lineage-hypothesis").count()).toBeGreaterThanOrEqual(4);
@@ -211,6 +260,13 @@ test("metadados de descoberta descrevem o atlas e seus índices públicos", asyn
     "href",
     "https://mreaggle.github.io/religiomundi/",
   );
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveAttribute(
+    "src",
+    "https://www.googletagmanager.com/gtag/js?id=G-930BMPYP28",
+  );
+  const analyticsConfig =
+    (await page.locator("head > script:not([src])").allTextContents()).join("\n");
+  expect(analyticsConfig).toContain('gtag("config", "G-930BMPYP28")');
   const structuredData = JSON.parse(
     (await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}",
   );

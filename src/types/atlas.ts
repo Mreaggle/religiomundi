@@ -1,5 +1,10 @@
 export type CorrelationType = "direct" | "partial" | "impersonal" | "uncertain" | "absent";
 export type TemporalPrecision = "exact" | "approximate" | "century" | "macroperiod" | "unknown";
+export type TemporalVisibilityBasis =
+  | "parsed-attestation"
+  | "macroperiod-bound"
+  | "living-documentary-floor"
+  | "present-only";
 export type TemporalMode = "panorama" | "emergences" | "catalog";
 export type ViewMode =
   | "constellation"
@@ -44,6 +49,8 @@ export interface Tradition {
   counts: Record<CorrelationType, number>;
   startYear?: number;
   endYear?: number;
+  visibilityStartYear?: number;
+  visibilityBasis: TemporalVisibilityBasis;
   temporalPrecision: TemporalPrecision;
   temporalLabel: string;
   isApproximate: boolean;

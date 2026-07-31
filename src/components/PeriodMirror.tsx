@@ -45,6 +45,9 @@ export function PeriodMirror() {
       families: [...families.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4),
       coverages: [...coverages.entries()].sort((a, b) => b[1] - a[1]),
       sources: sourceCodes.size,
+      documentaryFloor: visibleTraditions.filter(
+        (tradition) => tradition.visibilityBasis === "living-documentary-floor",
+      ).length,
     };
   }, [data.archetypes, visibleTraditions]);
   const classified =
@@ -103,6 +106,13 @@ export function PeriodMirror() {
           <p>
             {stats.top[1].name} possui {stats.top[1].counts.direct} correlações diretas e{" "}
             {stats.top[1].counts.partial} parciais.
+          </p>
+        )}
+        {temporalMode === "panorama" && stats.documentaryFloor > 0 && (
+          <p>
+            <strong>{stats.documentaryFloor} tradições vivas com início não convertível</strong>{" "}
+            permanecem neste panorama por um piso documental conservador. O marco técnico não
+            representa origem, fundação ou primeira atestação.
           </p>
         )}
       </div>
