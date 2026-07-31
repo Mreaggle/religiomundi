@@ -20,6 +20,7 @@ test("APOIAR abre sobre a visualização atual e oferece Pix e link direto", asy
   await expect(
     page.getByRole("img", { name: "QR Code para apoiar o RELIGIO MUNDI via Pix" }),
   ).toBeVisible();
+  await expect(page.locator('.support-qr-frame img[src*="qrcodepix.png"]')).toBeVisible();
   await expect(page.getByText("Kauan Crema Dias", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: /Continuar pelo Nubank/ })).toHaveAttribute(
     "href",

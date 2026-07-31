@@ -1,6 +1,6 @@
 import { Check, Copy, ExternalLink, Smartphone } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
+import { assetUrl } from "../utils/assets";
 import { ModalShell } from "./ModalShell";
 
 const PIX_CODE =
@@ -52,14 +52,7 @@ export function SupportModal({ onClose }: { onClose: () => void }) {
               role="img"
               aria-label="QR Code para apoiar o RELIGIO MUNDI via Pix"
             >
-              <QRCodeSVG
-                value={PIX_CODE}
-                size={248}
-                level="M"
-                marginSize={2}
-                bgColor="#f3eedf"
-                fgColor="#101816"
-              />
+              <img src={assetUrl("qrcodepix.png")} alt="" />
             </div>
             <h3>Escaneie com o aplicativo do seu banco</h3>
             <p>

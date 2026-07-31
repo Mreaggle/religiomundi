@@ -3326,10 +3326,11 @@ svg [tabindex] {
   place-items: center;
 }
 
-.support-qr-frame svg {
+.support-qr-frame img {
   display: block;
   width: 100%;
   height: 100%;
+  filter: invert(1);
 }
 
 .support-qr-panel h3 {
