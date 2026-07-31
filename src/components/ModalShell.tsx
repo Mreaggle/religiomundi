@@ -29,6 +29,12 @@ export function ModalShell({
 
   return (
     <div className="modal-backdrop">
+      <button
+        type="button"
+        className="modal-backdrop-dismiss"
+        onClick={onClose}
+        aria-label="Dispensar sobreposição clicando fora do modal"
+      />
       <div
         ref={dialogRef}
         className={`modal-shell ${className}`}
