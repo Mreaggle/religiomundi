@@ -33,4 +33,4 @@ Trate `UNO_reformulado.xlsx` como fonte canônica. Preserve o texto integral, os
 
 ## Entrega
 
-Informe arquivos gerados, contagens, divergências, decisões conservadoras e testes executados. Derive dimensões da fonte; a revisão atual possui 471 registros, 44 arquétipos e 20.724 células.
+Informe arquivos gerados, contagens, divergências, decisões conservadoras e testes executados. Derive dimensões da fonte; a revisão atual possui 482 registros, 44 arquétipos e 21.208 células.

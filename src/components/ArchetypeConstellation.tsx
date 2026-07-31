@@ -11,7 +11,11 @@ import { useSvgZoom } from "../hooks/useSvgZoom";
 import { useAtlas } from "../state/AtlasProvider";
 import type { Archetype, CorrelationType, Tradition } from "../types/atlas";
 import { clusterTraditions, countByCorrelation } from "../utils/atlas";
-import { selectCollisionFreeLabels, semanticZoomScale } from "../utils/collision";
+import {
+  expandedTraditionPosition,
+  selectCollisionFreeLabels,
+  semanticZoomScale,
+} from "../utils/collision";
 import { getArchetypeVisual } from "./archetypeVisuals";
 import { CorrelationFiber } from "./CorrelationFiber";
 import { MapGeometry, useWorldGeometry } from "./MapGeometry";
@@ -63,8 +67,7 @@ export function ArchetypeConstellation() {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<SVGGElement>(null);
   const positions = useMemo(() => archetypePositions(data.archetypes), [data.archetypes]);
-  const focusActive = Boolean(selectedTradition || selectedArchetype);
-  const focusTraditions = useMemo(() => {
+  const baseFocusTraditions = useMemo(() => {
     if (selectedTradition) return [selectedTradition];
     if (selectedArchetype) {
       return visibleTraditions.filter(
@@ -73,7 +76,14 @@ export function ArchetypeConstellation() {
     }
     return visibleTraditions;
   }, [selectedArchetype, selectedTradition, visibleTraditions]);
-  const clusters = useMemo(() => clusterTraditions(focusTraditions), [focusTraditions]);
+  const baseClusters = useMemo(() => clusterTraditions(baseFocusTraditions), [baseFocusTraditions]);
+  const expandedCluster = useMemo(
+    () => baseClusters.find((cluster) => cluster.key === expanded),
+    [baseClusters, expanded],
+  );
+  const sceneTraditions = expandedCluster?.traditions ?? baseFocusTraditions;
+  const clusters = expandedCluster ? [expandedCluster] : baseClusters;
+  const focusActive = Boolean(selectedTradition || selectedArchetype || expandedCluster);
   const { projection } = useWorldGeometry(EXTENT);
   const { scale, zoomBy, panBy, resetZoom } = useSvgZoom(svgRef, viewportRef, {
     width: WIDTH,
@@ -113,6 +123,12 @@ export function ArchetypeConstellation() {
     if (Number.isFinite(selectedYear)) setTooltip(undefined);
   }, [selectedYear]);
 
+  useEffect(() => {
+    if (expanded && !baseClusters.some((cluster) => cluster.key === expanded)) {
+      setExpanded(undefined);
+    }
+  }, [baseClusters, expanded]);
+
   function handleConstellationKey(event: KeyboardEvent) {
     if (event.key === "+" || event.key === "=") {
       event.preventDefault();
@@ -142,9 +158,9 @@ export function ArchetypeConstellation() {
     () =>
       new Map(
         data.archetypes.map((archetype) => {
-          const counts = countByCorrelation(visibleTraditions, archetype.code);
+          const counts = countByCorrelation(sceneTraditions, archetype.code);
           const total = counts.direct + counts.partial + counts.impersonal + counts.uncertain;
-          const topTraditions = visibleTraditions
+          const topTraditions = sceneTraditions
             .filter((tradition) => tradition.correlations[archetype.code]?.type !== "absent")
             .sort(
               (a, b) =>
@@ -156,7 +172,7 @@ export function ArchetypeConstellation() {
           return [archetype.code, { counts, total, topTraditions }];
         }),
       ),
-    [data.archetypes, visibleTraditions],
+    [data.archetypes, sceneTraditions],
   );
   const archetypeCounts = useMemo(
     () => new Map([...archetypeStats.entries()].map(([code, stats]) => [code, stats.total])),
@@ -172,7 +188,7 @@ export function ArchetypeConstellation() {
         ]) ?? [600, 350]
       );
     }
-    const angle = (index / Math.max(1, visibleTraditions.length)) * Math.PI * 2;
+    const angle = (index / Math.max(1, sceneTraditions.length)) * Math.PI * 2;
     return [600 + Math.cos(angle) * 175, 350 + Math.sin(angle) * 92];
   };
 
@@ -188,7 +204,7 @@ export function ArchetypeConstellation() {
         .filter((item) => item.correlation.type !== "absent" || showAbsences);
     }
     if (selectedArchetype) {
-      return visibleTraditions
+      return sceneTraditions
         .map((tradition) => ({
           tradition,
           archetype: selectedArchetype,
@@ -200,7 +216,7 @@ export function ArchetypeConstellation() {
     }
     return data.archetypes
       .map((archetype, archetypeIndex) => {
-        const ranked = visibleTraditions
+        const ranked = sceneTraditions
           .map((tradition) => ({
             tradition,
             archetype,
@@ -214,11 +230,13 @@ export function ArchetypeConstellation() {
         return strongest[archetypeIndex % strongest.length];
       })
       .filter((item): item is NonNullable<typeof item> => Boolean(item));
-  }, [data.archetypes, selectedArchetype, selectedTradition, showAbsences, visibleTraditions]);
+  }, [data.archetypes, sceneTraditions, selectedArchetype, selectedTradition, showAbsences]);
 
   return (
     <section
-      className={`constellation-view instrument-panel ${effectsEnabled ? "" : "effects-off"}`}
+      className={`constellation-view instrument-panel ${effectsEnabled ? "" : "effects-off"} ${
+        focusActive ? "has-scene-focus" : ""
+      }`}
       aria-labelledby="constellation-title"
     >
       <div className="instrument-heading constellation-heading">
@@ -363,17 +381,19 @@ export function ArchetypeConstellation() {
                       }}
                     />
                     {expanded === cluster.key &&
-                      cluster.traditions.slice(0, 18).map((tradition, itemIndex) => {
-                        const angle =
-                          (itemIndex / Math.min(18, cluster.traditions.length)) * Math.PI * 2;
-                        const radius = 28 + Math.floor(itemIndex / 8) * 18;
+                      cluster.traditions.slice(0, 48).map((tradition, itemIndex) => {
+                        const memberPosition = expandedTraditionPosition(
+                          projected,
+                          itemIndex,
+                          cluster.traditions.length,
+                          WIDTH,
+                          HEIGHT,
+                        );
                         return (
                           <g
                             key={tradition.id}
                             className="expanded-tradition"
-                            transform={`translate(${projected[0] + Math.cos(angle) * radius} ${
-                              projected[1] + Math.sin(angle) * radius
-                            }) scale(${semanticZoomScale(scale)})`}
+                            transform={`translate(${memberPosition[0]} ${memberPosition[1]}) scale(${semanticZoomScale(scale)})`}
                             role="button"
                             tabIndex={0}
                             onClick={() => setSelectedTraditionId(tradition.id)}
@@ -391,6 +411,16 @@ export function ArchetypeConstellation() {
                           </g>
                         );
                       })}
+                    {expanded === cluster.key && cluster.traditions.length > 48 && (
+                      <text
+                        className="map-overflow-label"
+                        x={projected[0]}
+                        y={projected[1] + 142}
+                        textAnchor="middle"
+                      >
+                        +{cluster.traditions.length - 48} disponíveis na lista acessível
+                      </text>
+                    )}
                   </g>
                 );
               })}
@@ -409,7 +439,8 @@ export function ArchetypeConstellation() {
                   selectedTradition?.correlations[archetype.code]?.type !== "absent";
                 const hiddenByFocus =
                   (Boolean(selectedArchetype) && !selected) ||
-                  (Boolean(selectedTradition) && !relevantToTradition);
+                  (Boolean(selectedTradition) && !relevantToTradition) ||
+                  (Boolean(expandedCluster) && count === 0);
                 return (
                   <g
                     key={archetype.code}
@@ -489,10 +520,23 @@ export function ArchetypeConstellation() {
           </div>
         )}
         {focusActive && (
-          <button className="focus-status" type="button" onClick={clearSelection}>
+          <button
+            className="focus-status"
+            type="button"
+            onClick={() => {
+              clearSelection();
+              setExpanded(undefined);
+              setTooltip(undefined);
+            }}
+          >
             <span>FOCO ISOLADO</span>
             <strong>
-              {selectedTradition?.name ?? `${selectedArchetype?.code} — ${selectedArchetype?.name}`}
+              {selectedTradition?.name ??
+                (selectedArchetype
+                  ? `${selectedArchetype.code} — ${selectedArchetype.name}`
+                  : expandedCluster
+                    ? `${expandedCluster.label} · ${expandedCluster.traditions.length} tradições`
+                    : "")}
             </strong>
             <small>Clique aqui ou fora dos elementos para mostrar tudo</small>
           </button>

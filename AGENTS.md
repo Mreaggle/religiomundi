@@ -34,6 +34,9 @@ must have a representative fiber. SVG zoom must progressively enlarge labels and
 scaling them as fast as geometry. Selection closes exactly once through X, backdrop, outside click,
 or `Escape`; `Revelar padrões` must not mount a competing dossier. On phone landscape, the sticky
 timeline starts collapsed and remains manually reversible.
+Selecting a map/constellation cluster creates an exclusive scene focus: unrelated clusters must
+leave the render or become non-interactive, every member of the selected cluster remains available,
+and clicking the scene background restores the complete cut.
 
 ÁRVORE renders every tradition in the current temporal/filter cut. Regional bands are layout
 branches only and must not imply descent. Solid edges mean documented historical relationship;
@@ -44,7 +47,10 @@ CHARTS ranks religions, traditions, families, or archetypes—not countries. Int
 deterministic derivatives of the current cut. External demographics must remain in a separately
 labeled dataset with institution, publication year, estimate year, aggregation caveat, and a
 machine-tested total. Never present unaffiliated people as a religion or compare Pew’s seven broad
-groups as though they had the catalog’s 471-row granularity.
+groups as though they had the catalog’s 482-row granularity.
+Provocative titles require an adjacent methodological caveat; functional similarity, absence,
+uncertainty, catalog family size, and source count must never be phrased as theological identity,
+historical transmission, inferiority, popularity, or truth.
 
 Geography separates `region` (origin/formation anchor) from `distributionLabel` and
 `geographicReach` (regional, multi-regional, diasporic, or global presence). Never use “Global”,

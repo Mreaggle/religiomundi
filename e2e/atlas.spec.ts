@@ -1,4 +1,21 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
+
+async function clickSceneBackground(page: Page, svgSelector: string) {
+  const point = await page.locator(svgSelector).evaluate((svg) => {
+    const bounds = svg.getBoundingClientRect();
+    for (const yRatio of [0.84, 0.72, 0.58, 0.42, 0.28]) {
+      for (const xRatio of [0.5, 0.22, 0.78, 0.1, 0.9]) {
+        const x = bounds.left + bounds.width * xRatio;
+        const y = bounds.top + bounds.height * yRatio;
+        if (document.elementFromPoint(x, y)?.classList.contains("focus-dismiss-surface")) {
+          return { x, y };
+        }
+      }
+    }
+    throw new Error("Nenhuma área vazia do foco foi encontrada");
+  });
+  await page.mouse.click(point.x, point.y);
+}
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -71,7 +88,7 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
       (fibers) => new Set(fibers.map((fiber) => fiber.getAttribute("data-archetype-code"))).size,
     );
   expect(connectedArchetypes).toBe(activeArchetypes);
-  await expect(page.getByText("471 × 44")).toHaveText("471 × 44");
+  await expect(page.getByText("482 × 44")).toHaveText("482 × 44");
 
   await page.getByRole("button", { name: "Abrir busca e filtros" }).click();
   await page.getByLabel("Busca global").fill("Šamaš");
@@ -104,12 +121,19 @@ test("integra dados, busca, tempo e modos sem erros de console", async ({ page }
   await expect(page.getByText("Grupos religiosos mundiais — não países")).toBeVisible();
   await expect(page.locator(".population-ranking li")).toHaveCount(7);
   await expect(page.locator(".population-ranking")).toContainText("Sem filiação religiosa");
+  expect(await page.locator(".ranking-card").count()).toBeGreaterThanOrEqual(12);
+  await expect(
+    page.getByText("Pares de famílias distintas com assinaturas próximas"),
+  ).toBeVisible();
+  await expect(page.locator(".ranking-caveat")).toHaveCount(
+    await page.locator(".ranking-card").count(),
+  );
   await page.getByRole("button", { name: "Matriz", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Matriz navegável" })).toBeVisible();
   await expect(page.locator(".matrix-cell").first()).toBeVisible();
   await page.getByRole("button", { name: "Fontes", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Biblioteca de fontes" })).toBeVisible();
-  await expect(page.locator(".source-library article")).toHaveCount(44);
+  await expect(page.locator(".source-library article")).toHaveCount(55);
   await expect(page.locator("a[download]")).toHaveCount(0);
   await expect(page.getByText(/UNO_reformulado\.xlsx/i)).toHaveCount(0);
   await page.getByRole("button", { name: "Sobre o projeto" }).click();
@@ -139,7 +163,7 @@ test("árvore antiga acumula antecessores e separa três classes de evidência",
   await expect(page.locator("#temporal-range")).toHaveAttribute("aria-valuetext", /7 a\.C\./);
   await page.getByRole("button", { name: "Árvore", exact: true }).click();
 
-  await expect(page.locator(".lineage-node")).toHaveCount(56);
+  await expect(page.locator(".lineage-node")).toHaveCount(57);
   expect(await page.locator(".lineage-documented").count()).toBeGreaterThanOrEqual(3);
   expect(await page.locator(".lineage-syncretism").count()).toBeGreaterThanOrEqual(8);
   expect(await page.locator(".lineage-hypothesis").count()).toBeGreaterThanOrEqual(4);
@@ -181,7 +205,7 @@ test("metadados de descoberta descrevem o atlas e seus índices públicos", asyn
   await expect(page).toHaveTitle(/O Maior Atlas Religioso do Mundo/);
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    /471 religiões/,
+    /482 religiões/,
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
@@ -222,6 +246,25 @@ test("constelação oferece zoom focal sem mover seus eixos entre períodos", as
   await page.getByRole("button", { name: "Restaurar posição da constelação" }).click();
   await expect(page.getByLabel("Nível de zoom da constelação")).toHaveText("100%");
 
+  const constellationClusters = page.locator(".tradition-cluster");
+  const constellationClusterCount = await constellationClusters.count();
+  const brazilConstellation = page.locator(
+    '.constellation-view .tradition-cluster[aria-label^="Brasil,"]',
+  );
+  const brazilConstellationLabel = (await brazilConstellation.getAttribute("aria-label")) ?? "";
+  const brazilConstellationCount = Number(
+    brazilConstellationLabel.match(/, (\d+) tradições/)?.[1] ?? 0,
+  );
+  expect(brazilConstellationCount).toBeGreaterThan(1);
+  await brazilConstellation.click();
+  await expect(page.locator(".tradition-cluster")).toHaveCount(1);
+  await expect(page.locator(".expanded-tradition")).toHaveCount(
+    Math.min(48, brazilConstellationCount),
+  );
+  await expect(page.getByText("DOSSIÊ DA TRADIÇÃO")).toHaveCount(0);
+  await clickSceneBackground(page, ".constellation-canvas > svg");
+  await expect(page.locator(".tradition-cluster")).toHaveCount(constellationClusterCount);
+
   await page.locator('.archetype-node[data-archetype-code="A15"]').click();
   await expect(page.locator(".archetype-node.focus-hidden")).toHaveCount(43);
   await page.getByLabel("Fechar dossiê e limpar seleção").click();
@@ -253,7 +296,7 @@ test("barra temporal recolhe automaticamente no celular deitado e pode reabrir",
   await expect(page.locator(".temporal-glide")).toHaveClass(/is-collapsed/);
 });
 
-test("mapa oferece zoom focal e acesso explícito às 471 tradições", async ({ page }, testInfo) => {
+test("mapa oferece zoom focal e acesso explícito às 482 tradições", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name.includes("mobile"), "Roda do mouse é verificada no desktop");
   await page.goto("/");
   await page.getByRole("button", { name: "Mapa", exact: true }).click();
@@ -266,20 +309,25 @@ test("mapa oferece zoom focal e acesso explícito às 471 tradições", async ({
   await expect(page.getByLabel("Nível de zoom")).not.toHaveText("100%");
   await expect.poll(() => viewport.getAttribute("transform")).not.toBe(before);
 
-  await page.getByRole("button", { name: "Catálogo · 471" }).click();
-  await expect(page.locator(".map-summary")).toContainText("471 tradições");
-  await expect(page.getByText("471 de 471 tradições")).toBeVisible();
+  await page.getByRole("button", { name: "Catálogo · 482" }).click();
+  await expect(page.locator(".map-summary")).toContainText("482 tradições");
+  await expect(page.getByText("482 de 482 tradições")).toBeVisible();
 
   await page.getByRole("button", { name: "Restaurar posição do mapa" }).click();
   const clusterNodes = page.locator(".tradition-cluster");
-  const labels = await clusterNodes.evaluateAll((nodes) =>
-    nodes.map((node) => node.getAttribute("aria-label") ?? ""),
-  );
-  const counts = labels.map((label) => Number(label.match(/, (\d+) tradições/)?.[1] ?? 0));
-  const largest = Math.max(...counts);
-  await clusterNodes.nth(counts.indexOf(largest)).click();
+  const clusterCount = await clusterNodes.count();
+  const brazilMap = page.locator('.map-view .tradition-cluster[aria-label^="Brasil,"]');
+  const brazilMapLabel = (await brazilMap.getAttribute("aria-label")) ?? "";
+  const brazilMapCount = Number(brazilMapLabel.match(/, (\d+) tradições/)?.[1] ?? 0);
+  expect(brazilMapCount).toBeGreaterThan(1);
+  await brazilMap.click();
+  await expect(page.locator(".tradition-cluster")).toHaveCount(1);
   await expect(page.locator(".map-cluster-inspector")).toBeVisible();
-  await expect(page.locator(".map-inspector-list > button")).toHaveCount(largest);
+  await expect(page.locator(".map-inspector-list > button")).toHaveCount(brazilMapCount);
+  await expect(page.getByText("DOSSIÊ DA TRADIÇÃO")).toHaveCount(0);
+  await clickSceneBackground(page, ".map-stage > svg");
+  await expect(page.locator(".tradition-cluster")).toHaveCount(clusterCount);
+  await expect(page.locator(".map-cluster-inspector")).toHaveCount(0);
 });
 
 test("mapa político acompanha a timeline sem carregar o arquivo histórico inteiro", async ({

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { selectCollisionFreeLabels, semanticZoomScale } from "./collision";
+import {
+  expandedTraditionPosition,
+  selectCollisionFreeLabels,
+  semanticZoomScale,
+} from "./collision";
 
 describe("seleção de rótulos sem colisão", () => {
   const candidates = [
@@ -28,5 +32,21 @@ describe("seleção de rótulos sem colisão", () => {
     expect(semanticZoomScale(1)).toBe(1);
     expect(semanticZoomScale(4)).toBe(0.5);
     expect(semanticZoomScale(9)).toBeCloseTo(1 / 3);
+  });
+
+  it("distribui membros expandidos em uma grade legível dentro da cena", () => {
+    const positions = Array.from({ length: 19 }, (_, index) =>
+      expandedTraditionPosition([400, 560], index, 19),
+    );
+    expect(new Set(positions.map(([x, y]) => `${x}:${y}`)).size).toBe(19);
+    expect(Math.min(...positions.map(([, y]) => y))).toBeGreaterThanOrEqual(110);
+    expect(Math.max(...positions.map(([, y]) => y))).toBeLessThanOrEqual(620);
+    for (let index = 0; index < positions.length; index += 1) {
+      for (let peer = index + 1; peer < positions.length; peer += 1) {
+        const [leftX, leftY] = positions[index];
+        const [rightX, rightY] = positions[peer];
+        expect(Math.hypot(leftX - rightX, leftY - rightY)).toBeGreaterThanOrEqual(24);
+      }
+    }
   });
 });

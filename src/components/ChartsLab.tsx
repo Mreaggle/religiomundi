@@ -5,32 +5,26 @@ import {
   RELIGIOUS_POPULATION_SOURCE,
 } from "../data/religiousPopulation";
 import { useAtlas } from "../state/AtlasProvider";
-import type { CorrelationType, Tradition } from "../types/atlas";
+import type { CorrelationType } from "../types/atlas";
+import { buildChartStats, type RankedDatum } from "../utils/charts";
 import { formatYear } from "../utils/temporal";
 
 const ACTIVE_TYPES: CorrelationType[] = ["direct", "partial", "impersonal", "uncertain"];
-
-interface RankedValue {
-  id: string;
-  label: string;
-  value: number;
-  detail: string;
-}
-
-function supportedCount(tradition: Tradition): number {
-  return tradition.counts.direct + tradition.counts.partial + tradition.counts.impersonal;
-}
 
 function Ranking({
   title,
   eyebrow,
   items,
   unit,
+  caveat,
+  onSelect,
 }: {
   title: string;
   eyebrow: string;
-  items: RankedValue[];
+  items: RankedDatum[];
   unit: string;
+  caveat: string;
+  onSelect: (item: RankedDatum) => void;
 }) {
   const ceiling = Math.max(...items.map((item) => item.value), 1);
   return (
@@ -40,10 +34,9 @@ function Ranking({
         <h3>{title}</h3>
       </header>
       <ol>
-        {items.map((item, index) => (
-          <li key={item.id}>
-            <span className="ranking-position">{String(index + 1).padStart(2, "0")}</span>
-            <div>
+        {items.map((item, index) => {
+          const content = (
+            <>
               <span>
                 <strong>{item.label}</strong>
                 <b>
@@ -54,87 +47,57 @@ function Ranking({
                 <em style={{ width: `${Math.max(1.5, (item.value / ceiling) * 100)}%` }} />
               </i>
               <small>{item.detail}</small>
-            </div>
-          </li>
-        ))}
+            </>
+          );
+          return (
+            <li key={item.id}>
+              <span className="ranking-position">{String(index + 1).padStart(2, "0")}</span>
+              {item.target ? (
+                <button
+                  className="chart-rank-target"
+                  type="button"
+                  onClick={() => onSelect(item)}
+                  aria-label={`Abrir ${item.label}`}
+                >
+                  {content}
+                </button>
+              ) : (
+                <div>{content}</div>
+              )}
+            </li>
+          );
+        })}
       </ol>
+      {!items.length && <p className="chart-empty">Sem amostra suficiente neste recorte.</p>}
+      <footer className="ranking-caveat">{caveat}</footer>
     </article>
   );
 }
 
 export function ChartsLab() {
-  const { data, visibleTraditions, selectedYear, temporalMode } = useAtlas();
-  const stats = useMemo(() => {
-    const dense = visibleTraditions
-      .map((tradition) => ({
-        id: tradition.id,
-        label: tradition.name,
-        value: supportedCount(tradition),
-        detail: `${tradition.coverage} · ${tradition.family}`,
-      }))
-      .filter((item) => item.value > 0)
-      .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, "pt-BR"))
-      .slice(0, 10);
-
-    const uncertain = visibleTraditions
-      .filter(
-        (tradition) =>
-          tradition.counts.uncertain > 0 &&
-          tradition.individualizedCells > 0 &&
-          tradition.coverage.toLocaleLowerCase("pt-BR").includes("detalhado"),
-      )
-      .map((tradition) => ({
-        id: tradition.id,
-        label: tradition.name,
-        value: tradition.counts.uncertain,
-        detail: `${tradition.individualizedCells} células individualizadas · ${tradition.coverage}`,
-      }))
-      .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, "pt-BR"))
-      .slice(0, 10);
-
-    const archetypes = data.archetypes
-      .map((archetype) => {
-        const counts: Record<CorrelationType, number> = {
-          direct: 0,
-          partial: 0,
-          impersonal: 0,
-          uncertain: 0,
-          absent: 0,
-        };
-        for (const tradition of visibleTraditions) {
-          const type = tradition.correlations[archetype.code]?.type;
-          if (type) counts[type] += 1;
-        }
-        return {
-          ...archetype,
-          counts,
-          total: ACTIVE_TYPES.reduce((sum, type) => sum + counts[type], 0),
-        };
-      })
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 12);
-
-    const families = new Map<string, { traditions: number; regions: Set<string> }>();
-    for (const tradition of visibleTraditions) {
-      const current = families.get(tradition.family) ?? { traditions: 0, regions: new Set() };
-      current.traditions += 1;
-      current.regions.add(tradition.region);
-      families.set(tradition.family, current);
-    }
-    const reach = [...families.entries()]
-      .map(([label, item]) => ({
-        id: label,
-        label,
-        value: item.regions.size,
-        detail: `${item.traditions} tradições catalogadas no recorte`,
-      }))
-      .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, "pt-BR"))
-      .slice(0, 10);
-
-    return { dense, uncertain, archetypes, reach };
-  }, [data.archetypes, visibleTraditions]);
+  const {
+    data,
+    visibleTraditions,
+    selectedYear,
+    temporalMode,
+    setSelectedTraditionId,
+    setSelectedArchetypeCode,
+  } = useAtlas();
+  const stats = useMemo(
+    () => buildChartStats(visibleTraditions, data.archetypes),
+    [data.archetypes, visibleTraditions],
+  );
 
   const archetypeCeiling = Math.max(...stats.archetypes.map((item) => item.total), 1);
+  function selectRank(item: RankedDatum) {
+    if (item.target?.type === "tradition") {
+      setSelectedArchetypeCode(undefined);
+      setSelectedTraditionId(item.target.id);
+    } else if (item.target?.type === "archetype") {
+      setSelectedTraditionId(undefined);
+      setSelectedArchetypeCode(item.target.id);
+    }
+  }
 
   return (
     <section className="charts-lab instrument-panel" aria-labelledby="charts-title">
@@ -237,18 +200,104 @@ export function ChartsLab() {
           title="Mais funções sustentadas — ou mais favorecidas pelas fontes?"
           items={stats.dense}
           unit="funções"
+          caveat="Densidade mede células classificadas; corpus abundante e detalhamento editorial pesam no resultado."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="O SAGRADO SEM ROSTO"
+          title="Onde princípios impessoais vencem personagens"
+          items={stats.impersonalTraditions}
+          unit="◇"
+          caveat="Impessoal não significa ateu: marca funções éticas, cósmicas ou não personificadas nesta classificação."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="SEM TRONO NO CÉU"
+          title="Matrizes densas sem soberania celeste classificada"
+          items={stats.nonSovereignDense}
+          unit="funções"
+          caveat="A ausência de A03 na matriz não prova inexistência de deuses, transcendência ou autoridade sagrada."
+          onSelect={selectRank}
         />
         <Ranking
           eyebrow="FRONTEIRA DOCUMENTAL"
           title="Mesmo perfis detalhados ainda admitem dúvida"
-          items={stats.uncertain}
+          items={stats.uncertainTraditions}
           unit="?"
+          caveat="Dúvida explícita é um resultado editorial, não defeito ou fragilidade da tradição."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="FUNÇÕES EM DISPUTA"
+          title="Arquétipos que mais atraem hipóteses"
+          items={stats.contestedArchetypes}
+          unit="?"
+          caveat="O ranking mede classificações incertas, incluindo documentação insuficiente e debate interpretativo."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="GÊMEAS IMPROVÁVEIS"
+          title="Pares de famílias distintas com assinaturas próximas"
+          items={stats.surprisingPairs}
+          unit="%"
+          caveat="Semelhança funcional ponderada não significa identidade, origem comum, transmissão ou influência histórica."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="QUEM GANHOU MAIS LINHAS?"
+          title="As maiores famílias são também escolhas editoriais"
+          items={stats.familySize}
+          unit="registros"
+          caveat="Quantidade de linhas mede granularidade do catálogo; não mede população, antiguidade ou importância."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="ALÉM DAS FRONTEIRAS"
+          title="Funções presentes em mais famílias distintas"
+          items={stats.crossFamilyArchetypes}
+          unit="famílias"
+          caveat="Recorrência entre famílias continua sendo classificatória; ela não demonstra um universal psicológico."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="PANTEÃO DAS AUSÊNCIAS"
+          title="Funções que mais desaparecem desta matriz"
+          items={stats.absentArchetypes}
+          unit="—"
+          caveat="Ausência significa sem correlato suficientemente documentado neste atlas, nunca ausência absoluta."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="PERIFERIA DA MANDALA"
+          title="As funções menos recorrentes do recorte"
+          items={stats.rareArchetypes}
+          unit="ocorrências"
+          caveat="Raridade pode refletir a taxonomia adotada, a documentação disponível ou o período selecionado."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="DÍVIDA EDITORIAL"
+          title="Onde o atlas ainda deve respostas específicas"
+          items={stats.editorialDebt}
+          unit="células"
+          caveat="Perfis familiares preservam cobertura ampla, mas suas células provisórias exigem pesquisa tradição por tradição."
+          onSelect={selectRank}
+        />
+        <Ranking
+          eyebrow="ATENÇÃO BIBLIOGRÁFICA"
+          title="Quem recebeu mais portas de entrada documentais?"
+          items={stats.sourceRichTraditions}
+          unit="fontes"
+          caveat="Mais códigos de fonte não significam maior verdade ou melhor documentação interna."
+          onSelect={selectRank}
         />
         <Ranking
           eyebrow="DISPERSÃO CATALOGADA"
           title="Famílias que atravessam mais regiões"
-          items={stats.reach}
+          items={stats.familyReach}
           unit="regiões"
+          caveat="Região é âncora aproximada de formação/atestação, separada do alcance diaspórico ou mundial."
+          onSelect={selectRank}
         />
 
         <article className="charts-card chart-manifesto">
